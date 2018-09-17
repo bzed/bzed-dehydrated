@@ -14,7 +14,6 @@ class dehydrated::params {
       $base_dir = 'C:\\LE_certs'
       $path_seperator = '\\'
       $manage_user = false
-      $configfile = ''
     }
     'Linux' : {
       $user = 'dehydrated'
@@ -36,6 +35,10 @@ class dehydrated::params {
   $crt_dir = join($base_dir, 'certs', $path_seperator)
   $key_dir = join($base_dir, 'private', $path_seperator)
 
+  $configdir = join($facts['puppet_vardir'], 'bzed-dehydrated', $path_seperator)
+  $configfile = join($configdir, 'config.json', $path_seperator)
+
+  
   # letsencrypt settings
   $letsencrypt_ca = 'v2-staging'
   $letsencrypt_cas = {
