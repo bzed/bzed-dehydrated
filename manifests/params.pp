@@ -14,6 +14,7 @@ class dehydrated::params {
       $base_dir = 'C:\\LE_certs'
       $path_seperator = '\\'
       $manage_user = false
+      fail($::settings::vardir)
       $puppet_vardir = regsubst($::settings::vardir, '/', '\\', 'G')
       $packages = []
       $manage_packages = false
