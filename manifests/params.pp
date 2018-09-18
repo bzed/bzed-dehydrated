@@ -14,19 +14,38 @@ class dehydrated::params {
       $base_dir = 'C:\\LE_certs'
       $path_seperator = '\\'
       $manage_user = false
+      $puppet_vardir = regsubst($facts['puppet_vardir'], '/', '\\', 'G')
+      $packages = []
+      $manage_packages = false
     }
     'Linux' : {
-      $user = 'dehydrated'
-      $group = 'dehydrated'
+      $user = $facts['user']
+      case $user {
+        'root' : {
+          $group = 'dehydrated'
+          $dehydrated_user = 'dehydrated'
+          $manage_user = true
+        }
+        default : {
+          $group = $facts['group']
+          $dehydrated_user = $user
+          $manage_user = false
+        }
+      }
+      $dehydrated_group = $group
       $path_seperator = '/'
       case $::os['family'] {
         'Debian' : {
           $pki_packages = ['pki-base']
         }
-        default: {}
+        default: {
+          $pki_packages = []
+        }
       }
       $base_dir = '/etc/pki/dehydrated'
-      $manage_user = true
+      $puppet_vardir = $facts['puppet_vardir']
+      $packages = ['git', 'openssl']
+      $manage_packages = true
     }
     default : { fail('Your OS is not supported!')}
   }
@@ -35,10 +54,9 @@ class dehydrated::params {
   $crt_dir = join($base_dir, 'certs', $path_seperator)
   $key_dir = join($base_dir, 'private', $path_seperator)
 
-  $configdir = join($facts['puppet_vardir'], 'bzed-dehydrated', $path_seperator)
+  $configdir = join($puppet_vardir, 'bzed-dehydrated', $path_seperator)
   $configfile = join($configdir, 'config.json', $path_seperator)
 
-  
   # letsencrypt settings
   $letsencrypt_ca = 'v2-staging'
   $letsencrypt_cas = {
@@ -63,6 +81,19 @@ class dehydrated::params {
   # dehydrated setting
   $dehydrated_git_url = 'https://github.com/lukas2511/dehydrated.git'
   $dehydrated_git_tag = 'v0.6.2'
+
+  $dehydrated_base_dir = '/opt/dehydrated'
+  $dehydrated_requests_dir = "${dehydrated_base_dir}/requests"
+  $dehydrated_git_dir = "${dehydrated_base_dir}/dehydrated"
+  $dehydrated_wellknown_dir = "${dehydrated_base_dir}/.acme-challenges"
+
+  if defined('$::puppetmaster') {
+    $dehydrated_host = $::puppetmaster
+  } elsif defined('$::servername') {
+    $dehydrated_host = $::servername
+  } else {
+    $dehydrated_host = undef
+  }
 
   #ssl settings
   $dh_param_size = 2048
