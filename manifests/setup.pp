@@ -16,7 +16,7 @@ class dehydrated::setup {
     }
   }
 
-  
+
   if (($facts['kernel'] != 'windows') and (!empty($::dehydrated::pki_packages))) {
     ensure_packages($::dehydrated::pki_packages)
   }
@@ -24,6 +24,5 @@ class dehydrated::setup {
   if ($::dehydrated::manage_packages) {
     ensure_packages($::dehydrated::packages)
   }
-  
 }
 
