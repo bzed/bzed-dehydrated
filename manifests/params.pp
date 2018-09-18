@@ -9,14 +9,17 @@ class dehydrated::params {
   # OS settings
   case $::kernel {
     'windows' : {
-      $user = $::identity['user']
+      $user = $facts['identity']['user']
       $group = undef
       $base_dir = 'C:\\LE_certs'
       $path_seperator = '\\'
       $manage_user = false
-      $puppet_vardir = regsubst($facts['puppet_vardir'], '/', '\\', 'G')
+      $puppet_vardir = regsubst($::settings::vardir, '/', '\\', 'G')
       $packages = []
       $manage_packages = false
+      $dehydrated_user = undef
+      $dehydrated_group = undef
+      $pki_packages = []
     }
     'Linux' : {
       $user = $facts['user']
@@ -43,19 +46,19 @@ class dehydrated::params {
         }
       }
       $base_dir = '/etc/pki/dehydrated'
-      $puppet_vardir = $facts['puppet_vardir']
+      $puppet_vardir = $::settings::vardir
       $packages = ['git', 'openssl']
       $manage_packages = true
     }
     default : { fail('Your OS is not supported!')}
   }
 
-  $csr_dir = join($base_dir, 'csr', $path_seperator)
-  $crt_dir = join($base_dir, 'certs', $path_seperator)
-  $key_dir = join($base_dir, 'private', $path_seperator)
+  $csr_dir = join([$base_dir, 'csr'], $path_seperator)
+  $crt_dir = join([$base_dir, 'certs'], $path_seperator)
+  $key_dir = join([$base_dir, 'private'], $path_seperator)
 
-  $configdir = join($puppet_vardir, 'bzed-dehydrated', $path_seperator)
-  $configfile = join($configdir, 'config.json', $path_seperator)
+  $configdir = join([$puppet_vardir, 'bzed-dehydrated'], $path_seperator)
+  $configfile = join([$configdir, 'config.json'], $path_seperator)
 
   # letsencrypt settings
   $letsencrypt_ca = 'v2-staging'

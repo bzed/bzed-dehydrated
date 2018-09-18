@@ -1,0 +1,8 @@
+# module specific facts
+---
+user: "dehydrated"
+group: "dehydrated"
+fqdn: "dehydrated.example.com"
+servername: "dehydrated.example.com"
+identity: { "user" : "example.com\\Administrator" }
+

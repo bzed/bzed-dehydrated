@@ -10,10 +10,10 @@ class dehydrated
   Stdlib::Absolutepath $crt_dir = $::dehydrated::params::crt_dir,
   Stdlib::Absolutepath $csr_dir = $::dehydrated::params::csr_dir,
   Stdlib::Absolutepath $key_dir = $::dehydrated::params::key_dir,
-  String $group = $::dehydrated::params::group,
   String $user = $::dehydrated::params::user,
-  String $dehydrated_user = $::dehydrated::params::dehydrated_user,
-  String $dehydrated_group = $::dehydrated::params::dehydrated_group,
+  Optional[String] $group = $::dehydrated::params::group,
+  Optional[String] $dehydrated_user = $::dehydrated::params::dehydrated_user,
+  Optional[String] $dehydrated_group = $::dehydrated::params::dehydrated_group,
 
   Integer $dh_param_size = $::dehydrated::params::dh_param_size,
   String $letsencrypt_ca = $::dehydrated::params::letsencrypt_ca,

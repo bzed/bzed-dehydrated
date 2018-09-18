@@ -58,7 +58,7 @@ class dehydrated::setup::dehydrated_host {
     source   => $::dehydrated::dehydrated_git_url,
     user     => $::dehydrated::dehydrated_user,
     require  => [
-      File[$::dehydrated::dehydrated_base_dir]
+      File[$::dehydrated::dehydrated_base_dir],
       Package['git']
     ],
   }

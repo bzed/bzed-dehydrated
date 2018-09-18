@@ -1,1 +1,1 @@
-type Dehydrated::GitSSHUrl = Pattern[/(?i:^(ssh://([^/@]+@)?[^/]+/.*|([^@:]+@)?[^:]+:.*))/]
+type Dehydrated::GitSSHUrl = Pattern[/(?i:^(ssh:\/\/([^\/@]+@)?[^\/]+\/.*|([^@:]+@)?[^:]+:.*))/]

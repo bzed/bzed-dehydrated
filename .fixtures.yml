@@ -3,4 +3,8 @@
 ---
 fixtures:
   forge_modules:
-#     stdlib: "puppetlabs/stdlib"
+     stdlib: "puppetlabs/stdlib"
+     openssl: "camptocamp/openssl"
+     vcsrepo: "puppetlabs/vcsrepo"
+  symlinks:
+      'dehydrated': "#{source_dir}"
