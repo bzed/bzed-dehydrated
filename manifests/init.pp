@@ -19,9 +19,6 @@ class dehydrated
   String $letsencrypt_ca = $::dehydrated::params::letsencrypt_ca,
   Hash $letsencrypt_cas = $::dehydrated::params::letsencrypt_cas,
 
-  Stdlib::Absolutepath $configdir = $::dehydrated::params::configdir,
-  Stdlib::Absolutepath $configfile = $::dehydrated::params::configfile,
-
   Stdlib::Absolutepath $dehydrated_base_dir = $::dehydrated::params::dehydrated_base_dir,
   Stdlib::Absolutepath $dehydrated_git_dir = $::dehydrated::params::dehydrated_git_dir,
   String $dehydrated_git_tag = $::dehydrated::params::dehydrated_git_tag,

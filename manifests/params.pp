@@ -9,19 +9,21 @@ class dehydrated::params {
   # OS settings
   case $::kernel {
     'windows' : {
-      $user = $facts['identity']['user']
-      $group = undef
+      $puppet_user = $facts['identity']['user']
+      $puppet_group = undef
+      $user = $puppet_user
+      $group = $puppet_group
       $base_dir = 'C:\\LE_certs'
-      $path_seperator = '\\'
       $manage_user = false
-      if ($::settings::vardir =~ /^[a-zA-Z]:\/.*/) {
+      if ($::settings::vardir =~ /\/tmp\/.*/) {
+        # this is a hack for running rspec for windows on a linux host
+        # :(
+        $puppet_vardir = 'C:\\ProgramData\\PuppetLabs\\puppet\\var'
+      } else {
         # puppet_vardir is a "windows" path
         $puppet_vardir = regsubst($::settings::vardir, '/', '\\', 'G')
-      } else {
-        # the weird case. like rspec tests...
-        # $::settings::vardir is /tmp/... here :(
-        $puppet_vardir = $::settings::vardir
       }
+      $path_seperator = '\\'
       $packages = []
       $manage_packages = false
       $dehydrated_user = undef
@@ -29,7 +31,9 @@ class dehydrated::params {
       $pki_packages = []
     }
     'Linux' : {
-      $user = $facts['user']
+      $puppet_user = $facts['user']
+      $puppet_group = $facts['group']
+      $user = $puppet_user
       case $user {
         'root' : {
           $group = 'dehydrated'
@@ -37,7 +41,7 @@ class dehydrated::params {
           $manage_user = true
         }
         default : {
-          $group = $facts['group']
+          $group = $puppet_group
           $dehydrated_user = $user
           $manage_user = false
         }
