@@ -9,7 +9,7 @@ define dehydrated::certificate(
   Dehydrated::DN $dn = $name,
   Array[Dehydrated::DN] $subject_alternative_names = [],
   Dehydrated::Challengetype $challengetype = $::dehydrated::challengetype,
-  Integer $dh_param_size = $::dehydrated::dh_param_size,
+  Integer[768] $dh_param_size = $::dehydrated::dh_param_size,
   Stdlib::Fqdn $dehydrated_host = $::dehydrated::dehydrated_host,
 ) {
 
@@ -18,6 +18,14 @@ define dehydrated::certificate(
   }
 
   require ::dehydrated::setup
+  require ::dehydrated::params
 
+  $certificate_filename = regsubst($dn, '^\*', '_wildcard_')
+
+  concat::fragment { "${fqdn}-${certificate_filename}" :
+    target  => $::dehydrated::params::domainfile,
+    content => "${certificate_filename}\n",
+    order   => '50'
+  }
 
 }

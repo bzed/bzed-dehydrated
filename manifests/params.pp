@@ -18,12 +18,12 @@ class dehydrated::params {
       if ($::settings::vardir =~ /\/tmp\/.*/) {
         # this is a hack for running rspec for windows on a linux host
         # :(
-        $puppet_vardir = 'C:\\ProgramData\\PuppetLabs\\puppet\\var'
+        $puppet_vardir = 'C:/ProgramData/PuppetLabs/puppet/var'
       } else {
         # puppet_vardir is a "windows" path
-        $puppet_vardir = regsubst($::settings::vardir, '/', '\\', 'G')
+        $puppet_vardir = regsubst($::settings::vardir, '\\', '/', 'G')
       }
-      $path_seperator = '\\'
+      $path_seperator = '/'
       $packages = []
       $manage_packages = false
       $dehydrated_user = undef
@@ -70,6 +70,7 @@ class dehydrated::params {
 
   $configdir = join([$puppet_vardir, 'bzed-dehydrated'], $path_seperator)
   $configfile = join([$configdir, 'config.json'], $path_seperator)
+  $domainfile = join([$configdir, 'domains.txt'], $path_seperator)
 
   # letsencrypt settings
   $letsencrypt_ca = 'v2-staging'

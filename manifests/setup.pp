@@ -89,5 +89,8 @@ class dehydrated::setup {
     mode => '0750',
   }
 
+  concat { $::dehydrated::params::domainfile :
+    ensure => present
+  }
 }
 

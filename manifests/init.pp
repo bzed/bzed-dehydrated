@@ -21,7 +21,7 @@ class dehydrated
 
   String $letsencrypt_ca = $::dehydrated::params::letsencrypt_ca,
   Hash $letsencrypt_cas = $::dehydrated::params::letsencrypt_cas,
-  Integer $dh_param_size = $::dehydrated::params::dh_param_size,
+  Integer[768] $dh_param_size = $::dehydrated::params::dh_param_size,
   Dehydrated::Challengetype $challengetype = $::dehydrated::params::challengetype,
 
   Stdlib::Absolutepath $dehydrated_base_dir = $::dehydrated::params::dehydrated_base_dir,
