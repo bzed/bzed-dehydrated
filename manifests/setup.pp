@@ -57,15 +57,15 @@ class dehydrated::setup {
 
   file { $::dehydrated::params::configdir :
     ensure => directory,
-    owner => $::dehydrated::params::puppet_user,
-    group => $::dehydrated::params::puppet_group,
+    owner  => $::dehydrated::params::puppet_user,
+    group  => $::dehydrated::params::puppet_group,
     mode   => '0750',
   }
 
   file { $::dehydrated::params::configfile :
     ensure  => file,
-    owner => $::dehydrated::params::puppet_user,
-    group => $::dehydrated::params::puppet_group,
+    owner   => $::dehydrated::params::puppet_user,
+    group   => $::dehydrated::params::puppet_group,
     mode    => '0640',
     content => $config_json,
   }
