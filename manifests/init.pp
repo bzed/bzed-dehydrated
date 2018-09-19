@@ -1,9 +1,13 @@
-# A description of what this class does
+# Base class to setup the letsencrypt certificate handling
+# with dehydrated.
 #
-# @summary A short summary of the purpose of this class
+# @summary Base class to define necessary variables and include setup classes.
 #
 # @example
 #   include dehydrated
+#
+# @api public
+
 class dehydrated
 (
   Stdlib::Absolutepath $base_dir = $::dehydrated::params::base_dir,
@@ -15,9 +19,10 @@ class dehydrated
   Optional[String] $dehydrated_user = $::dehydrated::params::dehydrated_user,
   Optional[String] $dehydrated_group = $::dehydrated::params::dehydrated_group,
 
-  Integer $dh_param_size = $::dehydrated::params::dh_param_size,
   String $letsencrypt_ca = $::dehydrated::params::letsencrypt_ca,
   Hash $letsencrypt_cas = $::dehydrated::params::letsencrypt_cas,
+  Integer $dh_param_size = $::dehydrated::params::dh_param_size,
+  Dehydrated::Challengetype $challengetype = $::dehydrated::params::challengetype,
 
   Stdlib::Absolutepath $dehydrated_base_dir = $::dehydrated::params::dehydrated_base_dir,
   Stdlib::Absolutepath $dehydrated_git_dir = $::dehydrated::params::dehydrated_git_dir,
@@ -32,6 +37,7 @@ class dehydrated
 
   Array $pki_packages = $::dehydrated::params::pki_packages,
   Array $packages = $::dehydrated::params::packages,
+  Optional[Array[Variant[Dehydrated::DN, Tuple[Dehydrated::DN, Array[Dehydrated::DN]]]]] $certificates = undef,
 
 ) inherits ::dehydrated::params {
 

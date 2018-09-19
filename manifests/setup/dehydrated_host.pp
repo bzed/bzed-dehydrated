@@ -1,9 +1,10 @@
-# A description of what this class does
+# Setup dehydrated and necessary files and folders
+# on $::dehydrated::dehydrated_host. Don't use it in
+# your code.
 #
 # @summary setup dehydrated and users/groups for it
 #
-# @example
-#   include dehydrated::setup::dehydrated_host
+# @api private
 
 class dehydrated::setup::dehydrated_host {
   if ! defined(Class['dehydrated']) {

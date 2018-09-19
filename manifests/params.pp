@@ -111,6 +111,6 @@ class dehydrated::params {
 
   #ssl settings
   $dh_param_size = 2048
-
+  $challengetype = 'dns-01'
 }
 
