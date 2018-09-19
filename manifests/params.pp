@@ -14,8 +14,14 @@ class dehydrated::params {
       $base_dir = 'C:\\LE_certs'
       $path_seperator = '\\'
       $manage_user = false
-      fail($::settings::vardir)
-      $puppet_vardir = regsubst($::settings::vardir, '/', '\\', 'G')
+      if ($::settings::vardir =~ /^[a-zA-Z]:\/.*/) {
+        # puppet_vardir is a "windows" path
+        $puppet_vardir = regsubst($::settings::vardir, '/', '\\', 'G')
+      } else {
+        # the weird case. like rspec tests...
+        # $::settings::vardir is /tmp/... here :(
+        $puppet_vardir = $::settings::vardir
+      }
       $packages = []
       $manage_packages = false
       $dehydrated_user = undef
