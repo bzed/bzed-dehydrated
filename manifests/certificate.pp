@@ -33,7 +33,7 @@ define dehydrated::certificate(
   }
 
   $json_fragment = to_json($domain_config)
-  ::concat::fragment { "${fqdn}-${dn}" :
+  ::concat::fragment { "${facts['fqdn']}-${dn}" :
     target  => $::dehydrated::params::domainfile,
     content => $json_fragment,
     order   => '50'
