@@ -46,5 +46,4 @@ define dehydrated::certificate(
   }
 
 
-
 }

@@ -77,7 +77,7 @@ class dehydrated
 
     $request_name = join(
       concat(
-        [$facts['fqdn', $_dn],
+        [$facts['fqdn'], $_dn],
         $_subject_alternative_names
       ),
     '-')

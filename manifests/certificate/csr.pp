@@ -38,7 +38,7 @@ define dehydrated::certificate::csr(
   $key_dir  = $::dehydrated::key_dir
   $crt_dir  = $::dehydrated::crt_dir
 
-  if (size($subject_alternative_names) > 0) {
+  if (!empty($subject_alternative_names)) {
     $req_ext = true
   } else {
     $req_ext = false

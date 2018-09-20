@@ -1,3 +1,5 @@
+require 'rspec/support/ruby_features'
+
 RSpec.configure do |c|
   c.enable_pathname_stubbing = true
 end

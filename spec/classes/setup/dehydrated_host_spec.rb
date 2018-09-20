@@ -6,7 +6,8 @@ describe 'dehydrated::setup::dehydrated_host' do
   end
 
   on_supported_os.each do |os, os_facts|
-    next unless os_facts[:kernel] == 'Linux'
+
+    next if os_facts[:kernel] == 'windows' and !WINDOWS
 
     context "on #{os}" do
       let(:facts) { os_facts }

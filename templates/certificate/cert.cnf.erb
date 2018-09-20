@@ -40,7 +40,7 @@ subjectAltName = @alt_names
 [ alt_names ]
 DNS.1 = <%= @dn %>
 <%- i=2 -%>
-<% @subject_alt_names.each do |val| -%>
+<% @subject_alternative_names.each do |val| -%>
 DNS.<%= i -%> = <%= val %>
 <%- i = i+1 -%>
 <% end -%>

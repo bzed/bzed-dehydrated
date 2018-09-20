@@ -12,7 +12,9 @@ describe 'dehydrated::certificate' do
 
 
   on_supported_os.each do |os, os_facts|
+
     next if os_facts[:kernel] == 'windows' and !WINDOWS
+
     context "on #{os}" do
       let(:facts) { os_facts }
 
