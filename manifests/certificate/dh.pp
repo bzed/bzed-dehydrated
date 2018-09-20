@@ -13,7 +13,7 @@
 define dehydrated::certificate::dh(
   Dehydrated::DN $dn,
   Integer[786] $dh_param_size,
-  Integer $current_dh_mtime,
+  Integer $dh_mtime,
   String $base_filename = $name,
   Enum['present', 'absent'] $ensure = 'present',
   Integer[3600] $max_age = (30*24*60*60),
@@ -27,9 +27,7 @@ define dehydrated::certificate::dh(
   $crt_dir  = $::dehydrated::crt_dir
   $dh  = "${crt_dir}/${base_filename}.dh"
 
-  $old_mtime = $facts['dehydrated_dh_mtimes'][$dn]
-
-  if (($old_mtime + $max_age) <= time() and ($ensure == 'present')) {
+  if (($dh_mtime + $max_age) <= time() and ($ensure == 'present')) {
     exec { "create-dh-for-${dn}-${base_filename}" :
       path    => $facts['path'],
       user    => $::dehydrated::user,

@@ -104,6 +104,7 @@ dehydrated_domains = {
         'challengetype': 'dns-01',
         'subject_alternative_names': [],
         'csr': wildcard_csr,
+        'dh_mtime': -99999,
     },
     'test.example.com': {
         'base_filename': 'test.example.com',
@@ -111,6 +112,7 @@ dehydrated_domains = {
         'challengetype': 'dns-01',
         'subject_alternative_names': [],
         'csr': test_csr,
+        'dh_mtime': -99999,
     }
 }
 

@@ -56,10 +56,10 @@ define dehydrated::certificate::csr(
     owner   => 'root',
     group   => $::dehydrated::group,
     mode    => '0644',
-    content => template('dehydrated/cert.cnf.erb'),
+    content => template('dehydrated/certificate/cert.cnf.erb'),
   }
 
-  if ($ensure = 'present') {
+  if ($ensure == 'present') {
     ssl_pkey { $key :
       ensure   => $ensure,
       password => $key_password,

@@ -73,32 +73,3 @@ end
 
 
 
-
-
-require 'facter'
-
-Facter.add(:dehydrated_dh_mtimes) do
-  setcode do
-    dehydrated_config = Facter.value(:dehydrated_config)
-    dehydrated_domains = Facter.value(:dehydrated_domains)
-    if dehydrated_config and dehydrated_domains then
-      crt_dir = dehydrated_config["crt_dir"]
-      ret = Hash.new
-      dehydrated_domains.each do |domain, config|
-        base_filename = config['base_filename']
-        dh = File.join(crt_dir, "#{base_filename}.dh")
-        if File.exists?(dh) and File.size?(dh) then
-          mtime = File.mtime(dh).to_i
-          ret[domain] = mtime
-        else
-          ret[domain] = -99999999
-        end
-      end
-      ret
-    else
-      nil
-    end
-  end
-end
-
-

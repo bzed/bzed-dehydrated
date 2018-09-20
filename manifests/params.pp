@@ -13,7 +13,7 @@ class dehydrated::params {
       $puppet_group = undef
       $user = $puppet_user
       $group = $puppet_group
-      $base_dir = 'C:\\LE_certs'
+      $base_dir = 'C:/LE_certs'
       $manage_user = false
       if ($::settings::vardir =~ /\/tmp\/.*/) {
         # this is a hack for running rspec for windows on a linux host
