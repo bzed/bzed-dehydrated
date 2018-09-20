@@ -34,7 +34,7 @@ Facter.add(:dehydrated_domains) do
           # CSR
           csr = File.join(csr_dir, "#{base_filename}.csr")
           if File.exists?(csr) then
-            ret[dn]['csr'] = File.read(csr)
+            ret[dn]['csr'] = File.read(csr).strip()
           else
             ret[dn]['csr'] = ''
           end
@@ -47,11 +47,11 @@ Facter.add(:dehydrated_domains) do
               cert = OpenSSL::X509::Certificate.new raw_cert
               crt_serial = cert.serial.to_i
             rescue OpenSSL::X509::CertificateError
-              crt_serial = 0
+              crt_serial = -1
             end
             ret[dn]['crt_serial'] = crt_serial
           else
-            ret[dn]['crt_serial'] = 0
+            ret[dn]['crt_serial'] = -1
           end
 
           # DH mtimes

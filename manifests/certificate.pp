@@ -7,6 +7,7 @@
 #   dehydrated::certificate { 'test.example.com': }
 define dehydrated::certificate(
   Dehydrated::DN $dn = $name,
+  String $base_filename = regsubst($dn, '^\*', '_wildcard_'),
   Array[Dehydrated::DN] $subject_alternative_names = [],
   Dehydrated::Challengetype $challengetype = $::dehydrated::challengetype,
   Integer[768] $dh_param_size = $::dehydrated::dh_param_size,
@@ -21,19 +22,18 @@ define dehydrated::certificate(
   require ::dehydrated::setup
   require ::dehydrated::params
 
-  $base_filename = regsubst($dn, '^\*', '_wildcard_')
-
   $domain_config = {
     $dn => {
       subject_alternative_names => $subject_alternative_names,
       base_filename             => $base_filename,
       dh_param_size             => $dh_param_size,
       challengetype             => $challengetype,
+      dehydrated_host           => $dehydrated_host,
     }
   }
 
   $json_fragment = to_json($domain_config)
-  concat::fragment { "${fqdn}-${dn}" :
+  ::concat::fragment { "${fqdn}-${dn}" :
     target  => $::dehydrated::params::domainfile,
     content => $json_fragment,
     order   => '50'

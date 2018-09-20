@@ -29,6 +29,7 @@ class dehydrated::params {
       $dehydrated_user = undef
       $dehydrated_group = undef
       $pki_packages = []
+      $dehydrated_host_packages = []
     }
     'Linux' : {
       $puppet_user = $facts['user']
@@ -60,6 +61,7 @@ class dehydrated::params {
       $puppet_vardir = $::settings::vardir
       $packages = ['git', 'openssl']
       $manage_packages = true
+      $dehydrated_host_packages = ['jq']
     }
     default : { fail('Your OS is not supported!')}
   }
@@ -99,6 +101,7 @@ class dehydrated::params {
 
   $dehydrated_base_dir = '/opt/dehydrated'
   $dehydrated_requests_dir = "${dehydrated_base_dir}/requests"
+  $dehydrated_requests_config = "${dehydrated_base_dir}/requests.json"
   $dehydrated_git_dir = "${dehydrated_base_dir}/dehydrated"
   $dehydrated_wellknown_dir = "${dehydrated_base_dir}/.acme-challenges"
 

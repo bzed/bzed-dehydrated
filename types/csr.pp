@@ -1,0 +1,1 @@
+type Dehydrated::CSR = Pattern[/^-+BEGIN CERTIFICATE REQUEST-+.*-+END CERTIFICATE REQUEST-+$/]

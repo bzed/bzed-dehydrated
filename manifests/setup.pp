@@ -48,6 +48,7 @@ class dehydrated::setup {
     'dehydrated_base_dir' => $::dehydrated::dehydrated_base_dir,
     'dehydrated_host' => $::dehydrated::dehydrated_host,
     'dehydrated_requests_dir' => $::dehydrated::dehydrated_requests_dir,
+    'dehydrated_requests_config' => $::dehydrated::dehydrated_requests_config,
     'key_dir' => $::dehydrated::key_dir,
     'letsencrypt_ca_url' => $::dehydrated::letsencrypt_cas[$::dehydrated::letsencrypt_ca]['url'],
     'letsencrypt_ca_hash' => $::dehydrated::letsencrypt_cas[$::dehydrated::letsencrypt_ca]['hash'],

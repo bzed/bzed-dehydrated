@@ -30,7 +30,9 @@ class dehydrated
   Dehydrated::GitUrl $dehydrated_git_url = $::dehydrated::params::dehydrated_git_url,
   Stdlib::Fqdn $dehydrated_host = $::dehydrated::params::dehydrated_host,
   Stdlib::Absolutepath $dehydrated_requests_dir = $::dehydrated::params::dehydrated_requests_dir,
+  Stdlib::Absolutepath $dehydrated_requests_config = $::dehydrated::params::dehydrated_requests_config,
   Stdlib::Absolutepath $dehydrated_wellknown_dir = $::dehydrated::params::dehydrated_wellknown_dir,
+  Array $dehydrated_host_packages = $::dehydrated::params::dehydrated_host_packages,
 
   Boolean $manage_user = $::dehydrated::params::manage_user,
   Boolean $manage_packages = $::dehydrated::params::manage_packages,
@@ -64,11 +66,26 @@ class dehydrated
     $_dh_mtime = $_config['dh_mtime']
     $_csr = $_config['csr']
     $_crt_serial = $_config['crt_serial']
+    $_subject_alternative_names = $_config['subject_alternative_names']
+    $_dehydrated_host = $_config['dehydrated_host']
 
-    dehydrated::certificate::dh { $_base_filename :
+    ::dehydrated::certificate::dh { $_base_filename :
       dn            => $_dn,
       dh_param_size => $_dh_param_size,
       dh_mtime      => $_dh_mtime,
+    }
+
+    $request_name = join(
+      concat(
+        [$facts['fqdn', $_dn],
+        $_subject_alternative_names
+      ),
+    '-')
+
+    if $_csr =~ Dehydrated::CSR {
+      @@dehydrated::certificate::request { $request_name :
+        tag => "dehydrated-request-for-${_dehydrated_host}",
+      }
     }
   }
 
