@@ -90,7 +90,8 @@ class dehydrated::setup {
   }
 
   concat { $::dehydrated::params::domainfile :
-    ensure => present
+    ensure => present,
+    format => 'json-pretty',
   }
 }
 

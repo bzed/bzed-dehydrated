@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'dehydrated::csr' do
+describe 'dehydrated::certificate::dh' do
   let(:title) { 'namevar' }
   let(:params) do
     {}

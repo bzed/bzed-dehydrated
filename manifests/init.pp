@@ -37,7 +37,7 @@ class dehydrated
 
   Array $pki_packages = $::dehydrated::params::pki_packages,
   Array $packages = $::dehydrated::params::packages,
-  Optional[Array[Variant[Dehydrated::DN, Tuple[Dehydrated::DN, Array[Dehydrated::DN]]]]] $certificates = undef,
+  Array[Variant[Dehydrated::DN, Tuple[Dehydrated::DN, Array[Dehydrated::DN]]]] $certificates = [],
 
 ) inherits ::dehydrated::params {
 
@@ -46,5 +46,35 @@ class dehydrated
   if ($dehydrated_host == $facts['fqdn']) {
     require ::dehydrated::setup::dehydrated_host
   }
+
+  $certificates.each | $certificate | {
+    if ($certificate =~ Tuple[Dehydrated::DN, Array[Dehydrated::DN]]) {
+      ::dehydrated::certificate { $certificate[0] :
+        subject_alternative_names => $certificate[1],
+      }
+    } else {
+      ::dehydrated::certificate { $certificate : }
+    }
+  }
+
+  $dehydrated_domains = $facts['dehydrated_domains']
+  $dehydrated_domains.each |Dehydrated::DN $_dn, Hash $_config| {
+    $_base_filename = $_config['base_filename']
+    $_dh_param_size = $_config['dh_param_size']
+    $_csr = $_config['csr']
+    $_crt_serial = $_config['crt_serial']
+
+    dehydrated::certificate::dh { $_base_filename :
+      dn            => $_dn,
+      dh_param_size => $_dh_param_size
+    }
+  }
+
+
+  # FIXME use $facts['dehydrated_domains']
+  # - request cert if csr
+  # - collect crt
+
+
 
 }

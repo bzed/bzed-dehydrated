@@ -1,0 +1,49 @@
+# file managed by puppet
+
+# This definition stops the following lines choking if HOME isn't
+# defined.
+HOME                    = .
+RANDFILE                = $ENV::HOME/.rnd
+
+[ req ]
+distinguished_name      = req_distinguished_name
+prompt                  = no
+<% if @req_ext -%>
+req_extensions          = v3_req
+<% end -%>
+
+[ req_distinguished_name ]
+commonName                      = <%= @dn %>
+<% unless @country.nil? -%>
+countryName                     = <%= @country %>
+<% end -%>
+<% unless @state.nil? -%>
+stateOrProvinceName             = <%= @state %>
+<% end -%>
+<% unless @locality.nil? -%>
+localityName                    = <%= @locality %>
+<% end -%>
+<% unless @organization.nil? -%>
+organizationName                = <%= @organization %>
+<% end -%>
+<% unless @unit.nil? -%>
+organizationalUnitName          = <%= @unit %>
+<% end -%>
+<% unless @email.nil? -%>
+emailAddress                    = <%= @email %>
+<% end -%>
+
+<% if @req_ext -%>
+[ v3_req ]
+subjectAltName = @alt_names
+
+[ alt_names ]
+DNS.1 = <%= @dn %>
+<%- i=2 -%>
+<% @subject_alt_names.each do |val| -%>
+DNS.<%= i -%> = <%= val %>
+<%- i = i+1 -%>
+<% end -%>
+
+<% end %>
+

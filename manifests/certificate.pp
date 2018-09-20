@@ -11,6 +11,7 @@ define dehydrated::certificate(
   Dehydrated::Challengetype $challengetype = $::dehydrated::challengetype,
   Integer[768] $dh_param_size = $::dehydrated::dh_param_size,
   Stdlib::Fqdn $dehydrated_host = $::dehydrated::dehydrated_host,
+  Optional[String] $key_password = undef,
 ) {
 
   if ! defined(Class['dehydrated']) {
@@ -20,12 +21,30 @@ define dehydrated::certificate(
   require ::dehydrated::setup
   require ::dehydrated::params
 
-  $certificate_filename = regsubst($dn, '^\*', '_wildcard_')
+  $base_filename = regsubst($dn, '^\*', '_wildcard_')
 
-  concat::fragment { "${fqdn}-${certificate_filename}" :
+  $domain_config = {
+    $dn => {
+      subject_alternative_names => $subject_alternative_names,
+      base_filename             => $base_filename,
+      dh_param_size             => $dh_param_size,
+      challengetype             => $challengetype,
+    }
+  }
+
+  $json_fragment = to_json($domain_config)
+  concat::fragment { "${fqdn}-${dn}" :
     target  => $::dehydrated::params::domainfile,
-    content => "${certificate_filename}\n",
+    content => $json_fragment,
     order   => '50'
   }
+
+  ::dehydrated::certificate::csr { $base_filename :
+    dn                        => $dn,
+    subject_alternative_names => $subject_alternative_names,
+    key_password              => $key_password,
+  }
+
+
 
 }

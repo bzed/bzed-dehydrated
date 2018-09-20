@@ -70,7 +70,7 @@ class dehydrated::params {
 
   $configdir = join([$puppet_vardir, 'bzed-dehydrated'], $path_seperator)
   $configfile = join([$configdir, 'config.json'], $path_seperator)
-  $domainfile = join([$configdir, 'domains.txt'], $path_seperator)
+  $domainfile = join([$configdir, 'domains.json'], $path_seperator)
 
   # letsencrypt settings
   $letsencrypt_ca = 'v2-staging'
