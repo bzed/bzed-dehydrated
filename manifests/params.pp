@@ -106,12 +106,13 @@ class dehydrated::params {
   $dehydrated_wellknown_dir = "${dehydrated_base_dir}/.acme-challenges"
 
   if defined('$::puppetmaster') {
-    $dehydrated_host = $::puppetmaster
+    $dehydrated_puppetmaster = $::puppetmaster
   } elsif defined('$::servername') {
-    $dehydrated_host = $::servername
+    $dehydrated_puppetmaster = $::servername
   } else {
-    $dehydrated_host = undef
+    $dehydrated_puppetmaster = undef
   }
+  $dehydrated_host = $dehydrated_puppetmaster
 
   #ssl settings
   $dh_param_size = 2048

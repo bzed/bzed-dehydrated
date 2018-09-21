@@ -71,13 +71,14 @@ define dehydrated::certificate::request(
   }
 
   $request_config = {
-    $dn            =>  {
-      'request_fqdn'              => $request_fqdn,
-      'subject_alternative_names' => $subject_alternative_names,
-      'base_filename'             => $base_filename,
-      'crt_serial'                => $crt_serial,
-      'request_fqdn_dir'          => $request_fqdn_dir,
-      'request_base_dir'          => $request_base_dir,
+    $request_fqdn =>  {
+      $dn           => {
+        'subject_alternative_names' => $subject_alternative_names,
+        'base_filename'             => $base_filename,
+        'crt_serial'                => $crt_serial,
+        'request_fqdn_dir'          => $request_fqdn_dir,
+        'request_base_dir'          => $request_base_dir,
+      }
     }
   }
 

@@ -18,7 +18,9 @@ Facter.add(:dehydrated_config) do
 end
 
 def get_cert_serial(crt)
-  return -1 unless File.exist?(crt)
+  unless File.exist?(crt)
+    return -1
+  end
 
   raw_cert = File.read(crt)
   begin
@@ -37,7 +39,9 @@ Facter.add(:dehydrated_domains) do
       ret = JSON.parse(File.read(domainsfile))
       ret.each do |dn, dnconfig|
         base_filename = dnconfig['base_filename']
-        next unless config
+        unless config
+          next
+        end
 
         csr_dir = config['csr_dir']
         crt_dir = config['crt_dir']

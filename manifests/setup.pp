@@ -47,6 +47,7 @@ class dehydrated::setup {
     'csr_dir' => $::dehydrated::csr_dir,
     'dehydrated_base_dir' => $::dehydrated::dehydrated_base_dir,
     'dehydrated_host' => $::dehydrated::dehydrated_host,
+    'dehydrated_puppetmaster' => $::dehydrated::params::dehydrated_puppetmaster,
     'dehydrated_requests_dir' => $::dehydrated::dehydrated_requests_dir,
     'dehydrated_requests_config' => $::dehydrated::dehydrated_requests_config,
     'key_dir' => $::dehydrated::key_dir,
