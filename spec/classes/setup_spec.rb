@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe 'dehydrated::setup' do
-
   let :pre_condition do
     'class { "dehydrated" : }'
   end

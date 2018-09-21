@@ -10,10 +10,8 @@ describe 'dehydrated::certificate' do
     'class { "dehydrated" : }'
   end
 
-
   on_supported_os.each do |os, os_facts|
-
-    next if os_facts[:kernel] == 'windows' and !WINDOWS
+    next if os_facts[:kernel] == 'windows' && !WINDOWS
 
     context "on #{os}" do
       let(:facts) { os_facts }

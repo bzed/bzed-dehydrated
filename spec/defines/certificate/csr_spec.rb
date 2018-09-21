@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'dehydrated::certificate::csr' do
   let(:title) { 'csr.certificate.dehydrated' }
   let(:params) do
-    { 'dn' => 'csr.certificate.dehydrated', 'subject_alternative_names' => [ '*.csr.certificate.dehydrated', ] }
+    { 'dn' => 'csr.certificate.dehydrated', 'subject_alternative_names' => ['*.csr.certificate.dehydrated'] }
   end
 
   let :pre_condition do
@@ -11,8 +11,7 @@ describe 'dehydrated::certificate::csr' do
   end
 
   on_supported_os.each do |os, os_facts|
-
-    next if os_facts[:kernel] == 'windows' and !WINDOWS
+    next if os_facts[:kernel] == 'windows' && !WINDOWS
 
     context "on #{os}" do
       let(:facts) { os_facts }
