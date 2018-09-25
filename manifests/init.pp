@@ -88,16 +88,20 @@ class dehydrated
   if ($dehydrated_host == $facts['fqdn']) {
     require ::dehydrated::setup::dehydrated_host
 
-    $dehydrated_certificates = $facts['dehydrated_certificates']
-    $dehydrated_certificates.each |Stdlib::Fqdn $_request_fqdn, Hash $_certificate_configs| {
-      $_certificate_configs.each |Dehydrated::DN $_request_dn, $_request_config| {
-        $_request_base_dir = $_request_config['request_base_dir']
-        $_request_base_filename = $_request_config['base_filename']
-        ::dehydrated::certificate::collect{ "${_request_fqdn}-${_request_dn}" :
-          request_dn            => $_request_dn,
-          request_fqdn          => $_request_fqdn,
-          request_base_dir      => $_request_base_dir,
-          request_base_filename => $_request_base_filename,
+    Dehydrated::Certificate::Request<<| tag == "dehydrated-request-for-${dehydrated_host}" |>>
+
+    if has_key($facts, 'dehydrated_certificates') {
+      $dehydrated_certificates = $facts['dehydrated_certificates']
+      $dehydrated_certificates.each |Stdlib::Fqdn $_request_fqdn, Hash $_certificate_configs| {
+        $_certificate_configs.each |Dehydrated::DN $_request_dn, $_request_config| {
+          $_request_base_dir = $_request_config['request_base_dir']
+          $_request_base_filename = $_request_config['base_filename']
+          ::dehydrated::certificate::collect{ "${_request_fqdn}-${_request_dn}" :
+            request_dn            => $_request_dn,
+            request_fqdn          => $_request_fqdn,
+            request_base_dir      => $_request_base_dir,
+            request_base_filename => $_request_base_filename,
+          }
         }
       }
     }

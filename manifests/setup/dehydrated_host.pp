@@ -32,17 +32,19 @@ class dehydrated::setup::dehydrated_host {
         password   => '!!',
         require    => Group[$::dehydrated::dehydrated_group],
       }
+      $_require = User[$::dehydrated::dehydrated_user]
+    } else {
+      $_require = Group[$::dehydrated::dehydrated_group]
     }
+  } else {
+    $_require = undef
   }
 
   File {
     owner   => $::dehydrated::dehydrated_user,
     group   => $::dehydrated::dehydrated_group,
     mode    => '0750',
-    require => [
-      User[$::dehydrated::dehydrated_user],
-      Group[$::dehydrated::dehydrated_group],
-    ],
+    require => $_require,
   }
 
   file { [

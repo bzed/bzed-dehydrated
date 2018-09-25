@@ -26,15 +26,52 @@ define dehydrated::certificate::collect(
     $ca_file = "${request_base_dir}/${request_base_filename}_ca.pem"
     $ocsp_file = "${crt_file}.ocsp"
 
-    $crt = file_or_nil($crt_file)
-    $ocsp = file_or_nil($ocsp_file)
-    $ca = file_or_nil($ocsp_file)
+    if find_file($crt) {
+      $crt = file($crt_file)
+    } else {
+      $crt = undef
+    }
+    if find_file($ocsp_file) {
+      $ocsp = binary_file($ocsp_file)
+    } else {
+      $ocsp = undef
+    }
+    if find_file($ca_file) {
+      $ca = file($ca_file)
+    } else {
+      $ca = undef
+    }
+
   } else {
-    # we are on a random host
+    # we are on a non-puppetmaster host
     # use facter to retrieve files.
-    $crt = ''
-    $ocsp = ''
-    $ca = ''
+    if (
+      has_key($facts, 'dehydrated_certificates') and
+      has_key($facts['dehydrated_certificates'], $request_fqdn) and
+      has_key($facts['dehydrated_certificates'][$request_fqdn], $request_dn)
+    ) {
+      $config = $facts['dehydrated_certificates'][$request_fqdn][$request_dn]
+      if has_key($config, 'crt') {
+        $crt = $config['crt']
+      } else {
+        $crt = undef
+      }
+      if has_key($config, 'oscp') {
+        $oscp = Binary($config['oscp'])
+      } else {
+        $oscp = undef
+      }
+      if has_key($config, 'ca') {
+        $ca = $config['ca']
+      } else {
+        $ca = undef
+      }
+    } else {
+      notify { 'No dehydrated certificate config from facter :(' : }
+      $crt = undef
+      $oscp = undef
+      $ca = undef
+    }
   }
 
 }
