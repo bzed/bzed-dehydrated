@@ -83,6 +83,12 @@ class dehydrated
         tag => "dehydrated-request-for-${_dehydrated_host}",
       }
     }
+
+    Dehydrated::Certificate::Transfer<<|
+      tag == "request_fqdn:${facts['fqdn']}" and
+      tag == "request_dn:${_dn}"
+    |>>
+
   }
 
   if ($dehydrated_host == $facts['fqdn']) {

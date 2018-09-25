@@ -56,7 +56,10 @@ define dehydrated::certificate::collect(
       } else {
         $crt = undef
       }
-      if has_key($config, 'oscp') {
+      if (
+        has_key($config, 'oscp') and
+        $config['oscp'] =~ Stdlib::Base64
+      ) {
         $oscp = Binary($config['oscp'])
       } else {
         $oscp = undef
@@ -71,6 +74,43 @@ define dehydrated::certificate::collect(
       $crt = undef
       $oscp = undef
       $ca = undef
+    }
+  }
+
+  if ($crt and $crt =~ Dehydrated::CRT) {
+    @@dehydrated::certificate::transfer { "${name}-transfer-crt" :
+      file_type    => 'crt',
+      request_dn   => $request_dn,
+      request_fqdn => $request_fqdn,
+      file_content => $crt,
+      tag          => [
+        "request_fqdn:${request_fqdn}",
+        "request_dn:${request_dn}"
+      ],
+    }
+  }
+  if ($ca and $ca =~ Dehydrated::CRT) {
+    @@dehydrated::certificate::transfer { "${name}-transfer-ca" :
+      file_type    => 'ca',
+      request_dn   => $request_dn,
+      request_fqdn => $request_fqdn,
+      file_content => $ca,
+      tag          => [
+        "request_fqdn:${request_fqdn}",
+        "request_dn:${request_dn}"
+      ],
+    }
+  }
+  if ($oscp) {
+    @@dehydrated::certificate::transfer { "${name}-transfer-ocsp" :
+      file_type    => 'ocsp',
+      request_dn   => $request_dn,
+      request_fqdn => $request_fqdn,
+      file_content => $ocsp,
+      tag          => [
+        "request_fqdn:${request_fqdn}",
+        "request_dn:${request_dn}"
+      ],
     }
   }
 

@@ -53,7 +53,7 @@ define dehydrated::certificate::csr(
 
   file { $cnf :
     ensure  => $ensure,
-    owner   => 'root',
+    owner   => $::dehydrated::user,
     group   => $::dehydrated::group,
     mode    => '0644',
     content => template('dehydrated/certificate/cert.cnf.erb'),

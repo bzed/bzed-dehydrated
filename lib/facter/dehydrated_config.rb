@@ -56,7 +56,9 @@ Facter.add(:dehydrated_domains) do
 
         # CRT serial
         crt = File.join(crt_dir, "#{base_filename}.crt")
-        ret[dn]['crt_serial'] = get_cert_serial(crt)
+        if File.exist?(crt)
+          ret[dn]['crt_serial'] = get_cert_serial(crt)
+        end
 
         # DH mtimes
         dh = File.join(crt_dir, "#{base_filename}.dh")
@@ -66,6 +68,12 @@ Facter.add(:dehydrated_domains) do
         else
           ret[dn]['dh_mtime'] = -999_999_999
         end
+
+        ca = File.join(crt_dir, "#{base_filename}_ca.pem")
+
+        ret[dn]['ready_for_merge'] = File.exist?(csr) &&
+                                     File.exist?(crt) &&
+                                     File.exist?(ca)
       end
       ret
     else

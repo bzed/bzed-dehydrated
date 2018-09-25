@@ -7,7 +7,7 @@ describe 'dehydrated::certificate::collect' do
       'request_dn' => 'test.example.com',
       'request_fqdn' => 'test.example.com',
       'request_base_dir' => '/opt/dehydrated/requests',
-      'request_base_filename' => 'test.example.com'
+      'request_base_filename' => 'test.example.com',
     }
   end
 
