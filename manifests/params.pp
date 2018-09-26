@@ -32,8 +32,16 @@ class dehydrated::params {
       $dehydrated_host_packages = []
     }
     'Linux' : {
-      $puppet_user = $facts['user']
-      $puppet_group = $facts['group']
+      $puppet_user = pick(
+        $facts['identity']['user'],
+        $facts['user'],
+        'root'
+      )
+      $puppet_group = pick(
+        $facts['identity']['group'],
+        $facts['group'],
+        'root'
+      )
       $user = $puppet_user
       case $user {
         'root' : {
