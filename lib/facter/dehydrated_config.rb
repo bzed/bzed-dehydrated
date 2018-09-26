@@ -18,16 +18,16 @@ Facter.add(:dehydrated_config) do
 end
 
 def get_cert_serial(crt)
-  unless File.exist?(crt)
-    return -1
-  end
-
-  raw_cert = File.read(crt)
-  begin
-    cert = OpenSSL::X509::Certificate.new raw_cert
-    return cert.serial.to_i
-  rescue OpenSSL::X509::CertificateError
-    return -1
+  if File.exist?(crt)
+    raw_cert = File.read(crt)
+    begin
+      cert = OpenSSL::X509::Certificate.new raw_cert
+      cert.serial.to_i
+    rescue OpenSSL::X509::CertificateError
+      -1
+    end
+  else
+    -1
   end
 end
 
@@ -56,9 +56,7 @@ Facter.add(:dehydrated_domains) do
 
         # CRT serial
         crt = File.join(crt_dir, "#{base_filename}.crt")
-        if File.exist?(crt)
-          ret[dn]['crt_serial'] = get_cert_serial(crt)
-        end
+        ret[dn]['crt_serial'] = get_cert_serial(crt)
 
         # DH mtimes
         dh = File.join(crt_dir, "#{base_filename}.dh")

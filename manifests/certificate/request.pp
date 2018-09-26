@@ -22,10 +22,10 @@ define dehydrated::certificate::request(
     fail('You must include the dehydrated base class first.')
   }
 
-  $dehydrated_base_dir = $::dehydrated::dehydrated_base_dir
+  $dehydrated_requests_dir = $::dehydrated::dehydrated_requests_dir
 
   $request_fqdn_dir = join(
-    [$dehydrated_base_dir, $request_fqdn],
+    [$dehydrated_requests_dir, $request_fqdn],
     $::dehydrated::params::path_seperator
   )
   $request_base_dir = join(
@@ -83,7 +83,7 @@ define dehydrated::certificate::request(
   }
 
   $json_fragment = to_json($request_config)
-  ::concat::fragment { $name :
+  ::concat::fragment { "${::dehydrated::dehydrated_requests_config}-${name}" :
     target  => $::dehydrated::dehydrated_requests_config,
     content => $json_fragment,
     order   => '50',

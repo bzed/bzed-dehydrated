@@ -80,6 +80,12 @@ class dehydrated
 
     if $_csr =~ Dehydrated::CSR {
       @@dehydrated::certificate::request { $request_name :
+        request_fqdn              => $facts['fqdn'],
+        dn                        => $_dn,
+        subject_alternative_names => $_subject_alternative_names,
+        base_filename             => $_base_filename,
+        csr                       => $_csr,
+        crt_serial                => $_crt_serial,
         tag => "dehydrated-request-for-${_dehydrated_host}",
       }
     }
