@@ -40,7 +40,7 @@ end
 
 def handle_requests(config)
   if config
-    requests = Json.parse(File.read(config['dehydrated_requests_config']))
+    requests = JSON.parse(File.read(config['dehydrated_requests_config']))
     dehydrated_puppetmaster = config['dehydrated_puppetmaster']
     dehydrated_host = config['dehydrated_host']
 
