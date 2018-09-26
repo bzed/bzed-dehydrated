@@ -3,7 +3,7 @@ require 'json'
 require 'openssl'
 
 puppet_vardir = Facter.value(:puppet_vardir)
-configfile = File.join(puppet_vardir, 'config.json')
+configfile = File.join(puppet_vardir, 'bzed-dehydrated', 'config.json')
 
 config = if File.exist?(configfile)
            JSON.parse(File.read(configfile))
@@ -34,7 +34,7 @@ end
 Facter.add(:dehydrated_domains) do
   setcode do
     puppet_vardir = Facter.value(:puppet_vardir)
-    domainsfile = File.join(puppet_vardir, 'domains.json')
+    domainsfile = File.join(puppet_vardir, 'bzed-dehydrated', 'domains.json')
     if File.exist?(domainsfile)
       ret = JSON.parse(File.read(domainsfile))
       ret.each do |dn, dnconfig|
