@@ -73,6 +73,7 @@ Facter.add(:dehydrated_domains) do
 
         ret[dn]['ready_for_merge'] = File.exist?(csr) &&
                                      File.exist?(crt) &&
+                                     File.exist?(dh) &&
                                      File.exist?(ca)
       end
       ret
