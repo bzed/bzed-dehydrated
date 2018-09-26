@@ -59,13 +59,16 @@ class dehydrated::params {
       $path_seperator = '/'
       case $::os['family'] {
         'Debian' : {
-          $pki_packages = ['pki-base']
+          # only in unstable :(
+          #$pki_packages = ['pki-base']
+          $pki_packages = []
+          $base_dir = '/etc/dehydrated'
         }
         default: {
           $pki_packages = []
+          $base_dir = '/etc/pki/dehydrated'
         }
       }
-      $base_dir = '/etc/pki/dehydrated'
       $puppet_vardir = $::settings::vardir
       $packages = ['git', 'openssl']
       $manage_packages = true
