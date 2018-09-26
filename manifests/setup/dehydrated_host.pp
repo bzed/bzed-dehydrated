@@ -71,8 +71,13 @@ class dehydrated::setup::dehydrated_host {
   }
 
   concat { $::dehydrated::dehydrated_requests_config :
-    ensure => present,
-    format => 'json-pretty',
+    ensure  => present,
+    format  => 'json-pretty',
+    require => [
+      File[$::dehydrated::dehydrated_base_dir],
+      File[$::dehydrated::dehydrated_requests_dir],
+      File[$::dehydrated::dehydrated_wellknown_dir],
+    ],
   }
 
 
