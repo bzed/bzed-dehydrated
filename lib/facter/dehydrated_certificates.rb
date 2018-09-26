@@ -72,7 +72,9 @@ end
 Facter.add(:dehydrated_certificates) do
   setcode do
     config = Facter.value(:dehydrated_config)
-    if config.empty?
+    if config.nil? or config.empty?
+      nil
+    else
       fqdn = Facter.value(:fqdn)
       dehydrated_host = config['dehydrated_host']
       if fqdn != dehydrated_host
@@ -80,8 +82,6 @@ Facter.add(:dehydrated_certificates) do
       else
         handle_requests(config)
       end
-    else
-      nil
     end
   end
 end
