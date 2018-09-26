@@ -1,1 +1,1 @@
-type Dehydrated::CRT = Pattern[/.*-+BEGIN CERTIFICATE-+.*-+END CERTIFICATE-+.*/]
+type Dehydrated::CRT = Pattern[/(?m:.*-+BEGIN CERTIFICATE-+.*-+END CERTIFICATE-+.*)/]
