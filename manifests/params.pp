@@ -15,13 +15,13 @@ class dehydrated::params {
       $group = $puppet_group
       $base_dir = 'C:/LE_certs'
       $manage_user = false
-      if ($::settings::vardir =~ /\/tmp\/.*/) {
+      if ($facts['puppet_vardir'] =~ /\/tmp\/.*/) {
         # this is a hack for running rspec for windows on a linux host
         # :(
         $puppet_vardir = 'C:/ProgramData/PuppetLabs/puppet/var'
       } else {
         # puppet_vardir is a "windows" path
-        $puppet_vardir = regsubst($::settings::vardir, '\\', '/', 'G')
+        $puppet_vardir = regsubst($facts['puppet_vardir'], '\\', '/', 'G')
       }
       $path_seperator = '/'
       $packages = []
@@ -69,7 +69,7 @@ class dehydrated::params {
           $base_dir = '/etc/pki/dehydrated'
         }
       }
-      $puppet_vardir = $::settings::vardir
+      $puppet_vardir = $facts['puppet_vardir']
       $packages = ['git', 'openssl']
       $manage_packages = true
       $dehydrated_host_packages = ['jq']
