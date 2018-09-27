@@ -7,9 +7,9 @@
 class dehydrated::params {
 
   # OS settings
-  case $::kernel {
+  case $facts['kernel'] {
     'windows' : {
-      $puppet_user = dig($facts, ['identity', 'user'])
+      $puppet_user = $facts.dig('identity', 'user')
       $puppet_group = undef
       $user = $puppet_user
       $group = $puppet_group
@@ -21,7 +21,7 @@ class dehydrated::params {
         $puppet_vardir = 'C:/ProgramData/PuppetLabs/puppet/var'
       } else {
         # puppet_vardir is a "windows" path
-        $puppet_vardir = regsubst($facts['puppet_vardir'], '\\', '/', 'G')
+        $puppet_vardir = regsubst($facts['puppet_vardir'], '\\\\', '/', 'G')
       }
       $path_seperator = '/'
       $packages = []
@@ -33,13 +33,13 @@ class dehydrated::params {
     }
     'Linux' : {
       $puppet_user = pick(
-        dig($facts, ['identity', 'user']),
-        dig($facts, ['user']),
+        $facts.dig('identity', 'user'),
+        $facts.dig('user'),
         'root'
       )
       $puppet_group = pick(
-        dig($facts, ['identity', 'group']),
-        dig($facts, ['group']),
+        $facts.dig('identity', 'group'),
+        $facts.dig('group'),
         'root'
       )
       $user = $puppet_user
