@@ -24,10 +24,10 @@ def get_cert_serial(crt)
       cert = OpenSSL::X509::Certificate.new raw_cert
       cert.serial.to_s
     rescue OpenSSL::X509::CertificateError
-      -1
+      ''
     end
   else
-    -1
+    ''
   end
 end
 
