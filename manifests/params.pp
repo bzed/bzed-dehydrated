@@ -9,7 +9,7 @@ class dehydrated::params {
   # OS settings
   case $::kernel {
     'windows' : {
-      $puppet_user = $facts['identity']['user']
+      $puppet_user = dig($facts, ['identity', 'user'])
       $puppet_group = undef
       $user = $puppet_user
       $group = $puppet_group
@@ -33,13 +33,13 @@ class dehydrated::params {
     }
     'Linux' : {
       $puppet_user = pick(
-        $facts['identity']['user'],
-        $facts['user'],
+        dig($facts, ['identity', 'user']),
+        dig($facts, ['user']),
         'root'
       )
       $puppet_group = pick(
-        $facts['identity']['group'],
-        $facts['group'],
+        dig($facts, ['identity', 'group']),
+        dig($facts, ['group']),
         'root'
       )
       $user = $puppet_user
