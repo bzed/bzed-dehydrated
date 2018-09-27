@@ -42,7 +42,7 @@ define dehydrated::certificate::deploy(
     mode => '0644',
   }
   concat { $crt_full_chain_with_key :
-    mode => '0644',
+    mode => '0640',
   }
 
   concat::fragment { "${dn}_key" :
