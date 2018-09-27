@@ -72,7 +72,7 @@ end
 Facter.add(:dehydrated_certificates) do
   setcode do
     config = Facter.value(:dehydrated_config)
-    if config.nil? or config.empty?
+    if config.nil? || config.empty?
       nil
     else
       fqdn = Facter.value(:fqdn)
