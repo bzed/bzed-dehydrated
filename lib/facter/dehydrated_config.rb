@@ -22,7 +22,7 @@ def get_cert_serial(crt)
     raw_cert = File.read(crt)
     begin
       cert = OpenSSL::X509::Certificate.new raw_cert
-      cert.serial.to_i
+      cert.serial.to_s
     rescue OpenSSL::X509::CertificateError
       -1
     end

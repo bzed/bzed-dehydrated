@@ -24,7 +24,7 @@ def get_certificate(crt, old_serial)
     raw_cert = File.read(crt)
     begin
       cert = OpenSSL::X509::Certificate.new raw_cert
-      serial = cert.serial.to_i
+      serial = cert.serial.to_s
       if serial == old_serial
         nil
       else

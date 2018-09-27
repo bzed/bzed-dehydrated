@@ -13,7 +13,7 @@ define dehydrated::certificate::request(
   Array[Dehydrated::DN] $subject_alternative_names,
   String $base_filename,
   Dehydrated::CSR $csr,
-  Integer $crt_serial,
+  String $crt_serial,
 ) {
 
   require ::dehydrated::params
