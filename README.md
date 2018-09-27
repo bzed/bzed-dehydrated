@@ -1,14 +1,8 @@
-
 # dehydrated
 
-Welcome to your new module. A short overview of the generated parts can be found in the PDK documentation at https://puppet.com/pdk/latest/pdk_generating_modules.html .
+[![Puppet Forge](http://img.shields.io/puppetforge/v/bzed/dehydrated.svg)](https://forge.puppetlabs.com/bzed/dehydrated) [![Build Status](https://travis-ci.org/bzed/bzed-dehydrated.png?branch=master)](https://travis-ci.org/bzed/bzed-dehydrated)
 
-The README template below provides a starting point with details about what information to include in your README.
-
-
-
-
-
+Centralized CSR signing using Let’s Encrypt™ - keeping your keys safe on the host they belong to.
 
 
 #### Table of Contents
@@ -24,28 +18,35 @@ The README template below provides a starting point with details about what info
 
 ## Description
 
-Briefly tell users why they might want to use your module. Explain what your module does and what kind of problems users can solve with it.
+bzed-dehydrated creates private keys and CSRs, transfers
+the CSR to a central host (for example your puppetmaster)
+where it is signed using the well known dehydrated
+https://github.com/lukas2511/dehydrated
 
-This should be a fairly short description helps the user decide if your module is what they want.
+Signed certificates are shipped back to the requesting host.
 
+You need to provide an appropriate hook script for dehydrated.
+The default is to use the DNS-01 challenge, but if your hook
+supports it you could also create the necessary files for http-01.
+
+Let’s Encrypt is a trademark of the Internet Security Research Group. All rights reserved.
 
 ## Setup
 
-### What dehydrated affects **OPTIONAL**
+### What dehydrated affects
 
-If it's obvious what your module touches, you can skip this section. For example, folks can probably figure out that your mysql_instance module affects their MySQL instances.
-
-If there's more that they should know about, though, this is the place to mention:
-
-* Files, packages, services, or operations that the module will alter, impact, or execute.
-* Dependencies that your module automatically installs.
-* Warnings or other important notices.
+dehydrated needs to use facter to retrieve the signed certificates
+and other data from your central signing hosts if you are not using
+a puppet master host to handle it. Although only certificates which
+need to be renewed are transferred, it is unknown how well this
+approach scales if you plan to request lots of certificates. Using
+a (designated) puppet master is the better option.
 
 ### Setup Requirements **OPTIONAL**
 
-If your module requires anything extra before setting up (pluginsync enabled, another module, etc.), mention it here.
+You need to ensure that exported ressources are working and pluginsync
+is enabled.
 
-If your most recent release breaks compatibility or requires particular steps for upgrading, you might want to include an additional "Upgrading" section here.
 
 ### Beginning with dehydrated
 
