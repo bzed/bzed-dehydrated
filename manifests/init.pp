@@ -86,7 +86,7 @@ class dehydrated
         base_filename             => $_base_filename,
         csr                       => $_csr,
         crt_serial                => $_crt_serial,
-        tag => "dehydrated-request-for-${_dehydrated_host}",
+        tag                       => "dehydrated-request-for-${_dehydrated_host}",
       }
     }
 
