@@ -51,18 +51,22 @@
     {
       "operatingsystem": "Debian",
       "operatingsystemrelease": [
-        "8"
+        "8",
+        "9",
+        "10"
       ]
     },
     {
       "operatingsystem": "Ubuntu",
       "operatingsystemrelease": [
-        "16.04"
+        "16.04",
+        "18.04"
       ]
     },
     {
       "operatingsystem": "windows",
       "operatingsystemrelease": [
+        "2016",
         "2008 R2",
         "2012 R2",
         "10"
@@ -71,13 +75,16 @@
     {
       "operatingsystem": "Fedora",
       "operatingsystemrelease": [
-        "25"
+        "27",
+        "28",
+        "29"
       ]
     },
     {
       "operatingsystem": "SLES",
       "operatingsystemrelease": [
-        "12"
+        "12",
+        "15"
       ]
     }
   ],
