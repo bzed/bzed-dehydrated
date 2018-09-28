@@ -17,14 +17,13 @@ add_custom_fact :puppet_vardir, ->(os, _facts) do
   end
 end
 add_custom_fact :identity, ->(os, _facts) do
+  privileged = true
   if os =~ %r{windows.*}
     user = 'MYDOMAIN\\Administrator'
     group = nil
-    privileged = true
   else
     user = 'root'
     group = 'root'
-    privileged = true
   end
   {
     'user' => user,
