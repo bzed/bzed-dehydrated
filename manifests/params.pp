@@ -106,15 +106,15 @@ class dehydrated::params {
     },
   }
 
+  #ssl settings
+  $dh_param_size = 2048
+  $challengetype = 'dns-01'
+
   # dehydrated setting
   $dehydrated_git_url = 'https://github.com/lukas2511/dehydrated.git'
   $dehydrated_git_tag = 'v0.6.2'
 
   $dehydrated_base_dir = '/opt/dehydrated'
-  $dehydrated_requests_dir = "${dehydrated_base_dir}/requests"
-  $dehydrated_requests_config = "${dehydrated_base_dir}/requests.json"
-  $dehydrated_git_dir = "${dehydrated_base_dir}/dehydrated"
-  $dehydrated_wellknown_dir = "${dehydrated_base_dir}/.acme-challenges"
 
   if defined('$::puppetmaster') {
     $dehydrated_puppetmaster = $::puppetmaster
@@ -125,8 +125,8 @@ class dehydrated::params {
   }
   $dehydrated_host = $dehydrated_puppetmaster
 
-  #ssl settings
-  $dh_param_size = 2048
-  $challengetype = 'dns-01'
+  $dehydrated_environment = {}
+  $dehydrated_domain_validation_hook = undef
+
 }
 

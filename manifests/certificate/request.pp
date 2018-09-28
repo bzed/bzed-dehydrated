@@ -14,6 +14,9 @@ define dehydrated::certificate::request(
   String $base_filename,
   Dehydrated::CSR $csr,
   Optional[String] $crt_serial,
+  Hash $dehydrated_environment,
+  Dehydrated::Hook $dehydrated_hook,
+  Optional[Dehydrated::Hook] $dehydrated_domain_validation_hook = undef,
 ) {
 
   require ::dehydrated::params
@@ -73,11 +76,14 @@ define dehydrated::certificate::request(
   $request_config = {
     $request_fqdn =>  {
       $dn           => {
-        'subject_alternative_names' => $subject_alternative_names,
-        'base_filename'             => $base_filename,
-        'crt_serial'                => $crt_serial,
-        'request_fqdn_dir'          => $request_fqdn_dir,
-        'request_base_dir'          => $request_base_dir,
+        'subject_alternative_names'         => $subject_alternative_names,
+        'base_filename'                     => $base_filename,
+        'crt_serial'                        => $crt_serial,
+        'request_fqdn_dir'                  => $request_fqdn_dir,
+        'request_base_dir'                  => $request_base_dir,
+        'dehydrated_environment'            => $dehydrated_environment,
+        'dehydrated_hook'                   => $dehydrated_hook,
+        'dehydrated_domain_validation_hook' => $dehydrated_domain_validation_hook,
       }
     }
   }

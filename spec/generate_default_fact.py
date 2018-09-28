@@ -105,6 +105,8 @@ dehydrated_domains = {
         'subject_alternative_names': [],
         'csr': wildcard_csr,
         'dh_mtime': -99999,
+        'dehydrated_hook': 'dns-01.sh',
+        'dehydrated_environment': {},
     },
     'test.example.com': {
         'base_filename': 'test.example.com',
@@ -113,8 +115,9 @@ dehydrated_domains = {
         'subject_alternative_names': [],
         'csr': test_csr,
         'dh_mtime': -99999,
+        'dehydrated_hook': 'dns-01.sh',
+        'dehydrated_environment': {'PATH': '/tmp'},
     }
 }
 
 print("dehydrated_domains: " + json.dumps(dehydrated_domains))
-

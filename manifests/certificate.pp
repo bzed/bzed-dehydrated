@@ -12,6 +12,9 @@ define dehydrated::certificate(
   Dehydrated::Challengetype $challengetype = $::dehydrated::challengetype,
   Integer[768] $dh_param_size = $::dehydrated::dh_param_size,
   Stdlib::Fqdn $dehydrated_host = $::dehydrated::dehydrated_host,
+  Hash $dehydrated_environment = $::dehydrated::dehydrated_environment,
+  Dehydrated::Hook $dehydrated_hook = $::dehydrated::dehydrated_hook,
+  Optional[Dehydrated::Hook] $dehydrated_domain_validation_hook = undef,
   Optional[String] $key_password = undef,
 ) {
 
@@ -24,11 +27,14 @@ define dehydrated::certificate(
 
   $domain_config = {
     $dn => {
-      subject_alternative_names => $subject_alternative_names,
-      base_filename             => $base_filename,
-      dh_param_size             => $dh_param_size,
-      challengetype             => $challengetype,
-      dehydrated_host           => $dehydrated_host,
+      subject_alternative_names         => $subject_alternative_names,
+      base_filename                     => $base_filename,
+      dh_param_size                     => $dh_param_size,
+      challengetype                     => $challengetype,
+      dehydrated_host                   => $dehydrated_host,
+      dehydrated_environment            => $dehydrated_environment,
+      dehydrated_hook                   => $dehydrated_hook,
+      dehydrated_domain_validation_hook => $dehydrated_domain_validation_hook,
     }
   }
 

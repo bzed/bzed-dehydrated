@@ -25,14 +25,18 @@ class dehydrated
   Dehydrated::Challengetype $challengetype = $::dehydrated::params::challengetype,
 
   Stdlib::Absolutepath $dehydrated_base_dir = $::dehydrated::params::dehydrated_base_dir,
-  Stdlib::Absolutepath $dehydrated_git_dir = $::dehydrated::params::dehydrated_git_dir,
+  Stdlib::Absolutepath $dehydrated_git_dir = "${dehydrated_base_dir}/dehydrated",
   String $dehydrated_git_tag = $::dehydrated::params::dehydrated_git_tag,
   Dehydrated::GitUrl $dehydrated_git_url = $::dehydrated::params::dehydrated_git_url,
   Stdlib::Fqdn $dehydrated_host = $::dehydrated::params::dehydrated_host,
-  Stdlib::Absolutepath $dehydrated_requests_dir = $::dehydrated::params::dehydrated_requests_dir,
-  Stdlib::Absolutepath $dehydrated_requests_config = $::dehydrated::params::dehydrated_requests_config,
-  Stdlib::Absolutepath $dehydrated_wellknown_dir = $::dehydrated::params::dehydrated_wellknown_dir,
+  Stdlib::Absolutepath $dehydrated_requests_dir = "${dehydrated_base_dir}/requests",
+  Stdlib::Absolutepath $dehydrated_hooks_dir = "${dehydrated_base_dir}/hooks",
+  Stdlib::Absolutepath $dehydrated_requests_config = "${dehydrated_base_dir}/requests.json",
+  Stdlib::Absolutepath $dehydrated_wellknown_dir = "${dehydrated_base_dir}/.acme-challenges",
   Array $dehydrated_host_packages = $::dehydrated::params::dehydrated_host_packages,
+  Hash $dehydrated_environment = $::dehydrated::params::dehydrated_environment,
+  Optional[Dehydrated::Hook] $dehydrated_domain_validation_hook = $::dehydrated::params::dehydrated_domain_validation_hook,
+  Dehydrated::Hook $dehydrated_hook = "${challengetype}.sh",
 
   Boolean $manage_user = $::dehydrated::params::manage_user,
   Boolean $manage_packages = $::dehydrated::params::manage_packages,
@@ -64,6 +68,9 @@ class dehydrated
     $_crt_serial = $_config['crt_serial']
     $_subject_alternative_names = $_config['subject_alternative_names']
     $_dehydrated_host = $_config['dehydrated_host']
+    $_dehydrated_environment = $_config['dehydrated_environment']
+    $_dehydrated_hook = $_config['dehydrated_hook']
+    $_dehydrated_domain_validation_hook = $_config.dig('dehydrated_domain_validation_hook')
 
     ::dehydrated::certificate::dh { $_base_filename :
       dn            => $_dn,
@@ -80,13 +87,16 @@ class dehydrated
 
     if $_csr =~ Dehydrated::CSR {
       @@dehydrated::certificate::request { $request_name :
-        request_fqdn              => $facts['fqdn'],
-        dn                        => $_dn,
-        subject_alternative_names => $_subject_alternative_names,
-        base_filename             => $_base_filename,
-        csr                       => $_csr,
-        crt_serial                => $_crt_serial,
-        tag                       => "dehydrated-request-for-${_dehydrated_host}",
+        request_fqdn                      => $facts['fqdn'],
+        dn                                => $_dn,
+        subject_alternative_names         => $_subject_alternative_names,
+        base_filename                     => $_base_filename,
+        csr                               => $_csr,
+        crt_serial                        => $_crt_serial,
+        dehydrated_environment            => $_dehydrated_environment,
+        dehydrated_hook                   => $_dehydrated_hook,
+        dehydrated_domain_validation_hook => $_dehydrated_domain_validation_hook,
+        tag                               => "dehydrated-request-for-${_dehydrated_host}",
       }
     }
 
