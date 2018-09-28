@@ -6,13 +6,17 @@ describe 'dehydrated::certificate::dh' do
     { 'dn' => 'dh.certificate.dehydrated', 'dh_param_size' => 1024, 'dh_mtime' => 0 }
   end
 
-  let :pre_condition do
-    'class { "dehydrated" : }'
-  end
-
   on_supported_os.each do |os, os_facts|
     context "on #{os}" do
       let(:facts) { os_facts }
+
+      let :pre_condition do
+        if os =~ %r{windows.*}
+          'class { "dehydrated" : dehydrated_host => "some.other.host.example.com" }'
+        else
+          'class { "dehydrated" : dehydrated_host => $facts["fqdn"] }'
+        end
+      end
 
       it { is_expected.to compile }
     end

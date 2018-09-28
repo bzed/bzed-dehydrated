@@ -17,15 +17,18 @@ describe 'dehydrated::certificate::request' do
     }
   end
 
-  let :pre_condition do
-    'class { "dehydrated" : }'
-  end
-
   on_supported_os.each do |os, os_facts|
     next if os_facts[:kernel] == 'windows' && !WINDOWS
 
     context "on #{os}" do
       let(:facts) { os_facts }
+      let :pre_condition do
+        if os =~ %r{windows.*}
+          'class { "dehydrated" : dehydrated_host => "some.other.host.example.com" }'
+        else
+          'class { "dehydrated" : dehydrated_host => $facts["fqdn"] }'
+        end
+      end
 
       it { is_expected.to compile }
     end

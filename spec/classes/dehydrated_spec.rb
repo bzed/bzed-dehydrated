@@ -6,6 +6,11 @@ describe 'dehydrated' do
       next if os_facts[:kernel] == 'windows' && !WINDOWS
 
       let(:facts) { os_facts }
+      let(:params) do
+        {
+          'dehydrated_host' => os_facts[:fqdn],
+        }
+      end
 
       it { is_expected.to compile }
     end
