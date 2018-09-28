@@ -1,0 +1,1 @@
+type Dehydrated::Hook = Pattern[/^[^\\\/]+$/]
