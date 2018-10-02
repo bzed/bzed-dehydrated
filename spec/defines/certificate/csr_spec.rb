@@ -3,7 +3,11 @@ require 'spec_helper'
 describe 'dehydrated::certificate::csr' do
   let(:title) { 'csr.certificate.dehydrated' }
   let(:params) do
-    { 'dn' => 'csr.certificate.dehydrated', 'subject_alternative_names' => ['*.csr.certificate.dehydrated'] }
+    {
+      'dn' => 'csr.certificate.dehydrated',
+      'subject_alternative_names' => ['*.csr.certificate.dehydrated'],
+      'algorithm' => 'secp384r1',
+    }
   end
 
   on_supported_os.each do |os, os_facts|

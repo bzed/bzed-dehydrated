@@ -8,7 +8,7 @@ Puppet::Type.type(:ecparam).provide(:openssl) do
   end
 
   def self.generate_key(resource)
-    OpenSSL::PKey::EC.generate(resource[:name])
+    OpenSSL::PKey::EC.generate(resource[:short_name])
   end
 
   def self.to_pem(resource, key)

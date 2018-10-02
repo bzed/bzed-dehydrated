@@ -12,7 +12,7 @@ Puppet::Type.newtype(:ecparam) do
     end
   end
 
-  newparam(:name) do
+  newparam(:short_name) do
     desc "Use the ec parameters with specified 'short name'"
     newvalues :prime256v1, :secp384r1
     defaultto :secp384r1

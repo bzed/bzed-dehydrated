@@ -16,7 +16,7 @@ define dehydrated::certificate::csr(
   String $base_filename = $name,
   String $csr_filename = "${name}.csr",
   String $key_filename = "${name}.key",
-  Dehydrated::Algorithm $algorithm,
+  Dehydrated::Algorithm $algorithm = 'rsa',
   Optional[String] $country = undef,
   Optional[String] $state = undef,
   Optional[String] $locality = undef,
@@ -63,17 +63,17 @@ define dehydrated::certificate::csr(
   if ($ensure == 'present') {
     if $algorithm == 'rsa' {
       ssl_pkey { $key :
-        ensure   => $ensure,
-        password => $key_password,
-        require  => File[$key_dir],
-        before   => X509_request[$csr],
+        authentication => $algorithm,
+        password       => $key_password,
+        require        => File[$key_dir],
+        before         => File[$key],
       }
     } else {
       ecparam { $key :
-        ensure   => $ensure,
-        password => $key_password,
-        require  => File[$key_dir],
-        before   => X509_request[$csr],
+        short_name => $algorithm,
+        password   => $key_password,
+        require    => File[$key_dir],
+        before     => File[$key],
       }
     }
     x509_request { $csr :
@@ -82,7 +82,10 @@ define dehydrated::certificate::csr(
       private_key => $key,
       password    => $key_password,
       force       => $force,
-      require     => File[$cnf],
+      require     => [
+        File[$cnf],
+        File[$key],
+      ]
     }
   }
 
@@ -91,7 +94,6 @@ define dehydrated::certificate::csr(
     owner   => $::dehydrated::user,
     group   => $::dehydrated::group,
     mode    => '0640',
-    require => Ssl_pkey[$key],
   }
   file { $csr :
     ensure  => $ensure,
