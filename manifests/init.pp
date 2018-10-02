@@ -33,7 +33,8 @@ class dehydrated
   Stdlib::Absolutepath $dehydrated_requests_dir = "${dehydrated_base_dir}/requests",
   Stdlib::Absolutepath $dehydrated_hooks_dir = "${dehydrated_base_dir}/hooks",
   Stdlib::Absolutepath $dehydrated_requests_config = "${dehydrated_base_dir}/requests.json",
-  Stdlib::Absolutepath $dehydrated_wellknown_dir = "${dehydrated_base_dir}/.acme-challenges",
+  Stdlib::Absolutepath $dehydrated_wellknown_dir = "${dehydrated_base_dir}/acme-challenges",
+  Stdlib::Absolutepath $dehydrated_alpncert_dir = "${dehydrated_base_dir}/alpn-certs",
   Array $dehydrated_host_packages = $::dehydrated::params::dehydrated_host_packages,
   Hash $dehydrated_environment = $::dehydrated::params::dehydrated_environment,
   Optional[Dehydrated::Hook] $dehydrated_domain_validation_hook = $::dehydrated::params::dehydrated_domain_validation_hook,
@@ -72,6 +73,7 @@ class dehydrated
     $_dehydrated_host = $_config['dehydrated_host']
     $_dehydrated_environment = $_config['dehydrated_environment']
     $_dehydrated_hook = $_config['dehydrated_hook']
+    $_letsencrypt_ca = $_config['letsencrypt_ca']
     if ($_config['dehydrated_domain_validation_hook'] == '') {
       $_dehydrated_domain_validation_hook = undef
     } else {
@@ -99,17 +101,10 @@ class dehydrated
 
     if $_csr =~ Dehydrated::CSR {
       @@dehydrated::certificate::request { $request_name :
-        request_fqdn                      => $facts['fqdn'],
-        dn                                => $_dn,
-        subject_alternative_names         => $_subject_alternative_names,
-        base_filename                     => $_base_filename,
-        csr                               => $_csr,
-        crt_serial                        => $_crt_serial,
-        dehydrated_environment            => $_dehydrated_environment,
-        dehydrated_hook                   => $_dehydrated_hook,
-        dehydrated_domain_validation_hook => $_dehydrated_domain_validation_hook,
-        dehydrated_contact_email          => $_dehydrated_contact_email,
-        tag                               => "dehydrated-request-for-${_dehydrated_host}",
+        request_fqdn => $facts['fqdn'],
+        config       => $_config,
+        dn           => $_dn,
+        tag          => "dehydrated-request-for-${_dehydrated_host}",
       }
     }
 

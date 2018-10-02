@@ -1,0 +1,27 @@
+# Path to certificate authority (default: https://acme-v02.api.letsencrypt.org/directory)
+CA="<%= @letsencrypt_ca_url -%>"
+
+# Which challenge should be used? Currently http-01, dns-01 and tls-alpn-01 are supported
+CHALLENGETYPE="<%= @challengetype -%>"
+
+# Base directory for account key, generated certificates and list of domains (default: $SCRIPTDIR -- uses config directory if undefined)
+BASEDIR="<%= @request_base_dir -%>"
+
+# Output directory for generated certificates
+CERTDIR="<%= @request_base_dir -%>"
+
+# Output directory for alpn verification certificates
+ALPNCERTDIR="<%= @dehydrated_alpncert_dir -%>"
+
+# Directory for account keys and registration information
+ACCOUNTDIR="<%= @request_account_dir -%>"
+
+# Output directory for challenge-tokens to be served by webserver or deployed in HOOK (default: /var/www/dehydrated)
+WELLKNOWN="<%= @dehydrated_wellknown_dir -%>"
+
+# E-mail to use during the registration (default: <unset>)
+CONTACT_EMAIL="<%= @dehydrated_contact_email -%>"
+
+# Lockfile location, to prevent concurrent access (default: $BASEDIR/lock)
+LOCKFILE="${BASEDIR}/lock"
+

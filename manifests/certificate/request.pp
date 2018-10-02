@@ -10,14 +10,7 @@
 define dehydrated::certificate::request(
   Stdlib::Fqdn $request_fqdn,
   Dehydrated::DN $dn,
-  Array[Dehydrated::DN] $subject_alternative_names,
-  String $base_filename,
-  Dehydrated::CSR $csr,
-  Optional[String] $crt_serial,
-  Hash $dehydrated_environment,
-  Dehydrated::Hook $dehydrated_hook,
-  Optional[Dehydrated::Hook] $dehydrated_domain_validation_hook = undef,
-  Optional[Dehydrated::Email] $dehydrated_contact_email = undef,
+  Hash $config,
 ) {
 
   require ::dehydrated::params
@@ -25,6 +18,25 @@ define dehydrated::certificate::request(
   if ! defined(Class['dehydrated']) {
     fail('You must include the dehydrated base class first.')
   }
+
+  $base_filename = $config['base_filename']
+  $dh_param_size = $config['dh_param_size']
+  $dh_mtime = $config['dh_mtime']
+  $csr = $config['csr']
+  $crt_serial = $config['crt_serial']
+  $subject_alternative_names = $config['subject_alternative_names']
+  $dehydrated_host = $config['dehydrated_host']
+  $dehydrated_environment = $config['dehydrated_environment']
+  $dehydrated_hook = $config['dehydrated_hook']
+  $letsencrypt_ca = $config['letsencrypt_ca']
+  if ($config['dehydrated_domain_validation_hook'] == '') {
+    $dehydrated_domain_validation_hook = undef
+  } else {
+    $dehydrated_domain_validation_hook = $config['dehydrated_domain_validation_hook']
+  }
+  $dehydrated_contact_email = pick_default($config['dehydrated_contact_email'], '')
+
+  $challengetype = $config['challengetype']
 
   $dehydrated_requests_dir = $::dehydrated::dehydrated_requests_dir
 
@@ -36,11 +48,25 @@ define dehydrated::certificate::request(
     [$request_fqdn_dir, $base_filename],
     $::dehydrated::params::path_seperator
   )
+  $request_account_dir = join(
+    [$request_fqdn_dir, 'accounts'],
+    $::dehydrated::params::path_seperator
+  )
 
   $csr_file = join(
     [$request_base_dir, "${base_filename}.csr"],
     $::dehydrated::params::path_seperator
   )
+  $config_file = join(
+    [$request_base_dir, "${base_filename}.config"],
+    $::dehydrated::params::path_seperator
+  )
+
+  $letsencrypt_ca_url = $::dehydrated::letsencrypt_cas[$letsencrypt_ca]['url']
+  $letsencrypt_ca_hash = $::dehydrated::letsencrypt_cas[$letsencrypt_ca]['hash']
+
+  $dehydrated_wellknown_dir = $::dehydrated::dehydrated_wellknown_dir
+  $dehydrated_alpncert_dir = $::dehydrated::dehydrated_alpncert_dir
 
   File {
     owner => $::dehydrated::dehydrated_user,
@@ -73,6 +99,10 @@ define dehydrated::certificate::request(
     ensure  => file,
     content => $csr,
   }
+  file { $config_file :
+    ensure  => file,
+    content => template('dehydrated/dehydrated/config.erb'),
+  }
 
   $request_config = {
     $request_fqdn =>  {
@@ -86,6 +116,9 @@ define dehydrated::certificate::request(
         'dehydrated_hook'                   => $dehydrated_hook,
         'dehydrated_domain_validation_hook' => $dehydrated_domain_validation_hook,
         'dehydrated_contact_email'          => $dehydrated_contact_email,
+        'letsencrypt_ca_url'                => $letsencrypt_ca_url,
+        'letsencrypt_ca_hash'               => $letsencrypt_ca_hash,
+        'config_file'                       => $config_file,
       }
     }
   }
