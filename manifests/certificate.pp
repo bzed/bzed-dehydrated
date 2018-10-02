@@ -32,7 +32,6 @@ define dehydrated::certificate(
       'base_filename'                     => $base_filename,
       'dh_param_size'                     => $dh_param_size,
       'challengetype'                     => $challengetype,
-      'algorithm'                         => $algorithm,
       'dehydrated_host'                   => $dehydrated_host,
       'dehydrated_environment'            => $dehydrated_environment,
       'dehydrated_hook'                   => $dehydrated_hook,
@@ -51,6 +50,7 @@ define dehydrated::certificate(
     dn                        => $dn,
     subject_alternative_names => $subject_alternative_names,
     key_password              => $key_password,
+    algorithm                 => $algorithm,
   }
 
 
