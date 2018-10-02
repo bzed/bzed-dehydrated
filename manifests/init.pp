@@ -70,7 +70,11 @@ class dehydrated
     $_dehydrated_host = $_config['dehydrated_host']
     $_dehydrated_environment = $_config['dehydrated_environment']
     $_dehydrated_hook = $_config['dehydrated_hook']
-    $_dehydrated_domain_validation_hook = $_config['dehydrated_domain_validation_hook']
+    if ($_config['dehydrated_domain_validation_hook'] == '') {
+      $_dehydrated_domain_validation_hook = undef
+    } else {
+      $_dehydrated_domain_validation_hook = $_config['dehydrated_domain_validation_hook']
+    }
 
     ::dehydrated::certificate::dh { $_base_filename :
       dn            => $_dn,
@@ -95,7 +99,7 @@ class dehydrated
         crt_serial                        => $_crt_serial,
         dehydrated_environment            => $_dehydrated_environment,
         dehydrated_hook                   => $_dehydrated_hook,
-        dehydrated_domain_validation_hook => pick_default($_dehydrated_domain_validation_hook, undef),
+        dehydrated_domain_validation_hook => $_dehydrated_domain_validation_hook,
         tag                               => "dehydrated-request-for-${_dehydrated_host}",
       }
     }
