@@ -95,7 +95,7 @@ class dehydrated
         crt_serial                        => $_crt_serial,
         dehydrated_environment            => $_dehydrated_environment,
         dehydrated_hook                   => $_dehydrated_hook,
-        dehydrated_domain_validation_hook => $_dehydrated_domain_validation_hook,
+        dehydrated_domain_validation_hook => pick_default($_dehydrated_domain_validation_hook, undef),
         tag                               => "dehydrated-request-for-${_dehydrated_host}",
       }
     }
