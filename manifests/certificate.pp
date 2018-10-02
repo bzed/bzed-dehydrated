@@ -27,14 +27,14 @@ define dehydrated::certificate(
 
   $domain_config = {
     $dn => {
-      subject_alternative_names         => $subject_alternative_names,
-      base_filename                     => $base_filename,
-      dh_param_size                     => $dh_param_size,
-      challengetype                     => $challengetype,
-      dehydrated_host                   => $dehydrated_host,
-      dehydrated_environment            => $dehydrated_environment,
-      dehydrated_hook                   => $dehydrated_hook,
-      dehydrated_domain_validation_hook => $dehydrated_domain_validation_hook,
+      'subject_alternative_names'         => $subject_alternative_names,
+      'base_filename'                     => $base_filename,
+      'dh_param_size'                     => $dh_param_size,
+      'challengetype'                     => $challengetype,
+      'dehydrated_host'                   => $dehydrated_host,
+      'dehydrated_environment'            => $dehydrated_environment,
+      'dehydrated_hook'                   => $dehydrated_hook,
+      'dehydrated_domain_validation_hook' => $dehydrated_domain_validation_hook,
     }
   }
 
