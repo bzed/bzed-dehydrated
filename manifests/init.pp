@@ -71,19 +71,6 @@ class dehydrated
     $_crt_serial = $_config['crt_serial']
     $_subject_alternative_names = $_config['subject_alternative_names']
     $_dehydrated_host = $_config['dehydrated_host']
-    $_dehydrated_environment = $_config['dehydrated_environment']
-    $_dehydrated_hook = $_config['dehydrated_hook']
-    $_letsencrypt_ca = $_config['letsencrypt_ca']
-    if ($_config['dehydrated_domain_validation_hook'] == '') {
-      $_dehydrated_domain_validation_hook = undef
-    } else {
-      $_dehydrated_domain_validation_hook = $_config['dehydrated_domain_validation_hook']
-    }
-    if ($_config['dehydrated_contact_email'] == '') {
-      $_dehydrated_contact_email = undef
-    } else {
-      $_dehydrated_contact_email = $_config['dehydrated_contact_email']
-    }
 
 
     ::dehydrated::certificate::dh { $_base_filename :
