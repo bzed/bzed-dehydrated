@@ -15,7 +15,8 @@ define dehydrated::certificate(
   Stdlib::Fqdn $dehydrated_host = $::dehydrated::dehydrated_host,
   Hash $dehydrated_environment = $::dehydrated::dehydrated_environment,
   Dehydrated::Hook $dehydrated_hook = $::dehydrated::dehydrated_hook,
-  Optional[Dehydrated::Hook] $dehydrated_domain_validation_hook = undef,
+  Optional[Dehydrated::Hook] $dehydrated_domain_validation_hook = $::dehydrated::dehydrated_domain_validation_hook,
+  Optional[Dehydrated::Email] $dehydrated_contact_email = $::dehydrated::dehydrated_contact_email,
   Optional[String] $key_password = undef,
 ) {
 
@@ -36,6 +37,7 @@ define dehydrated::certificate(
       'dehydrated_environment'            => $dehydrated_environment,
       'dehydrated_hook'                   => $dehydrated_hook,
       'dehydrated_domain_validation_hook' => $dehydrated_domain_validation_hook,
+      'dehydrated_contact_email'          => $dehydrated_contact_email,
     }
   }
 

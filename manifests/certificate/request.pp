@@ -17,6 +17,7 @@ define dehydrated::certificate::request(
   Hash $dehydrated_environment,
   Dehydrated::Hook $dehydrated_hook,
   Optional[Dehydrated::Hook] $dehydrated_domain_validation_hook = undef,
+  Optional[Dehydrated::Email] $dehydrated_contact_email = undef,
 ) {
 
   require ::dehydrated::params
@@ -84,6 +85,7 @@ define dehydrated::certificate::request(
         'dehydrated_environment'            => $dehydrated_environment,
         'dehydrated_hook'                   => $dehydrated_hook,
         'dehydrated_domain_validation_hook' => $dehydrated_domain_validation_hook,
+        'dehydrated_contact_email'          => $dehydrated_contact_email,
       }
     }
   }

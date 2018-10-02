@@ -90,10 +90,10 @@ define dehydrated::certificate::csr(
   }
 
   file { $key :
-    ensure  => $ensure,
-    owner   => $::dehydrated::user,
-    group   => $::dehydrated::group,
-    mode    => '0640',
+    ensure => $ensure,
+    owner  => $::dehydrated::user,
+    group  => $::dehydrated::group,
+    mode   => '0640',
   }
   file { $csr :
     ensure  => $ensure,

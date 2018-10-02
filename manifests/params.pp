@@ -129,5 +129,7 @@ class dehydrated::params {
   $dehydrated_environment = {}
   $dehydrated_domain_validation_hook = undef
 
+  $dehydrated_contact_email = undef
+
 }
 

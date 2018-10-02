@@ -38,6 +38,7 @@ class dehydrated
   Hash $dehydrated_environment = $::dehydrated::params::dehydrated_environment,
   Optional[Dehydrated::Hook] $dehydrated_domain_validation_hook = $::dehydrated::params::dehydrated_domain_validation_hook,
   Dehydrated::Hook $dehydrated_hook = "${challengetype}.sh",
+  Optional[Dehydrated::Email] $dehydrated_contact_email = $::dehydrated::params::dehydrated_contact_email,
 
   Boolean $manage_user = $::dehydrated::params::manage_user,
   Boolean $manage_packages = $::dehydrated::params::manage_packages,
@@ -76,6 +77,12 @@ class dehydrated
     } else {
       $_dehydrated_domain_validation_hook = $_config['dehydrated_domain_validation_hook']
     }
+    if ($_config['dehydrated_contact_email'] == '') {
+      $_dehydrated_contact_email = undef
+    } else {
+      $_dehydrated_contact_email = $_config['dehydrated_contact_email']
+    }
+
 
     ::dehydrated::certificate::dh { $_base_filename :
       dn            => $_dn,
@@ -101,6 +108,7 @@ class dehydrated
         dehydrated_environment            => $_dehydrated_environment,
         dehydrated_hook                   => $_dehydrated_hook,
         dehydrated_domain_validation_hook => $_dehydrated_domain_validation_hook,
+        dehydrated_contact_email          => $_dehydrated_contact_email,
         tag                               => "dehydrated-request-for-${_dehydrated_host}",
       }
     }
