@@ -70,7 +70,7 @@ class dehydrated
     $_dehydrated_host = $_config['dehydrated_host']
     $_dehydrated_environment = $_config['dehydrated_environment']
     $_dehydrated_hook = $_config['dehydrated_hook']
-    $_dehydrated_domain_validation_hook = $_config.dig('dehydrated_domain_validation_hook')
+    $_dehydrated_domain_validation_hook = $_config['dehydrated_domain_validation_hook']
 
     ::dehydrated::certificate::dh { $_base_filename :
       dn            => $_dn,
