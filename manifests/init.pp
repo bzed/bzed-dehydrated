@@ -23,6 +23,7 @@ class dehydrated
   Hash $letsencrypt_cas = $::dehydrated::params::letsencrypt_cas,
   Integer[768] $dh_param_size = $::dehydrated::params::dh_param_size,
   Dehydrated::Challengetype $challengetype = $::dehydrated::params::challengetype,
+  Dehydrated::Algorithm $algorithm = $::dehydrated::params::algorithm,
 
   Stdlib::Absolutepath $dehydrated_base_dir = $::dehydrated::params::dehydrated_base_dir,
   Stdlib::Absolutepath $dehydrated_git_dir = "${dehydrated_base_dir}/dehydrated",
