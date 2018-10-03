@@ -57,7 +57,7 @@ define dehydrated::certificate::request(
     [$request_base_dir, "${base_filename}.csr"],
     $::dehydrated::params::path_seperator
   )
-  $config_file = join(
+  $dehydrated_config = join(
     [$request_base_dir, "${base_filename}.config"],
     $::dehydrated::params::path_seperator
   )
@@ -99,7 +99,7 @@ define dehydrated::certificate::request(
     ensure  => file,
     content => $csr,
   }
-  file { $config_file :
+  file { $dehydrated_config :
     ensure  => file,
     content => template('dehydrated/dehydrated/config.erb'),
   }
@@ -118,7 +118,7 @@ define dehydrated::certificate::request(
         'dehydrated_contact_email'          => $dehydrated_contact_email,
         'letsencrypt_ca_url'                => $letsencrypt_ca_url,
         'letsencrypt_ca_hash'               => $letsencrypt_ca_hash,
-        'config_file'                       => $config_file,
+        'dehydrated_config'                       => $dehydrated_config,
       }
     }
   }
