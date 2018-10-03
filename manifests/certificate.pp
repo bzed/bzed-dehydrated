@@ -17,7 +17,6 @@ define dehydrated::certificate(
   Dehydrated::Hook $dehydrated_hook = $::dehydrated::dehydrated_hook,
   String $letsencrypt_ca = $::dehydrated::letsencrypt_ca,
   Optional[Dehydrated::Hook] $dehydrated_domain_validation_hook = $::dehydrated::dehydrated_domain_validation_hook,
-  Optional[Dehydrated::Email] $dehydrated_contact_email = $::dehydrated::dehydrated_contact_email,
   Optional[String] $key_password = undef,
 ) {
 
@@ -38,7 +37,6 @@ define dehydrated::certificate(
       'dehydrated_environment'            => $dehydrated_environment,
       'dehydrated_hook'                   => $dehydrated_hook,
       'dehydrated_domain_validation_hook' => $dehydrated_domain_validation_hook,
-      'dehydrated_contact_email'          => $dehydrated_contact_email,
       'letsencrypt_ca'                    => $letsencrypt_ca,
     }
   }
