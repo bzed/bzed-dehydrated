@@ -42,15 +42,16 @@ class dehydrated::setup {
   }
 
   $config = {
-    'base_dir' => $::dehydrated::base_dir,
-    'crt_dir' => $::dehydrated::crt_dir,
-    'csr_dir' => $::dehydrated::csr_dir,
-    'dehydrated_base_dir' => $::dehydrated::dehydrated_base_dir,
-    'dehydrated_host' => $::dehydrated::dehydrated_host,
-    'dehydrated_puppetmaster' => $::dehydrated::params::dehydrated_puppetmaster,
-    'dehydrated_requests_dir' => $::dehydrated::dehydrated_requests_dir,
+    'base_dir'                   => $::dehydrated::base_dir,
+    'crt_dir'                    => $::dehydrated::crt_dir,
+    'csr_dir'                    => $::dehydrated::csr_dir,
+    'dehydrated_base_dir'        => $::dehydrated::dehydrated_base_dir,
+    'dehydrated_git_dir'         => $::dehydrated::dehydrated_git_dir,
+    'dehydrated_host'            => $::dehydrated::dehydrated_host,
+    'dehydrated_puppetmaster'    => $::dehydrated::params::dehydrated_puppetmaster,
+    'dehydrated_requests_dir'    => $::dehydrated::dehydrated_requests_dir,
     'dehydrated_requests_config' => $::dehydrated::dehydrated_requests_config,
-    'key_dir' => $::dehydrated::key_dir,
+    'key_dir'                    => $::dehydrated::key_dir,
   }
 
   $config_json = to_json($config)
