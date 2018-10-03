@@ -62,6 +62,10 @@ class dehydrated
     }
   }
 
+  $_fqdn_based_config = {
+    'dehydrated_contact_email' => $dehydrated_contact_email,
+  }
+
   $dehydrated_domains = $facts['dehydrated_domains']
   $dehydrated_domains.each |Dehydrated::DN $_dn, Hash $_config| {
     $_base_filename = $_config['base_filename']
@@ -86,10 +90,11 @@ class dehydrated
       ),
     '-')
 
+    $_request_config = merge($_fqdn_based_config, $_config)
     if $_csr =~ Dehydrated::CSR {
       @@dehydrated::certificate::request { $request_name :
         request_fqdn => $facts['fqdn'],
-        config       => $_config,
+        config       => $_request_config,
         dn           => $_dn,
         tag          => "dehydrated-request-for-${_dehydrated_host}",
       }
