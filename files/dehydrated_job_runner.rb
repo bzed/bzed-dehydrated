@@ -2,42 +2,226 @@
 
 require 'json'
 require 'open3'
+require 'uri'
+require 'optparse'
 
-def run_dehydrated(env, config, command)
-    old_env = {}
-    env.each do |key, value|
-        old_env[key] = value
-        ENV[key] = value
+DEHYDRATED = nil
+
+def run_dehydrated(dehydrated_config, command)
+  unless DEHYDRATED && File.exist?(DEHYDRATED)
+    raise 'dehydrated script not found or missing in config'
+  end
+  cmd = "#{DEHYDRATED} --dehydrated_config '#{dehydrated_config}' #{command}"
+  stdout, stderr, status = Open3.capture3(cmd)
+
+  [stdout, stderr, status.success?]
+end
+
+def _get_authority_url(crt, url_description)
+  authority_info_access = crt.extensions.find do |extension|
+    extension.oid == 'authorityInfoAccess'
+  end
+
+  descriptions = authority_info_access.value.split "\n"
+  url_description = descriptions.find do |description|
+    description.start_with? url_description
+  end
+  URI url_description[%r{URI:(.*)}, 1]
+end
+
+def update_ca_chain(crt_file, ca_file)
+  raw_crt = File.read(crt_file)
+  crt = OpenSSL::X509::Certificate.new(raw_crt)
+  ca_issuer_uri = _get_authority_url(crt, 'CA Issuers')
+  limit = 10
+  ca_crt = ''
+  while limit > 0
+    response = Net::HTTP.get_response(ca_issuer_uri)
+    case response
+    when Net::HTTPSuccess then
+      ca_crt = response.body
+      status = 0
+      stdout = ca_cert
+      stderr = response.message
+    when Net::HTTPRedirection then
+      ca_issuer_uri = URI(response['location'])
+      limit -= 1
+      status = response.status
+      stdout = response.body
+      stderr = response.message
+      next
+    else
+      status = response.status
+      stdout = ''
+      stderr = response.message
     end
+    break
+  end
+  if status.zero? && ca_crt =~ %r{.*-+BEGIN CERTIFICATE-+.*-+END CERTIFICATE-+.*}m
+    File.write(ca_file, ca_crt)
+  end
+  [stdout, stderr, status]
+end
 
-    cmd = "#{DEHYDRATED} --config '#{config}' #{command}"
-    stdout, stderr, status = Open3.capture3(cmd)
+def update_ocsp(ocsp_file, crt_file, ca_file)
+  crt = OpenSSL::X509::Certificate.new(File.read(crt_file))
+  ca = OpenSSL::X509::Certificate.new(File.read(ca_file))
+  digest = OpenSSL::Digest::SHA1.new
+  certificate_id = OpenSSL::OCSP::CertificateId.new(crt, ca, digest)
+  request = OpenSSL::OCSP::Request.new
+  request.add_certid certificate_id
 
-    old_env.each do |key, value|
-        ENV[key] = value
+  # seems LE doesn't handle nonces.
+  # request.add_nonce
+
+  ocsp_uri = _get_authority_url(crt, 'OCSP')
+
+  ocsp_response = ''
+  while limit > 0
+    response = Net::HTTP.start ocsp_uri.hostname, ocsp_uri.port do |http|
+      http.post(
+        ocsp_uri.path,
+        request.to_der,
+        'content-type' => 'application/ocsp-request',
+      )
     end
-    [stdout, stderr, status.success?]
+    case response
+    when Net::HTTPSuccess then
+      ocsp_response = response.body
+      status = 0
+      stdout = ''
+      stderr = response.message
+    when Net::HTTPRedirection then
+      ocsp_uri = URI(response['location'])
+      limit -= 1
+      status = response.status
+      stdout = response.body
+      stderr = response.message
+      next
+    else
+      status = response.status
+      stdout = ''
+      stderr = response.message
+    end
+    break
+  end
+
+  if status.zero? && ocsp_response != ''
+    ocsp = OpenSSL::OCSP::Response.new ocsp_response
+    store = OpenSSL::X509::Store.new
+    store.set_default_paths
+
+    if ocsp.verify([], store)
+      File.write(ocsp_file, ocsp.to_der)
+    else
+      status = 1
+      stderr = stdout = 'OCSP verification failed'
+    end
+  end
+  [status, stdout, stderr]
 end
 
-def register_account(env, config)
-    run_dehydrated(env, config, '--accept-terms --register')
+def register_account(dehydrated_config)
+  run_dehydrated(env, dehydrated_config, '--accept-terms --register')
 end
 
-def update_account(env, config)
-    run_dehydrated(env, config, '--account')
+def update_account(dehydrated_config)
+  run_dehydrated(env, dehydrated_config, '--account')
 end
 
-def sign_csr(env, config, csr)
-    run_dehydrated(env, config, "--signcsr '#{csr}'")
+def sign_csr(dehydrated_config, csr_file, crt_file)
+  stdout, stderr, status = run_dehydrated(env, dehydrated_config, "--signcsr '#{csr_file}'")
+  if status.zero?
+    if stdout =~ %r{.*-+BEGIN CERTIFICATE-+.*-+END CERTIFICATE-+.*}m
+      File.write(crt_file, stdout)
+    else
+      # this case should never happen
+      stdout = "# -- is this a certificate?? -- \n #{stdout}"
+      status = 255
+    end
+  end
+  [stdout, stderr, status]
 end
 
-DEHYDRATED="/opt/dehydrated/dehydrated/dehydrated"
+def cert_still_valid(crt_file)
+  if File.exist?(crt_file)
+    raw_crt = File.read(crt_file)
+    crt = OpenSSL::X509::Certificate.new(raw_crt)
+    min_valid = Time.now + (30 * 24 * 60 * 60)
+    crt.not_after > min_valid
+  else
+    false
+  end
+end
 
-a=sign_csr({}, '/tmp/foo', '/tmp/bar')
-p a[0]
-p a[1]
-p a[2]
+def handle_request(fqdn, dn, config)
+  # set environment from config
+  env = config['dehydrated_environment']
+  old_env = {}
+  env.each do |key, value|
+    old_env[key] = value
+    ENV[key] = value
+  end
 
+  # set paths/filenames
+  dehydrated_config = config['dehydrated_config']
+  letsencrypt_ca_hash = config['letsencrypt_ca_hash']
+  request_fqdn_dir = config['request_fqdn_dir']
+  request_base_dir = config['request_base_dir']
+  base_filename = config['base_filename']
+  crt_file = File.join(request_base_dir, "#{base_filename}.crt")
+  csr_file = File.join(request_base_dir, "#{base_filename}.csr")
+  ca_file = File.join(request_base_dir, "#{base_filename}_ca.pem")
+  ocsp_file = "#{crt_file}.ocsp"
+
+  # register / update account
+  account_json = File.join(request_fqdn_dir, 'accounts', letsencrypt_ca_hash, 'registration_info.json')
+  if !File.exist?(account_json)
+    stdout, stderr, status = register_account(dehydrated_config)
+    return ['Account registration failed', stdout, stderr, status] if status > 0
+  else
+    registration_info = JSON.parse(File.read(account_json))
+    if registration_info['contact'].any?
+      current_contact = registration_info['contact'][0]
+      current_contact.gsub!(%r{^mailto:}, '')
+    else
+      current_contact = ''
+    end
+    required_contact = config['dehydrated_contact_email']
+    if current_contact != required_contact
+      stdout, stderr, status = update_account(dehydrated_config)
+      return ['Account update failed', stdout, stderr, status] if status > 0
+    end
+  end
+
+
+  unless cert_still_valid(crt_file)
+    stdout, stderr, status = sign_csr(dehydrated_config, csr_file, crt_file)
+    return ['CSR signing failed', stdout, stderr, status] if status > 0
+  end
+
+  if cert_still_valid(crt_file) && !cert_still_valid(ca_file)
+    stdout, stderr, status = update_ca_chain(crt_file, ca_file)
+    return ['CA certificate update failed', stdout, stderr, status] if status > 0
+  end
+
+  if cert_still_valid(crt_file) && cert_still_valid(ca_file)
+    unless File.exist?(ocsp_file) && (File.mtime(ocsp_file) + 24 * 60 * 60) > Time.now
+      stdout, stderr, status = update_ocsp(ocsp_file, crt_file, ca_file)
+      return ['OCSP update failed', stdout, stderr, status] if status > 0
+    end
+  end
+  old_env.each do |key, value|
+    ENV[key] = value
+  end
+
+  [
+    'CRT/CA/OCSP uptodate',
+    "(#{dn} for #{fqdn})",
+    '',
+    0,
+  ]
+end
 
 #{
 #  "fuzz.foobar.com": {
@@ -56,7 +240,7 @@ p a[2]
 #      "dehydrated_contact_email": "",
 #      "letsencrypt_ca_url": "https://acme-staging-v02.api.letsencrypt.org/directory",
 #      "letsencrypt_ca_hash": "aHR0cHM6Ly9hY21lLXN0YWdpbmctdjAyLmFwaS5sZXRzZW5jcnlwdC5vcmcvZGlyZWN0b3J5Cg",
-#      "config_file": "/opt/dehydrated/requests/fuzz.foobar.com/s.foobar.com/s.foobar.com.config"
+#      "dehydrrated_config": "/opt/dehydrated/requests/fuzz.foobar.com/s.foobar.com/s.foobar.com.config"
 #    },
 #    "tt.foobar.com": {
 #      "subject_alternative_names": [
@@ -73,7 +257,7 @@ p a[2]
 #      "dehydrated_contact_email": "",
 #      "letsencrypt_ca_url": "https://acme-staging-v02.api.letsencrypt.org/directory",
 #      "letsencrypt_ca_hash": "aHR0cHM6Ly9hY21lLXN0YWdpbmctdjAyLmFwaS5sZXRzZW5jcnlwdC5vcmcvZGlyZWN0b3J5Cg",
-#      "config_file": "/opt/dehydrated/requests/fuzz.foobar.com/tt.foobar.com/tt.foobar.com.config"
+#      "dehydrrated_config": "/opt/dehydrated/requests/fuzz.foobar.com/tt.foobar.com/tt.foobar.com.config"
 #    }
 #  }
 #}
