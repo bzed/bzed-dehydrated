@@ -28,6 +28,15 @@ define dehydrated::certificate::request(
   $dehydrated_host = $config['dehydrated_host']
   $dehydrated_environment = $config['dehydrated_environment']
   $dehydrated_hook = $config['dehydrated_hook']
+  if (!$dehydrated_hook or $dehydrated_hook == '') {
+    $dehydrated_hook_script = undef
+  } else {
+    $dehydrated_hook_script = join(
+      [$::dehydrated::dehydrated_hooks_dir, $dehydrated_hook],
+      $::dehydrated::params::path_seperator,
+    )
+  }
+
   $letsencrypt_ca = $config['letsencrypt_ca']
   if ($config['dehydrated_domain_validation_hook'] == '') {
     $dehydrated_domain_validation_hook = undef
@@ -68,6 +77,8 @@ define dehydrated::certificate::request(
   $dehydrated_wellknown_dir = $::dehydrated::dehydrated_wellknown_dir
   $dehydrated_alpncert_dir = $::dehydrated::dehydrated_alpncert_dir
 
+
+
   File {
     owner => $::dehydrated::dehydrated_user,
     group => $::dehydrated::dehydrated_group,
@@ -99,6 +110,7 @@ define dehydrated::certificate::request(
     ensure  => file,
     content => $csr,
   }
+
   file { $dehydrated_config :
     ensure  => file,
     content => template('dehydrated/dehydrated/config.erb'),
@@ -113,7 +125,7 @@ define dehydrated::certificate::request(
         'request_fqdn_dir'                  => $request_fqdn_dir,
         'request_base_dir'                  => $request_base_dir,
         'dehydrated_environment'            => $dehydrated_environment,
-        'dehydrated_hook'                   => $dehydrated_hook,
+        'dehydrated_hook_script'            => $dehydrated_hook_script,
         'dehydrated_domain_validation_hook' => $dehydrated_domain_validation_hook,
         'dehydrated_contact_email'          => $dehydrated_contact_email,
         'letsencrypt_ca_url'                => $letsencrypt_ca_url,

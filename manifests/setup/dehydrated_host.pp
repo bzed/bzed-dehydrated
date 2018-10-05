@@ -52,10 +52,12 @@ class dehydrated::setup::dehydrated_host {
     $::dehydrated::dehydrated_requests_dir,
     $::dehydrated::dehydrated_wellknown_dir,
     $::dehydrated::dehydrated_alpncert_dir,
+    $::dehydrated::dehydrated_hooks_dir,
     ] :
       ensure => directory,
       mode   => '0750',
   }
+
 
   vcsrepo { $::dehydrated::dehydrated_git_dir :
     ensure   => latest,

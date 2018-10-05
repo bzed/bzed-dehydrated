@@ -12,7 +12,7 @@ def run_domain_validation_hook(hook, dn, subject_alternative_names = [])
     escaped_domains = domains.each do |domain|
       domain.shellescape
     end
-    args = escaped_domains,join(' ')
+    args = escaped_domains.join(' ')
     cmd = "#{hook} #{args}"
     stdout, stderr, status = Open3.capture3(cmd)
     status = status.success?
@@ -191,7 +191,7 @@ def handle_request(fqdn, dn, config)
   ocsp_file = "#{crt_file}.ocsp"
   subject_alternative_names = config['subject_alternative_names']
   dehydrated_domain_validation_hook = config['dehydrated_domain_validation_hook']
-
+  dehydrated_hook_script = config['dehydrated_hook_script']
 
   # register / update account
   account_json = File.join(request_fqdn_dir, 'accounts', letsencrypt_ca_hash, 'registration_info.json')
@@ -217,9 +217,20 @@ def handle_request(fqdn, dn, config)
     stdout, stderr, status = run_domain_validation_hook(
       dehydrated_domain_validation_hook,
       dn,
-      subject_alternative_names
+      subject_alternative_names,
     )
     return ['Domain validation hook failed', stdout, stderr, status] if status > 0
+  end
+
+  unless dehydrated_hook_script.empty?
+    unless File.exist?(dehydrated_hook_script) && File.executable?(dehydrated_hook_script)
+      return ['Configured Dehydrated hook does not exist or is not executable',
+              dehydrated_hook_script,
+              '',
+              255]
+    end
+    # nothing else to do here, the hook is configured
+    # in the dehydrated config file already.
   end
 
   unless cert_still_valid(crt_file)
@@ -250,30 +261,35 @@ def handle_request(fqdn, dn, config)
   ]
 end
 
-if ARGV.empty?
-  raise ArgumentError, "Need to specify config.json as argument"
-end
-
-
-dehydrated_host_config_file = ARGV[0]
-dehydrated_host_config = JSON.parse(File.read(dehydrated_host_config_file))
-dehydrated_requests_config = dehydrated_host_config['dehydrated_host_config']
-dehydrated_base_dir = dehydrated_host_config['dehydrated_base_dir']
-
-requests_status = {}
-dehydrated_requests_config.each do |fqdn, dns|
-  requests_status[fqdn] = {}
-  dns.each do |dn, config|
-    error_message, stdout, stderr, statuscode = handle_request(fqdn, dn, config)
-    requests_status[fqdn][dn] = {
-      'error_message' => error_message,
-      'stdout' => stdout,
-      'stderr' => stderr,
-      'statuscode' => statuscode,
-    }
+def run_config(dehydrated_requests_config)
+  requests_status = {}
+  dehydrated_requests_config.each do |fqdn, dns|
+    requests_status[fqdn] = {}
+    dns.each do |dn, config|
+      error_message, stdout, stderr, statuscode = handle_request(fqdn, dn, config)
+      requests_status[fqdn][dn] = {
+        'error_message' => error_message,
+        'stdout' => stdout,
+        'stderr' => stderr,
+        'statuscode' => statuscode,
+      }
+    end
   end
 end
 
+if ARGV.empty?
+  raise ArgumentError, 'Need to specify config.json as argument'
+end
+
+dehydrated_host_config_file = ARGV[0]
+dehydrated_host_config = JSON.parse(File.read(dehydrated_host_config_file))
+dehydrated_requests_config_file = dehydrated_host_config['dehydrated_host_config']
+dehydrated_requests_config = JSON.parse(File.read(dehydrated_requests_config_file))
+# dehydrated_base_dir = dehydrated_host_config['dehydrated_base_dir']
+
+run_config(dehydrated_requests_config)
+
+# rubocop:disable all
 #{
 #  "fuzz.foobar.com": {
 #    "s.foobar.com": {
@@ -286,7 +302,7 @@ end
 #      "request_base_dir": "/opt/dehydrated/requests/fuzz.foobar.com/s.foobar.com",
 #      "dehydrated_environment": {
 #      },
-#      "dehydrated_hook": "dns-01.sh",
+#      "dehydrated_hook_script": "dns-01.sh",
 #      "dehydrated_domain_validation_hook": null,
 #      "dehydrated_contact_email": "",
 #      "letsencrypt_ca_url": "https://acme-staging-v02.api.letsencrypt.org/directory",
@@ -303,7 +319,7 @@ end
 #      "request_base_dir": "/opt/dehydrated/requests/fuzz.foobar.com/tt.foobar.com",
 #      "dehydrated_environment": {
 #      },
-#      "dehydrated_hook": "dns-01.sh",
+#      "dehydrated_hook_script": "dns-01.sh",
 #      "dehydrated_domain_validation_hook": null,
 #      "dehydrated_contact_email": "",
 #      "letsencrypt_ca_url": "https://acme-staging-v02.api.letsencrypt.org/directory",
