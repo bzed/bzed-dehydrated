@@ -3,12 +3,28 @@
 require 'json'
 require 'open3'
 require 'uri'
-require 'optparse'
 
 DEHYDRATED = nil
 
+def run_domain_validation_hook(hook, dn, subject_alternative_names = [])
+  if hook && File.exist?(hook) && File.executable?(hook)
+    domains = [dn] + subject_alternative_names
+    escaped_domains = domains.each do |domain|
+      domain.shellescape
+    end
+    args = escaped_domains,join(' ')
+    cmd = "#{hook} #{args}"
+    stdout, stderr, status = Open3.capture3(cmd)
+    status = status.success?
+  else
+    stdout = stderr = 'domain validation hook not found or not executable'
+    status = 255
+  end
+  [stdout, stderr, status]
+end
+
 def run_dehydrated(dehydrated_config, command)
-  unless DEHYDRATED && File.exist?(DEHYDRATED)
+  unless DEHYDRATED && File.exist?(DEHYDRATED) && File.executable?(DEHYDRATED)
     raise 'dehydrated script not found or missing in config'
   end
   cmd = "#{DEHYDRATED} --dehydrated_config '#{dehydrated_config}' #{command}"
@@ -173,6 +189,9 @@ def handle_request(fqdn, dn, config)
   csr_file = File.join(request_base_dir, "#{base_filename}.csr")
   ca_file = File.join(request_base_dir, "#{base_filename}_ca.pem")
   ocsp_file = "#{crt_file}.ocsp"
+  subject_alternative_names = config['subject_alternative_names']
+  dehydrated_domain_validation_hook = config['dehydrated_domain_validation_hook']
+
 
   # register / update account
   account_json = File.join(request_fqdn_dir, 'accounts', letsencrypt_ca_hash, 'registration_info.json')
@@ -194,6 +213,14 @@ def handle_request(fqdn, dn, config)
     end
   end
 
+  unless dehydrated_domain_validation_hook.empty?
+    stdout, stderr, status = run_domain_validation_hook(
+      dehydrated_domain_validation_hook,
+      dn,
+      subject_alternative_names
+    )
+    return ['Domain validation hook failed', stdout, stderr, status] if status > 0
+  end
 
   unless cert_still_valid(crt_file)
     stdout, stderr, status = sign_csr(dehydrated_config, csr_file, crt_file)
@@ -221,6 +248,30 @@ def handle_request(fqdn, dn, config)
     '',
     0,
   ]
+end
+
+if ARGV.empty?
+  raise ArgumentError, "Need to specify config.json as argument"
+end
+
+
+dehydrated_host_config_file = ARGV[0]
+dehydrated_host_config = JSON.parse(File.read(dehydrated_host_config_file))
+dehydrated_requests_config = dehydrated_host_config['dehydrated_host_config']
+dehydrated_base_dir = dehydrated_host_config['dehydrated_base_dir']
+
+requests_status = {}
+dehydrated_requests_config.each do |fqdn, dns|
+  requests_status[fqdn] = {}
+  dns.each do |dn, config|
+    error_message, stdout, stderr, statuscode = handle_request(fqdn, dn, config)
+    requests_status[fqdn][dn] = {
+      'error_message' => error_message,
+      'stdout' => stdout,
+      'stderr' => stderr,
+      'statuscode' => statuscode,
+    }
+  end
 end
 
 #{
