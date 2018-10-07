@@ -58,6 +58,16 @@ class dehydrated::setup::dehydrated_host {
       mode   => '0750',
   }
 
+  $dehydrated_host_script = join(
+    [$::dehydrated::dehydrated_base_dir, 'dehydrated_job_runner.rb'],
+    $::dehydrated::params::path_seperator
+  )
+
+  file { $dehydrated_host_script :
+    ensure => file,
+    mode   => 0750,
+    source => 'puppet:///modules/dehydrated/dehydrated_job_runner.rb',
+  }
 
   vcsrepo { $::dehydrated::dehydrated_git_dir :
     ensure   => latest,
