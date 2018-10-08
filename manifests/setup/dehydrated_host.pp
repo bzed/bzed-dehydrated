@@ -65,7 +65,7 @@ class dehydrated::setup::dehydrated_host {
 
   file { $dehydrated_host_script :
     ensure => file,
-    mode   => 0750,
+    mode   => '0750',
     source => 'puppet:///modules/dehydrated/dehydrated_job_runner.rb',
   }
 
