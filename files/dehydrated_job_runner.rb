@@ -74,8 +74,8 @@ def update_ca_chain(crt_file, ca_file)
     break
   end
   if status.zero?
-      ca_crt = OpenSSL::X509::Certificate.new(ca_crt_raw)
-      File.write(ca_file, ca_crt.to_pem)
+    ca_crt = OpenSSL::X509::Certificate.new(ca_crt_raw)
+    File.write(ca_file, ca_crt.to_pem)
   end
   [stdout, stderr, status]
 end
@@ -96,11 +96,11 @@ def update_ocsp(ocsp_file, crt_file, ca_file)
   ocsp_response = ''
   limit = 10
   while limit > 0
-    if ocsp_uri.path.empty?
-        path = '/'
-    else
-        path = ocsp_uri.path
-    end
+    path = if ocsp_uri.path.empty?
+             '/'
+           else
+             ocsp_uri.path
+           end
     response = Net::HTTP.start ocsp_uri.hostname, ocsp_uri.port do |http|
       http.post(
         path,
@@ -134,11 +134,11 @@ def update_ocsp(ocsp_file, crt_file, ca_file)
     store = OpenSSL::X509::Store.new
     store.add_cert(ca)
 
-    if ocsp.basic() #&& ocsp.basic().verify([], store)
-        File.write(ocsp_file, ocsp.to_der)
+    if ocsp.basic # && ocsp.basic().verify([], store)
+      File.write(ocsp_file, ocsp.to_der)
     else
-        status = 1
-        stderr = stdout = 'OCSP verification failed'
+      status = 1
+      stderr = stdout = 'OCSP verification failed'
     end
   end
   [stdout, stderr, status.to_i]
@@ -202,15 +202,15 @@ def handle_request(fqdn, dn, config)
   dehydrated_hook_script = config['dehydrated_hook_script']
 
   new_dn_config = {
-    'letsencrypt_ca_hash' => letsencrypt_ca_hash
+    'letsencrypt_ca_hash' => letsencrypt_ca_hash,
   }
   # read old dn config if it exists
-  if File.exists?(dn_config_file)
-      current_dn_config = JSON.parse(File.read(dn_config_file))
-  else
-      current_dn_config = new_dn_config
-  end
-  force_update = !(current_dn_config['letsencrypt_ca_hash'] == new_dn_config['letsencrypt_ca_hash'])
+  current_dn_config = if File.exist?(dn_config_file)
+                        JSON.parse(File.read(dn_config_file))
+                      else
+                        new_dn_config
+                      end
+  force_update = (current_dn_config['letsencrypt_ca_hash'] != new_dn_config['letsencrypt_ca_hash'])
 
   # register / update account
   account_json = File.join(request_fqdn_dir, 'accounts', letsencrypt_ca_hash, 'registration_info.json')
@@ -255,14 +255,14 @@ def handle_request(fqdn, dn, config)
   if !cert_still_valid(crt_file) || force_update
     stdout, stderr, status = sign_csr(dehydrated_config, csr_file, crt_file)
     if status > 0 || !cert_still_valid(crt_file)
-        return ['CSR signing failed', stdout, stderr, status] if status > 0
+      return ['CSR signing failed', stdout, stderr, status] if status > 0
     end
   end
 
   if cert_still_valid(crt_file) && !cert_still_valid(ca_file)
     stdout, stderr, status = update_ca_chain(crt_file, ca_file)
     if status > 0 || !cert_still_valid(ca_file)
-        return ['CA certificate update failed', stdout, stderr, status]
+      return ['CA certificate update failed', stdout, stderr, status]
     end
   end
 
@@ -278,7 +278,6 @@ def handle_request(fqdn, dn, config)
 
   # track current used CA
   File.write(dn_config_file, JSON.generate(new_dn_config))
-
 
   [
     'CRT/CA/OCSP uptodate',
