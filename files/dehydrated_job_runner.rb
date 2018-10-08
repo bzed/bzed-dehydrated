@@ -4,8 +4,6 @@ require 'json'
 require 'open3'
 require 'uri'
 
-DEHYDRATED = nil
-
 def run_domain_validation_hook(hook, dn, subject_alternative_names = [])
   if hook && File.exist?(hook) && File.executable?(hook)
     domains = [dn] + subject_alternative_names
@@ -15,7 +13,7 @@ def run_domain_validation_hook(hook, dn, subject_alternative_names = [])
     args = escaped_domains.join(' ')
     cmd = "#{hook} #{args}"
     stdout, stderr, status = Open3.capture3(cmd)
-    status = status.success?
+    status = status.to_i >> 8
   else
     stdout = stderr = 'domain validation hook not found or not executable'
     status = 255
@@ -27,10 +25,10 @@ def run_dehydrated(dehydrated_config, command)
   unless DEHYDRATED && File.exist?(DEHYDRATED) && File.executable?(DEHYDRATED)
     raise 'dehydrated script not found or missing in config'
   end
-  cmd = "#{DEHYDRATED} --dehydrated_config '#{dehydrated_config}' #{command}"
+  cmd = "#{DEHYDRATED} --config '#{dehydrated_config}' #{command}"
   stdout, stderr, status = Open3.capture3(cmd)
 
-  [stdout, stderr, status.success?]
+  [stdout, stderr, status.to_i >> 8]
 end
 
 def _get_authority_url(crt, url_description)
@@ -138,11 +136,11 @@ def update_ocsp(ocsp_file, crt_file, ca_file)
 end
 
 def register_account(dehydrated_config)
-  run_dehydrated(env, dehydrated_config, '--accept-terms --register')
+  run_dehydrated(dehydrated_config, '--accept-terms --register')
 end
 
 def update_account(dehydrated_config)
-  run_dehydrated(env, dehydrated_config, '--account')
+  run_dehydrated(dehydrated_config, '--account')
 end
 
 def sign_csr(dehydrated_config, csr_file, crt_file)
@@ -213,7 +211,7 @@ def handle_request(fqdn, dn, config)
     end
   end
 
-  unless dehydrated_domain_validation_hook.empty?
+  if dehydrated_domain_validation_hook && !dehydrated_domain_validation_hook.empty?
     stdout, stderr, status = run_domain_validation_hook(
       dehydrated_domain_validation_hook,
       dn,
@@ -275,6 +273,7 @@ def run_config(dehydrated_requests_config)
       }
     end
   end
+  p requests_status
 end
 
 if ARGV.empty?
@@ -283,9 +282,11 @@ end
 
 dehydrated_host_config_file = ARGV[0]
 dehydrated_host_config = JSON.parse(File.read(dehydrated_host_config_file))
-dehydrated_requests_config_file = dehydrated_host_config['dehydrated_host_config']
+dehydrated_requests_config_file = dehydrated_host_config['dehydrated_requests_config']
 dehydrated_requests_config = JSON.parse(File.read(dehydrated_requests_config_file))
 # dehydrated_base_dir = dehydrated_host_config['dehydrated_base_dir']
+dehydrated_git_dir = dehydrated_host_config['dehydrated_git_dir']
+DEHYDRATED = File.join(dehydrated_git_dir, 'dehydrated')
 
 run_config(dehydrated_requests_config)
 
