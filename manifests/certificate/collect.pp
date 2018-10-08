@@ -57,12 +57,12 @@ define dehydrated::certificate::collect(
         $crt = undef
       }
       if (
-        has_key($config, 'oscp') and
-        $config['oscp'] =~ Stdlib::Base64
+        has_key($config, 'ocsp') and
+        $config['ocsp'] =~ Stdlib::Base64
       ) {
-        $oscp = Binary($config['oscp'])
+        $ocsp = Binary($config['ocsp'])
       } else {
-        $oscp = undef
+        $ocsp = undef
       }
       if has_key($config, 'ca') {
         $ca = $config['ca']
@@ -72,7 +72,7 @@ define dehydrated::certificate::collect(
     } else {
       notify { 'No dehydrated certificate config from facter :(' : }
       $crt = undef
-      $oscp = undef
+      $ocsp = undef
       $ca = undef
     }
   }
@@ -101,7 +101,7 @@ define dehydrated::certificate::collect(
       ],
     }
   }
-  if ($oscp) {
+  if ($ocsp) {
     @@dehydrated::certificate::transfer { "${name}-transfer-ocsp" :
       file_type    => 'ocsp',
       request_dn   => $request_dn,
