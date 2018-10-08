@@ -53,7 +53,7 @@ define dehydrated::certificate::transfer(
     }
     'ocsp' : {
       file { $ocsp :
-        content => $file_content,
+        content => base64('decode', $file_content),
       }
     }
     default : {

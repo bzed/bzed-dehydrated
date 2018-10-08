@@ -60,7 +60,7 @@ define dehydrated::certificate::collect(
         has_key($config, 'ocsp') and
         $config['ocsp'] =~ Stdlib::Base64
       ) {
-        $ocsp = Binary(base64('decode', $config['ocsp']))
+        $ocsp = Binary($config['ocsp'])
       } else {
         $ocsp = undef
       }
