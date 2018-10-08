@@ -3,6 +3,8 @@
 require 'json'
 require 'open3'
 require 'uri'
+require 'openssl'
+require 'net/http'
 
 def run_domain_validation_hook(hook, dn, subject_alternative_names = [])
   if hook && File.exist?(hook) && File.executable?(hook)
@@ -55,7 +57,7 @@ def update_ca_chain(crt_file, ca_file)
     when Net::HTTPSuccess then
       ca_crt = response.body
       status = 0
-      stdout = ca_cert
+      stdout = ca_crt
       stderr = response.message
     when Net::HTTPRedirection then
       ca_issuer_uri = URI(response['location'])
@@ -91,10 +93,16 @@ def update_ocsp(ocsp_file, crt_file, ca_file)
   ocsp_uri = _get_authority_url(crt, 'OCSP')
 
   ocsp_response = ''
+  limit = 10
   while limit > 0
+    if ocsp_uri.path.empty?
+        path = '/'
+    else
+        path = ocsp_uri.path
+    end
     response = Net::HTTP.start ocsp_uri.hostname, ocsp_uri.port do |http|
       http.post(
-        ocsp_uri.path,
+        path,
         request.to_der,
         'content-type' => 'application/ocsp-request',
       )
@@ -125,14 +133,14 @@ def update_ocsp(ocsp_file, crt_file, ca_file)
     store = OpenSSL::X509::Store.new
     store.set_default_paths
 
-    if ocsp.verify([], store)
-      File.write(ocsp_file, ocsp.to_der)
+    if ocsp.basic() && ocsp.basic().verify([], store)
+        File.write(ocsp_file, ocsp.to_der)
     else
-      status = 1
-      stderr = stdout = 'OCSP verification failed'
+        status = 1
+        stderr = stdout = 'OCSP verification failed'
     end
   end
-  [status, stdout, stderr]
+  [stdout, stderr, status.to_i]
 end
 
 def register_account(dehydrated_config)
@@ -144,7 +152,7 @@ def update_account(dehydrated_config)
 end
 
 def sign_csr(dehydrated_config, csr_file, crt_file)
-  stdout, stderr, status = run_dehydrated(env, dehydrated_config, "--signcsr '#{csr_file}'")
+  stdout, stderr, status = run_dehydrated(dehydrated_config, "--signcsr '#{csr_file}'")
   if status.zero?
     if stdout =~ %r{.*-+BEGIN CERTIFICATE-+.*-+END CERTIFICATE-+.*}m
       File.write(crt_file, stdout)
