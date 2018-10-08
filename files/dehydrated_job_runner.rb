@@ -276,6 +276,7 @@ def handle_request(fqdn, dn, config)
     ENV[key] = value
   end
 
+  # track current used CA
   File.write(dn_config_file, JSON.generate(new_dn_config))
 
 
