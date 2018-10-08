@@ -56,17 +56,22 @@ class dehydrated::setup {
 
   $config_json = to_json($config)
 
+  if ($::dehydrated::dehydrated_host == $facts['fqdn']) {
+    $configdir_group = $::dehydrated::group
+  } else {
+    $configdir_group = $::dehydrated::params::puppet_group
+  }
   file { $::dehydrated::params::configdir :
     ensure => directory,
     owner  => $::dehydrated::params::puppet_user,
-    group  => $::dehydrated::params::puppet_group,
+    group  => $configdir_group,
     mode   => '0750',
   }
 
   file { $::dehydrated::params::configfile :
     ensure  => file,
     owner   => $::dehydrated::params::puppet_user,
-    group   => $::dehydrated::params::puppet_group,
+    group   => $configdir_group,
     mode    => '0640',
     content => $config_json,
   }
