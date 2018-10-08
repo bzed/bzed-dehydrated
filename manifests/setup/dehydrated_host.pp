@@ -49,9 +49,14 @@ class dehydrated::setup::dehydrated_host {
 
   file { [
     $::dehydrated::dehydrated_base_dir,
-    $::dehydrated::dehydrated_requests_dir,
     $::dehydrated::dehydrated_wellknown_dir,
     $::dehydrated::dehydrated_alpncert_dir,
+    ] :
+      ensure => directory,
+      mode   => '0751',
+  }
+  file { [
+    $::dehydrated::dehydrated_requests_dir,
     $::dehydrated::dehydrated_hooks_dir,
     ] :
       ensure => directory,
