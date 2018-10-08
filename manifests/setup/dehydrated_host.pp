@@ -62,11 +62,21 @@ class dehydrated::setup::dehydrated_host {
     [$::dehydrated::dehydrated_base_dir, 'dehydrated_job_runner.rb'],
     $::dehydrated::params::path_seperator
   )
+  $dehydrated_host_script_config = join(
+    [$::dehydrated::dehydrated_base_dir, 'config.json'],
+    $::dehydrated::params::path_seperator
+  )
 
   file { $dehydrated_host_script :
     ensure => file,
     mode   => '0750',
     source => 'puppet:///modules/dehydrated/dehydrated_job_runner.rb',
+  }
+  file { $dehydrated_host_script_config :
+    ensure  => file,
+    mode    => '0640',
+    source  => $::dehydrated::params::configfile,
+    require => File[$::dehydrated::params::configfile],
   }
 
   vcsrepo { $::dehydrated::dehydrated_git_dir :
