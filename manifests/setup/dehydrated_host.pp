@@ -84,6 +84,12 @@ class dehydrated::setup::dehydrated_host {
     require => File[$::dehydrated::params::configfile],
   }
 
+  cron { 'dehydrated_host_script':
+    command => $dehydrated_host_script,
+    user    => $::dehydrated::dehydrated_user,
+    minute  => [3,18,33,48,]
+  }
+
   vcsrepo { $::dehydrated::dehydrated_git_dir :
     ensure   => latest,
     revision => $::dehydrated::dehydrated_git_tag,
