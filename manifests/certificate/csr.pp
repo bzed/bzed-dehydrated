@@ -26,6 +26,7 @@ define dehydrated::certificate::csr(
   Optional[String] $key_password = undef,
   Enum['present', 'absent'] $ensure = 'present',
   Boolean $force = true,
+  Optional[Integer[768]] $size = undef,
 ) {
 
   if ! defined(Class['dehydrated']) {
@@ -61,20 +62,12 @@ define dehydrated::certificate::csr(
   }
 
   if ($ensure == 'present') {
-    if $algorithm == 'rsa' {
-      ssl_pkey { $key :
-        authentication => $algorithm,
-        password       => $key_password,
-        require        => File[$key_dir],
-        before         => File[$key],
-      }
-    } else {
-      ecparam { $key :
-        short_name => $algorithm,
-        password   => $key_password,
-        require    => File[$key_dir],
-        before     => File[$key],
-      }
+    dehydrated_key { $key :
+      algorithm => $algorithm,
+      password  => $key_password,
+      size      => $size,
+      require   => File[$key_dir],
+      before    => File[$key],
     }
     x509_request { $csr :
       ensure      => $ensure,
