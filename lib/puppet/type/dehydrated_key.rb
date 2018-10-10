@@ -4,19 +4,22 @@
 require 'pathname'
 Puppet::Type.newtype(:dehydrated_key) do
   desc 'Create a private key for dehydrated.'
+  validate do
+      self.fail "Specifying a key size is supported for rsa keys only" if self[:algorithm] != rsa && self[:size]
+  end
 
   newparam(:path, namevar: true) do
     desc 'Key location, must be absolute.'
     validate do |value|
       path = Pathname.new(value)
       unless path.absolute?
-        raise ArgumentError, "Path must be absolute: #{path}"
+        fail "Path must be absolute: #{path}"
       end
     end
   end
 
   newparam(:algorithm) do
-    desc "Use the ec parameters with specified 'short name'"
+    desc "Algorithm to use for Key generation, supported: prime256v1, secp384r1, rsa"
     newvalues(:prime256v1, :secp384r1, :rsa)
     defaultto :rsa
 
@@ -31,8 +34,15 @@ Puppet::Type.newtype(:dehydrated_key) do
 
   newparam(:size) do
     desc 'The key size, used for RSA only.'
-    newvalue(/\d+/)
-    defaultto 2048
+
+    validate do |value|
+        unless value.to_i.to_s == value || value.to_i == value
+            fail "The key size must be an integer".
+        end
+        unless value.to_i >= 512 && value.to_i <= 16384
+            fail "Only key sizes >= 512 and <= 16384 are supported."
+        end
+    end
 
     munge do |val|
       val.to_i
