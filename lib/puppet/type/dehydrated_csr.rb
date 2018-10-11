@@ -58,7 +58,7 @@ Puppet::Type.newtype(:dehydrated_csr) do
     desc 'Digest used while signing the CSR, defaults to SHA512'
     defaultto :SHA512
     validate do |value|
-      raise Puppet::Error, "Unknown digest #{value}" if value !~ %r{(MD[245]|SHA(|-?(1|224|256|384|512)))}
+      raise Puppet::Error, "Unknown digest #{value}" if value !~ %r{^(MD[245]|SHA(|-?(1|224|256|384|512)))$}
     end
   end
 
