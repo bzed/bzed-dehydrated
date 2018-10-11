@@ -4,7 +4,6 @@
 fixtures:
   forge_modules:
      stdlib: "puppetlabs/stdlib"
-     openssl: "camptocamp/openssl"
      vcsrepo: "puppetlabs/vcsrepo"
      concat: "puppetlabs/concat"
   symlinks:

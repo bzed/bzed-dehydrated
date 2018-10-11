@@ -85,7 +85,7 @@ define dehydrated::certificate::csr(
     owner   => $::dehydrated::user,
     group   => $::dehydrated::group,
     mode    => '0644',
-    require => X509_request[$csr],
+    require => Dehydrated_csr[$csr],
   }
 
 

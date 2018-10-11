@@ -21,7 +21,7 @@ Puppet::Type.newtype(:dehydrated_key) do
   newparam(:algorithm) do
     desc 'Algorithm to use for Key generation, supported: prime256v1, secp384r1, rsa'
     newvalues(:prime256v1, :secp384r1, :rsa)
-    defaultto :rsa
+    defaultto 'rsa'
 
     munge do |val|
       val.to_sym

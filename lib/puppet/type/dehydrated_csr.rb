@@ -44,7 +44,7 @@ Puppet::Type.newtype(:dehydrated_csr) do
     validate do |value|
       raise Puppet::Error, 'Supported algorithms: rsa, secp384r1, prime256v1' if value !~ %r{^(rsa|secp384r1|prime256v1)$}
     end
-    defaultto :rsa
+    defaultto 'rsa'
   end
 
   newparam(:common_name) do
