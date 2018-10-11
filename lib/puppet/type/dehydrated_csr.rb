@@ -7,7 +7,7 @@ Puppet::Type.newtype(:dehydrated_csr) do
 
   ensurable
 
-  newparam(:path, :namevar => true) do
+  newparam(:path, namevar: true) do
     validate do |value|
       path = Pathname.new(value)
       unless path.absolute?
@@ -16,7 +16,7 @@ Puppet::Type.newtype(:dehydrated_csr) do
     end
   end
 
-  newparam(:force, :boolean => true) do
+  newparam(:force, boolean: true) do
     desc 'Whether to replace the certificate if the private key or CommonName/SANs mismatches'
     newvalues(:true, :false)
     defaultto false
@@ -24,19 +24,6 @@ Puppet::Type.newtype(:dehydrated_csr) do
 
   newparam(:password) do
     desc 'The optional password for the private key'
-  end
-
-  newparam(:template) do
-    defaultto do
-      path = Pathname.new(@resource[:path])
-      "#{path.dirname}/#{path.basename(path.extname)}.cnf"
-    end
-    validate do |value|
-      path = Pathname.new(value)
-      unless path.absolute?
-        fail "Path must be absolute: #{path}"
-      end
-    end
   end
 
   newparam(:private_key) do
@@ -47,7 +34,7 @@ Puppet::Type.newtype(:dehydrated_csr) do
     validate do |value|
       path = Pathname.new(value)
       unless path.absolute?
-        fail "Path must be absolute: #{path}"
+        raise Puppet::Error, "Path must be absolute: #{path}"
       end
     end
   end
@@ -55,20 +42,36 @@ Puppet::Type.newtype(:dehydrated_csr) do
   newparam(:algorithm) do
     desc 'The algorithm to use, supported: rsa, secp384r1, prime256v1'
     validate do |value|
-        fail 'Supported algorithms: rsa, secp384r1, prime256v1' if value !~ %r{^(rsa|secp384r1|prime256v1)$}
+      raise Puppet::Error, 'Supported algorithms: rsa, secp384r1, prime256v1' if value !~ %r{^(rsa|secp384r1|prime256v1)$}
     end
     defaultto :rsa
   end
 
-  newparam(:encrypted, :boolean => true) do
-    desc 'Whether to generate the key unencrypted. This is needed by some applications like OpenLDAP'
-    newvalues(:true, :false)
-    defaultto true
+  newparam(:common_name) do
+    desc 'The common name for the csr'
+    validate do |value|
+      raise Puppet::Error, 'A common name is always required' if value.blank?
+    end
   end
 
-  autorequire(:x509_cert) do
-    path = Pathname.new(self[:private_key])
-    "#{path.dirname}/#{path.basename(path.extname)}"
+  newparam(:digest) do
+    desc 'Digest used while signing the CSR, defaults to SHA512'
+    defaultto :SHA512
+    validate do |value|
+      raise Puppet::Error, "Unknown digest #{value}" if value !~ %r{(MD[245]|SHA(|-?(1|224|256|384|512)))}
+    end
+  end
+
+  newparam(:subject_alternative_names) do
+    desc 'SANs to request'
+    defaultto []
+    validate do |value|
+      raise Puppet::Error, 'subject_alternative_names must be an array!' unless value.is_a?(Array)
+    end
+  end
+
+  autorequire(:dehydrated_key) do
+    self[:private_key]
   end
 
   autorequire(:file) do
