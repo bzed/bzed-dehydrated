@@ -1,3 +1,4 @@
+require 'rspec-puppet'
 require 'rspec-puppet-facts'
 include RspecPuppetFacts
 
@@ -6,6 +7,9 @@ require 'spec_helper'
 
 RSpec.configure do |c|
   c.enable_pathname_stubbing = true
+#  c.after(:suite) do
+#    RSpec::Puppet::Coverage.report!(95)
+#  end
 end
 WINDOWS = defined?(RSpec::Support) ? RSpec::Support::OS.windows? : !File::ALT_SEPARATOR.nil?
 

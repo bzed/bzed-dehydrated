@@ -9,6 +9,7 @@ Gemfile:
       - gem: 'rspec-puppet-facts'
         version: '~> 1.7'
       - gem: 'puppet-blacksmith'
+      - gem: 'rspec-puppet'
 
 Rakefile:
   requires:
