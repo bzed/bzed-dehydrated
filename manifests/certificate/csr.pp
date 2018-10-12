@@ -70,6 +70,7 @@ define dehydrated::certificate::csr(
       digest                    => $digest,
       require                   => [
         File[$key],
+        File[$csr_dir],
       ]
     }
   }

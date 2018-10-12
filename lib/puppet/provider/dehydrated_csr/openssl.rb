@@ -52,9 +52,13 @@ Puppet::Type.type(:dehydrated_csr).provide(:openssl) do
   end
 
   def self.check_private_key(resource)
-    request = OpenSSL::X509::Request.new(File.read(resource[:path]))
-    priv = private_key(resource)
-    request.verify(priv)
+    if File.exist?(resource[:path])
+      request = OpenSSL::X509::Request.new(File.read(resource[:path]))
+      priv = private_key(resource)
+      request.verify(priv)
+    else
+      false
+    end
   end
 
   def self.create_subject(resource)
@@ -104,9 +108,9 @@ Puppet::Type.type(:dehydrated_csr).provide(:openssl) do
 
   def exists?
     (
-     Pathname.new(resource[:path]).exist? ||
-     (resource[:force] && !self.class.check_private_key(resource)) ||
-     (resource[:force] && !self.class.check_sans(resource))
+      Pathname.new(resource[:path]).exist? ||
+      (resource[:force] && !self.class.check_private_key(resource)) ||
+      (resource[:force] && !self.class.check_sans(resource))
     )
   end
 
