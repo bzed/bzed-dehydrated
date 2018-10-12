@@ -27,23 +27,16 @@ define dehydrated::certificate::dh(
   $crt_dir  = $::dehydrated::crt_dir
   $dh  = "${crt_dir}/${base_filename}.dh"
 
-  if (($dh_mtime + $max_age) <= time() and ($ensure == 'present')) {
-    exec { "create-dh-for-${dn}-${base_filename}" :
-      path    => $facts['path'],
-      user    => $::dehydrated::user,
-      group   => $::dehydrated::group,
-      umask   => '022',
-      command => "openssl dhparam -check -out ${dh} ${dh_param_size}",
-      require => File[$crt_dir],
-      before  => File[$dh],
-    }
+  dehydrated_dhparam { $dh :
+    size => $dh_param_size,
   }
 
   file { $dh:
-    ensure => $ensure,
-    owner  => $::dehydrated::user,
-    group  => $::dehydrated::group,
-    mode   => '0644',
+    ensure  => $ensure,
+    owner   => $::dehydrated::user,
+    group   => $::dehydrated::group,
+    mode    => '0644',
+    require => Dehydrated_dhparam[$dh],
   }
 
 }
