@@ -85,7 +85,7 @@ class dehydrated::setup::dehydrated_host {
   }
 
   cron { 'dehydrated_host_script':
-    command => $dehydrated_host_script,
+    command => "${dehydrated_host_script} ${dehydrated_host_script_config}",
     user    => $::dehydrated::dehydrated_user,
     minute  => [3,18,33,48,]
   }
