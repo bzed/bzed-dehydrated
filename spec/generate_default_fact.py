@@ -104,7 +104,6 @@ dehydrated_domains = {
         'challengetype': 'dns-01',
         'subject_alternative_names': [],
         'csr': wildcard_csr,
-        'dh_mtime': -99999,
         'dehydrated_hook': 'dns-01.sh',
         'dehydrated_environment': {},
     },
@@ -114,7 +113,6 @@ dehydrated_domains = {
         'challengetype': 'dns-01',
         'subject_alternative_names': [],
         'csr': test_csr,
-        'dh_mtime': -99999,
         'dehydrated_hook': 'dns-01.sh',
         'dehydrated_environment': {'PATH': '/tmp'},
     }
