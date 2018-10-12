@@ -18,37 +18,42 @@ Puppet::Type.type(:dehydrated_csr).provide(:openssl) do
   end
 
   def self.check_sans(resource)
-    ext_req = request.attributes.find do |a|
-      a.oid == 'extReq'
-    end
-
-    san_value = ext_req.value.map do |ext_req_v|
-      san = ext_req_v.find do |v|
-        v.value[0].value == 'subjectAltName'
+    if File.exist?(resource[:path])
+      request = OpenSSL::X509::Request.new(File.read(resource[:path]))
+      ext_req = request.attributes.find do |a|
+        a.oid == 'extReq'
       end
-      if san
-        san.value[1]
-      end
-    end
-    san_value = OpenSSL::ASN1.decode(san_value[0].value)
 
-    csr_alt_names = san_value.map do |v|
-      case v.tag
-      when 2
-        v.value
-      when 7
-        case v.value.size
-        when 4
-          v.value.unpack('C*').join('.')
-        when 16
-          v.value.unpack('n*').map { |o| '%X' % o }.join(':')
+      san_value = ext_req.value.map do |ext_req_v|
+        san = ext_req_v.find do |v|
+          v.value[0].value == 'subjectAltName'
+        end
+        if san
+          san.value[1]
         end
       end
-    end
+      san_value = OpenSSL::ASN1.decode(san_value[0].value)
 
-    configured_alt_names = [resource[:common_name], resource[:subject_alternative_names]]
-    configured_alt_names.flatten!.uniq!
-    configured_alt_names.sort == csr_alt_names.sort
+      csr_alt_names = san_value.map do |v|
+        case v.tag
+        when 2
+          v.value
+        when 7
+          case v.value.size
+          when 4
+            v.value.unpack('C*').join('.')
+          when 16
+            v.value.unpack('n*').map { |o| '%X' % o }.join(':')
+          end
+        end
+      end
+
+      configured_alt_names = [resource[:common_name], resource[:subject_alternative_names]]
+      configured_alt_names.flatten!.uniq!
+      configured_alt_names.sort == csr_alt_names.sort
+    else
+      false
+    end
   end
 
   def self.check_private_key(resource)
