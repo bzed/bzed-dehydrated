@@ -8,6 +8,8 @@ Puppet::Type.newtype(:dehydrated_key) do
     raise Puppet::Error, 'Specifying a key size is supported for rsa keys only' if self[:algorithm] != 'rsa' && self[:size]
   end
 
+  ensureable
+
   newparam(:path, namevar: true) do
     desc 'Key location, must be absolute.'
     validate do |value|
