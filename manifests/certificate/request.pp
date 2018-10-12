@@ -21,7 +21,6 @@ define dehydrated::certificate::request(
 
   $base_filename = $config['base_filename']
   $dh_param_size = $config['dh_param_size']
-  $dh_mtime = $config['dh_mtime']
   $csr = $config['csr']
   $crt_serial = $config['crt_serial']
   $subject_alternative_names = $config['subject_alternative_names']
