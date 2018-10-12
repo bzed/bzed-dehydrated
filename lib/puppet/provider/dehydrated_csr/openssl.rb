@@ -8,9 +8,9 @@ Puppet::Type.type(:dehydrated_csr).provide(:openssl) do
 
   def self.private_key(resource)
     file = File.read(resource[:private_key])
-    if resource[:algorithm] == 'rsa'
+    if resource[:algorithm] == :rsa
       OpenSSL::PKey::RSA.new(file, resource[:password])
-    elsif resource[:algorithm] == 'prime256v1' || resource[:algorithm] == 'secp384r1'
+    elsif resource[:algorithm] == :prime256v1 || resource[:algorithm] == :secp384r1
       OpenSSL::PKey::EC.new(file, resource[:password])
     else
       raise Puppet::Error, "Unknown algorithm type '#{resource[:algorithm]}'"
@@ -103,20 +103,21 @@ Puppet::Type.type(:dehydrated_csr).provide(:openssl) do
       "DNS:#{san}"
     end
     dns_subject_alternative_names_list = dns_subject_alternative_names.join(',')
-
-    ext = factory.create_ext(
+    ext = factory.create_extension(
       'subjectAltName',
       dns_subject_alternative_names_list,
       false,
     )
-    ext_set = OpenSSL::ASN1::Set([OpenSSL::ASN1::Sequence([ext])])
+    ext_set = OpenSSL::ASN1::Set.new([OpenSSL::ASN1::Sequence.new([ext])])
     OpenSSL::X509::Attribute.new('extReq', ext_set)
   end
 
   def self.create_x509_csr(subject, attributes, private_key, digest)
     request = OpenSSL::X509::Request.new
     request.subject = subject
-    request.attributes = attributes unless @attributes.nil?
+    attributes.each do |attribute|
+      request.add_attribute(attribute)
+    end
     request.public_key = private_key.public_key
     openssl_digest = OpenSSL::Digest.new(digest)
     request.sign(private_key, openssl_digest)
@@ -147,7 +148,7 @@ Puppet::Type.type(:dehydrated_csr).provide(:openssl) do
 
   def create
     subject = self.class.create_subject(resource)
-    subject_alternative_names = if resource[:subject_alternative_names].blank?
+    subject_alternative_names = if resource[:subject_alternative_names].nil? || resource[:subject_alternative_names].empty?
                                   [resource[:common_name]]
                                 elsif resource[:subject_alternative_names].include?(resource[:common_name])
                                   resource[:subject_alternative_names]

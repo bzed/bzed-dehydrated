@@ -4,11 +4,8 @@
 require 'pathname'
 Puppet::Type.newtype(:dehydrated_key) do
   desc 'Create a private key for dehydrated.'
-  validate do
-    raise Puppet::Error, 'Specifying a key size is supported for rsa keys only' if self[:algorithm] != 'rsa' && self[:size]
-  end
 
-  ensureable
+  ensurable
 
   newparam(:path, namevar: true) do
     desc 'Key location, must be absolute.'
@@ -23,7 +20,7 @@ Puppet::Type.newtype(:dehydrated_key) do
   newparam(:algorithm) do
     desc 'Algorithm to use for Key generation, supported: prime256v1, secp384r1, rsa'
     newvalues(:prime256v1, :secp384r1, :rsa)
-    defaultto 'rsa'
+    defaultto :rsa
 
     munge do |val|
       val.to_sym
@@ -36,6 +33,7 @@ Puppet::Type.newtype(:dehydrated_key) do
 
   newparam(:size) do
     desc 'The key size, used for RSA only.'
+    defaultto 2048
 
     validate do |value|
       unless (value.to_i.to_s == value) || (value.to_i == value)

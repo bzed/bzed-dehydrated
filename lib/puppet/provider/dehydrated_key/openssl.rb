@@ -30,7 +30,7 @@ Puppet::Type.type(:dehydrated_key).provide(:openssl) do
   end
 
   def exists?
-    Pathname.new(resource[:path]).exist?
+    Pathname.new(resource[:path]).exist? && !File.read(resource[:path]).empty?
   end
 
   def create

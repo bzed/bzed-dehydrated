@@ -67,13 +67,16 @@ define dehydrated::certificate::csr(
       private_key               => $key,
       password                  => $key_password,
       algorithm                 => $algorithm,
+      common_name               => $dn,
       subject_alternative_names => $subject_alternative_names,
       force                     => $force,
       digest                    => $digest,
       require                   => [
         File[$key],
         File[$csr_dir],
-      ]
+        Dehydrated_key[$key],
+      ],
+      before                    => File[$csr],
     }
   }
 
