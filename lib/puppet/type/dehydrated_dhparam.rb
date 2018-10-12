@@ -2,8 +2,8 @@
 # Apache License, Version 2.0, January 2004
 
 require 'pathname'
-Puppet::Type.newtype(:dhparam) do
-  desc 'A Diffie Helman parameter file'
+Puppet::Type.newtype(:dehydrated_dhparam) do
+  desc 'DH params for dehydrated'
 
   ensurable
 

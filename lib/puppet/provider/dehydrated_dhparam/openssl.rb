@@ -2,7 +2,7 @@
 # Apache License, Version 2.0, January 2004
 
 require 'pathname'
-Puppet::Type.type(:dhparam).provide(:openssl) do
+Puppet::Type.type(:dehydrated_dhparam).provide(:openssl) do
   desc 'Manages dhparam files with OpenSSL'
 
   commands :openssl => 'openssl'
