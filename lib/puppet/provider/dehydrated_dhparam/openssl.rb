@@ -5,7 +5,7 @@ require 'pathname'
 Puppet::Type.type(:dehydrated_dhparam).provide(:openssl) do
   desc 'Manages dhparam files with OpenSSL'
 
-  commands :openssl => 'openssl'
+  commands openssl: 'openssl'
 
   def exists?
     if resource[:size] < 2048
@@ -16,7 +16,6 @@ Puppet::Type.type(:dehydrated_dhparam).provide(:openssl) do
     else
       Pathname.new(resource[:path]).exist?
     end
-
   end
 
   def create

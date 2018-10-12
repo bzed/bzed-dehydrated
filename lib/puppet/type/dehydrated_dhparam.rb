@@ -7,7 +7,7 @@ Puppet::Type.newtype(:dehydrated_dhparam) do
 
   ensurable
 
-  newparam(:path, :namevar => true) do
+  newparam(:path, namevar: true) do
     validate do |value|
       path = Pathname.new(value)
       unless path.absolute?
@@ -29,5 +29,4 @@ Puppet::Type.newtype(:dehydrated_dhparam) do
       value.to_i
     end
   end
-
 end
