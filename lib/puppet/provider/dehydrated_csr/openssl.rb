@@ -8,9 +8,9 @@ Puppet::Type.type(:dehydrated_csr).provide(:openssl) do
 
   def self.private_key(resource)
     file = File.read(resource[:private_key])
-    if resource[:algorithm] == :rsa
+    if resource[:algorithm] == 'rsa'
       OpenSSL::PKey::RSA.new(file, resource[:password])
-    elsif resource[:algorithm] == :prime256v1 || resource[:algorithm] == :secp384r1
+    elsif resource[:algorithm] == 'prime256v1' || resource[:algorithm] == 'secp384r1'
       OpenSSL::PKey::EC.new(file, resource[:password])
     else
       raise Puppet::Error, "Unknown algorithm type '#{resource[:algorithm]}'"
