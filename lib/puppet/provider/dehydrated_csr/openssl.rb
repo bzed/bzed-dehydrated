@@ -107,11 +107,12 @@ Puppet::Type.type(:dehydrated_csr).provide(:openssl) do
   end
 
   def exists?
-    (
-      Pathname.new(resource[:path]).exist? ||
-      (resource[:force] && !self.class.check_private_key(resource)) ||
-      (resource[:force] && !self.class.check_sans(resource))
-    )
+    exists = Pathname.new(resource[:path]).exist?
+    if exists && resource[:force]
+      self.class.check_private_key(resource) && self.class.check_sans(resource)
+    else
+      exists
+    end
   end
 
   def create
