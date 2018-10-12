@@ -60,6 +60,9 @@ Facter.add(:dehydrated_domains) do
 
         ca = File.join(crt_dir, "#{base_filename}_ca.pem")
 
+        # DH
+        dh = File.join(crt_dir, "#{base_filename}.dh")
+
         ret[dn]['ready_for_merge'] = File.exist?(csr) &&
                                      File.exist?(crt) &&
                                      File.exist?(dh) &&
