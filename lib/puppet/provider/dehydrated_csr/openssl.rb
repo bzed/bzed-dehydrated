@@ -2,6 +2,7 @@
 # Apache License, Version 2.0, January 2004
 
 require 'pathname'
+require 'openssl'
 Puppet::Type.type(:dehydrated_csr).provide(:openssl) do
   desc 'Manages certificate signing requests with OpenSSL'
 
