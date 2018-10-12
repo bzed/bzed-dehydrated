@@ -13,7 +13,6 @@
 define dehydrated::certificate::dh(
   Dehydrated::DN $dn,
   Integer[786] $dh_param_size,
-  Integer $dh_mtime,
   String $base_filename = $name,
   Enum['present', 'absent'] $ensure = 'present',
   Integer[3600] $max_age = (30*24*60*60),

@@ -70,7 +70,6 @@ class dehydrated
   $dehydrated_domains.each |Dehydrated::DN $_dn, Hash $_config| {
     $_base_filename = $_config['base_filename']
     $_dh_param_size = $_config['dh_param_size']
-    $_dh_mtime = $_config['dh_mtime']
     $_csr = $_config['csr']
     $_crt_serial = $_config['crt_serial']
     $_subject_alternative_names = $_config['subject_alternative_names']
@@ -80,7 +79,6 @@ class dehydrated
     ::dehydrated::certificate::dh { $_base_filename :
       dn            => $_dn,
       dh_param_size => $_dh_param_size,
-      dh_mtime      => $_dh_mtime,
     }
 
     $request_name = join(

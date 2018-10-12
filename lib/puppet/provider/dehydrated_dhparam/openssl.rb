@@ -8,13 +8,29 @@ Puppet::Type.type(:dehydrated_dhparam).provide(:openssl) do
   commands openssl: 'openssl'
 
   def exists?
-    if resource[:size] < 2048
-      # replace dhparms regularily to avoid logjam attacks
-      # should not be necessary with dhparams >= 2048.
-      # please send pull requests if my knowledge is wrong :)
-      Pathname.new(resource[:path]).exist? && (File.mtime(resource[:path]) + 24 * 60 * 60) < Time.now
+    needsreplace = if resource[:size] < 2048
+                     # replace dhparms regularily to avoid logjam attacks
+                     # should not be necessary with dhparams >= 2048.
+                     # please send pull requests if my knowledge is wrong :)
+                     Pathname.new(resource[:path]).exist? && (File.mtime(resource[:path]) + 24 * 60 * 60) < Time.now
+                   else
+                     Pathname.new(resource[:path]).exist?
+                   end
+
+    if !needsreplace
+      content = File.read(resource[:path])
+      if content.empty?
+        false
+      else
+        begin
+          dh = OpenSSL::PKey::DH.new(content)
+          dh.params_ok?
+        rescue OpenSSL::PKey::DHError
+          false
+        end
+      end
     else
-      Pathname.new(resource[:path]).exist?
+      false
     end
   end
 

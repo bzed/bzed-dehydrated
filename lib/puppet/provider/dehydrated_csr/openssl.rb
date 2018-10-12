@@ -26,9 +26,9 @@ Puppet::Type.type(:dehydrated_csr).provide(:openssl) do
       when 4
         v.value.unpack('C*').join('.')
       when 16
-        # rubocop#disable Style/FormatStringtToken
+        # rubocop:disable Style/FormatStringToken
         v.value.unpack('n*').map { |o| '%X' % o }.join(':')
-        # rubocop#enable Style/FormatStringtToken
+        # rubocop:enable Style/FormatStringToken
       end
     end
   end
