@@ -10,6 +10,7 @@
 #   }
 #
 # @api private
+#
 define dehydrated::certificate::csr(
   Dehydrated::DN $dn,
   Array[Dehydrated::DN] $subject_alternative_names,

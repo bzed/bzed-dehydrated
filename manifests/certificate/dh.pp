@@ -1,6 +1,6 @@
-# A description of what this defined type does
+# Create dh params files as necessary.
 #
-# @summary A short summary of the purpose of this defined type.
+# @summary Create the DH params file.
 #
 # @example
 #   dehydrated::certificate::dh { 'test.example.com':

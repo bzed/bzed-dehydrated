@@ -1,9 +1,14 @@
-# A description of what this defined type does
+# Used as exported ressource to ransfer crt/ca/ocsp files.
 #
-# @summary A short summary of the purpose of this defined type.
+# @summary Transfer crt/ca/ocsp files.
 #
 # @example
-#   dehydrated::certificate::transfer { 'namevar': }
+#   dehydrated::certificate::transfer { 'namevar':
+#       file_type    => 'crt',
+#       request_dn   => 'domain.foo.bar.example.com',
+#       request_fqdn => 'foo.bar.example.com',
+#       file_content => '',
+#   }
 #
 # @api private
 #

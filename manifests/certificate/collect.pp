@@ -3,7 +3,15 @@
 # @summary A short summary of the purpose of this defined type.
 #
 # @example
-#   dehydrated::certificate::collect { 'namevar': }
+#   dehydrated::certificate::collect { 'namevar': 
+#       request_dn            => '*.foo.bar.com',
+#       request_fqdn          => 'foo.bar.com',
+#       request_base_dir      => '/opt/dehydrated/requests',
+#       request_base_filename => '_.foo.bar.com',
+#   }
+#
+# @api private
+#
 define dehydrated::certificate::collect(
   Dehydrated::DN $request_dn,
   Stdlib::Fqdn $request_fqdn,

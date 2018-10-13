@@ -1,9 +1,12 @@
-# A description of what this defined type does
+# Deploy collected certificate and CA files.
 #
-# @summary A short summary of the purpose of this defined type.
+# @summary Deploy collected certificate and CA files.
 #
 # @example
 #   dehydrated::certificate::deploy { 'namevar': }
+#
+# @api private
+#
 define dehydrated::certificate::deploy(
   Dehydrated::DN $dn = $name,
 ) {

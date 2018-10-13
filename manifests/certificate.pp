@@ -5,6 +5,8 @@
 #
 # @example
 #   dehydrated::certificate { 'test.example.com': }
+#
+# @api public
 define dehydrated::certificate(
   Dehydrated::DN $dn = $name,
   String $base_filename = regsubst($dn, '^\*', '_wildcard_'),
