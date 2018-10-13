@@ -42,7 +42,7 @@ need to be renewed are transferred, it is unknown how well this
 approach scales if you plan to request lots of certificates. Using
 a (designated) puppet master is the better option.
 
-### Setup Requirements **OPTIONAL**
+### Setup Requirements 
 
 You need to ensure that exported ressources are working and pluginsync
 is enabled.
@@ -58,39 +58,20 @@ Include usage examples for common use cases in the **Usage** section. Show your 
 
 ## Reference
 
-This section is deprecated. Instead, add reference information to your code as Puppet Strings comments, and then use Strings to generate a REFERENCE.md in your module. For details on how to add code comments and generate documentation with Strings, see the Puppet Strings [documentation](https://puppet.com/docs/puppet/latest/puppet_strings.html) and [style guide](https://puppet.com/docs/puppet/latest/puppet_strings_style.html)
+An html version of the reference is available here: https://bzed.github.io/bzed-dehydrated/
 
-If you aren't ready to use Strings yet, manually create a REFERENCE.md in the root of your module directory and list out each of your module's classes, defined types, facts, functions, Puppet tasks, task plans, and resource types and providers, along with the parameters for each.
+## Monitoring
 
-For each element (class, defined type, function, and so on), list:
-
-  * The data type, if applicable.
-  * A description of what the element does.
-  * Valid values, if the data type doesn't make it obvious.
-  * Default value, if any.
-
-For example:
-
-```
-### `pet::cat`
-
-#### Parameters
-
-##### `meow`
-
-Enables vocalization in your cat. Valid options: 'string'.
-
-Default: 'medium-loud'.
-```
+The cron-triggered dehydrated worker creates a status file in a format compatible with check\_statusfile, which is - in Debian and derivates - packaged in the _nagios-plugins-contrib_ package.
+If you ar enot using Debian you can retrieve the source code here: https://github.com/bzed/pkg-nagios-plugins-contrib/blob/master/dsa/checks/dsa-check-statusfile
 
 ## Limitations
 
-In the Limitations section, list any incompatibilities, known issues, or other warnings.
+Don't forget that Let’s Encrypt limits apply!
+Also: this code might not work for your use-case out of the box, please test it properly against
+the Let’s Encrypt testing CA instead of running into the limit for failed authorizations and blaiming me for it ;)
 
 ## Development
 
-In the Development section, tell other users the ground rules for contributing to your project and how they should submit their work.
+Please use the github issue tracker and send pull requests. Make sure that your pull requests keep travis happy!
 
-## Release Notes/Contributors/Etc. **Optional**
-
-If you aren't using changelog, put your release notes here (though you should consider using changelog). You can also add any additional sections you feel are necessary or important to include here. Please use the `## ` header.
