@@ -117,7 +117,7 @@ renewed are transferred, it is unknown how well this approach scales if you
 plan to request lots of certificates. Using a (designated) puppet master is
 the better option.</p>
 
-<h3 id="label-Setup+Requirements+OPTIONAL">Setup Requirements <strong>OPTIONAL</strong></h3>
+<h3 id="label-Setup+Requirements">Setup Requirements</h3>
 
 <p>You need to ensure that exported ressources are working and pluginsync is
 enabled.</p>
@@ -139,60 +139,28 @@ classes, and functions working in tandem.</p>
 
 <h2 id="label-Reference">Reference</h2>
 
-<p>This section is deprecated. Instead, add reference information to your code
-as Puppet Strings comments, and then use Strings to generate a REFERENCE.md
-in your module. For details on how to add code comments and generate
-documentation with Strings, see the Puppet Strings <a
-href="https://puppet.com/docs/puppet/latest/puppet_strings.html">documentation</a>
-and <a
-href="https://puppet.com/docs/puppet/latest/puppet_strings_style.html">style
-guide</a></p>
+<p>An html version of the reference is available here: <a
+href="https://bzed.github.io/bzed-dehydrated">bzed.github.io/bzed-dehydrated</a>/</p>
 
-<p>If you aren&#39;t ready to use Strings yet, manually create a REFERENCE.md
-in the root of your module directory and list out each of your module&#39;s
-classes, defined types, facts, functions, Puppet tasks, task plans, and
-resource types and providers, along with the parameters for each.</p>
+<h2 id="label-Monitoring">Monitoring</h2>
 
-<p>For each element (class, defined type, function, and so on), list:</p>
-<ul><li>
-<p>The data type, if applicable.</p>
-</li><li>
-<p>A description of what the element does.</p>
-</li><li>
-<p>Valid values, if the data type doesn&#39;t make it obvious.</p>
-</li><li>
-<p>Default value, if any.</p>
-</li></ul>
-
-<p>For example:</p>
-
-<pre class="code ruby"><code class="ruby">### `pet::cat`
-
-#### Parameters
-
-##### `meow`
-
-Enables vocalization in your cat. Valid options: &#39;string&#39;.
-
-Default: &#39;medium-loud&#39;.
-</code></pre>
+<p>The cron-triggered dehydrated worker creates a status file in a format
+compatible with check_statusfile, which is - in Debian and derivates -
+packaged in the <em>nagios-plugins-contrib</em> package. If you ar enot
+using Debian you can retrieve the source code here: <a
+href="https://github.com/bzed/pkg-nagios-plugins-contrib/blob/master/dsa/checks/dsa-check-statusfile">github.com/bzed/pkg-nagios-plugins-contrib/blob/master/dsa/checks/dsa-check-statusfile</a></p>
 
 <h2 id="label-Limitations">Limitations</h2>
 
-<p>In the Limitations section, list any incompatibilities, known issues, or
-other warnings.</p>
+<p>Don&#39;t forget that Let’s Encrypt limits apply! Also: this code might not
+work for your use-case out of the box, please test it properly against the
+Let’s Encrypt testing CA instead of running into the limit for failed
+authorizations and blaiming me for it ;)</p>
 
 <h2 id="label-Development">Development</h2>
 
-<p>In the Development section, tell other users the ground rules for
-contributing to your project and how they should submit their work.</p>
-
-<h2 id="label-Release+Notes-2FContributors-2FEtc.+Optional">Release Notes/Contributors/Etc. <strong>Optional</strong></h2>
-
-<p>If you aren&#39;t using changelog, put your release notes here (though you
-should consider using changelog). You can also add any additional sections
-you feel are necessary or important to include here. Please use the
-<code>##</code> header.</p>
+<p>Please use the github issue tracker and send pull requests. Make sure that
+your pull requests keep travis happy!</p>
 </div></div>
 
       <div id="footer">
