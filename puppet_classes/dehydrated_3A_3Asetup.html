@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Puppet Class: dehydrated::setup
+  
+    &mdash; Documentation by YARD 0.9.16
+  
+</title>
+
+  <link rel="stylesheet" href="../css/style.css" type="text/css" charset="utf-8" />
+
+  <link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  pathId = "puppet_classes::dehydrated::setup";
+  relpath = '../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../puppet_class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../_index.html">Index (d)</a> &raquo;
+    <span class='title'><span class='object_link'>Puppet Classes</span></span>
+     &raquo; 
+    <span class="title">dehydrated::setup</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="puppet_class_list_link"
+        href="../puppet_class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Puppet Class: dehydrated::setup</h1>
+<div class="box_info">
+  
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>
+      manifests/setup.pp
+    </dd>
+  </dl>
+</div>
+
+  <h2>Summary</h2>
+  Setup required files and folders. Don't include/call this class.
+
+<h2>Overview</h2>
+<div class="docstring">
+  <div class="discussion">
+    
+<p>This class creates all the necessary files and folders do handle key/csr
+creation and crt storage. It shoudld never be included in your puppet code.</p>
+
+  </div>
+</div>
+
+
+<div class="tags">
+  
+
+</div><div class="method_details_list">
+  <table class="source_code">
+    <tr>
+      <td>
+        <pre class="lines">
+
+
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97</pre>
+      </td>
+      <td>
+        <pre class="code"><span class="info file"># File 'manifests/setup.pp', line 9</span>
+
+class dehydrated::setup {
+
+  require ::dehydrated::params
+
+  if ! defined(Class[&#39;dehydrated&#39;]) {
+    fail(&#39;You must include the dehydrated base class first; also this class is not supposed to be included on its own.&#39;)
+  }
+
+  if ($::dehydrated::manage_user) {
+    if ($facts[&#39;kernel&#39;] == &#39;windows&#39;) {
+      fail(&#39;User management not configured for windows&#39;)
+    }
+
+    if (defined(&#39;$::dehydrated::group&#39;)) {
+      if ($::dehydrated::params::puppet_group != $::dehydrated::group) {
+        group { $::dehydrated::group :
+          ensure =&gt; &#39;present&#39;
+        }
+        $group_require = Group[$::dehydrated::group]
+      }
+    }
+  }
+  if (! defined(&#39;$group_require&#39;)) {
+    $group_require = undef
+  }
+
+
+
+  if ($::dehydrated::manage_packages) {
+    ensure_packages($::dehydrated::packages)
+    if (!empty($::dehydrated::pki_packages)) {
+      ensure_packages($::dehydrated::pki_packages)
+    }
+  }
+
+  $config = {
+    &#39;base_dir&#39;                   =&gt; $::dehydrated::base_dir,
+    &#39;crt_dir&#39;                    =&gt; $::dehydrated::crt_dir,
+    &#39;csr_dir&#39;                    =&gt; $::dehydrated::csr_dir,
+    &#39;dehydrated_base_dir&#39;        =&gt; $::dehydrated::dehydrated_base_dir,
+    &#39;dehydrated_git_dir&#39;         =&gt; $::dehydrated::dehydrated_git_dir,
+    &#39;dehydrated_host&#39;            =&gt; $::dehydrated::dehydrated_host,
+    &#39;dehydrated_puppetmaster&#39;    =&gt; $::dehydrated::params::dehydrated_puppetmaster,
+    &#39;dehydrated_requests_dir&#39;    =&gt; $::dehydrated::dehydrated_requests_dir,
+    &#39;dehydrated_requests_config&#39; =&gt; $::dehydrated::dehydrated_requests_config,
+    &#39;key_dir&#39;                    =&gt; $::dehydrated::key_dir,
+  }
+
+  $config_json = to_json($config)
+
+  file { $::dehydrated::params::configdir :
+    ensure =&gt; directory,
+    owner  =&gt; $::dehydrated::params::puppet_user,
+    group  =&gt; $::dehydrated::params::puppet_group,
+    mode   =&gt; &#39;0750&#39;,
+  }
+
+  file { $::dehydrated::params::configfile :
+    ensure  =&gt; file,
+    owner   =&gt; $::dehydrated::params::puppet_user,
+    group   =&gt; $::dehydrated::params::puppet_group,
+    mode    =&gt; &#39;0640&#39;,
+    content =&gt; $config_json,
+  }
+
+  File {
+    ensure  =&gt; directory,
+    owner   =&gt; $::dehydrated::user,
+    group   =&gt; $::dehydrated::group,
+    mode    =&gt; &#39;0755&#39;,
+    require =&gt; $group_require,
+  }
+
+  file { [
+    $::dehydrated::base_dir,
+    $::dehydrated::crt_dir,
+    $::dehydrated::csr_dir,
+    ] :
+  }
+
+  file { $::dehydrated::key_dir :
+    mode =&gt; &#39;0750&#39;,
+  }
+
+  concat { $::dehydrated::params::domainfile :
+    ensure =&gt; present,
+    format =&gt; &#39;json-pretty&#39;,
+  }
+}</pre>
+      </td>
+    </tr>
+  </table>
+</div>
+</div>
+
+      <div id="footer">
+     Generated by <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>.
+</div>
+
+    </div>
+  </body>
+</html>

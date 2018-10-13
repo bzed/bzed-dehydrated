@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  File: README
+  
+    &mdash; Documentation by YARD 0.9.16
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" charset="utf-8" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  pathId = "";
+  relpath = '';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="file_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="_index.html">Index</a> &raquo; 
+    <span class="title">File: README</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="puppet_class_list_link"
+        href="puppet_class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><div id='filecontents'>
+<h1 id="label-dehydrated">dehydrated</h1>
+
+<p><a href="https://forge.puppetlabs.com/bzed/dehydrated"><img
+src="http://img.shields.io/puppetforge/v/bzed/dehydrated.svg"></a> <a
+href="https://travis-ci.org/bzed/bzed-dehydrated"><img
+src="https://travis-ci.org/bzed/bzed-dehydrated.png?branch=master"></a></p>
+
+<p>Centralized CSR signing using Let’s Encrypt™ - keeping your keys safe on
+the host they belong to.</p>
+
+<h4 id="label-Table+of+Contents">Table of Contents</h4>
+<ol><li>
+<p><a href="#label-Description">Description</a></p>
+</li><li>
+<p><a href="#label-Setup">Setup - The basics of getting started with dehydrated</a></p>
+<ul><li>
+<p><a href="#label-What+dehydrated+affects">What dehydrated affects</a></p>
+</li><li>
+<p><a href="#label-Setup+requirements">Setup requirements</a></p>
+</li><li>
+<p><a href="#label-Beginning+with+dehydrated">Beginning with dehydrated</a></p>
+</li></ul>
+</li><li>
+<p><a href="#label-Usage">Usage - Configuration options and additional
+functionality</a></p>
+</li><li>
+<p><a href="#label-Limitations">Limitations - OS compatibility, etc.</a></p>
+</li><li>
+<p><a href="#label-Development">Development - Guide for contributing to the
+module</a></p>
+</li></ol>
+
+<h2 id="label-Description">Description</h2>
+
+<p>bzed-dehydrated creates private keys and CSRs, transfers the CSR to a
+central host (for example your puppetmaster) where it is signed using the
+well known dehydrated <a
+href="https://github.com/lukas2511/dehydrated">github.com/lukas2511/dehydrated</a></p>
+
+<p>Signed certificates are shipped back to the requesting host.</p>
+
+<p>You need to provide an appropriate hook script for dehydrated. The default
+is to use the DNS-01 challenge, but if your hook supports it you could also
+create the necessary files for http-01.</p>
+
+<p>Let’s Encrypt is a trademark of the Internet Security Research Group. All
+rights reserved.</p>
+
+<h2 id="label-Setup">Setup</h2>
+
+<h3 id="label-What+dehydrated+affects">What dehydrated affects</h3>
+
+<p>dehydrated needs to use facter to retrieve the signed certificates and
+other data from your central signing hosts if you are not using a puppet
+master host to handle it. Although only certificates which need to be
+renewed are transferred, it is unknown how well this approach scales if you
+plan to request lots of certificates. Using a (designated) puppet master is
+the better option.</p>
+
+<h3 id="label-Setup+Requirements+OPTIONAL">Setup Requirements <strong>OPTIONAL</strong></h3>
+
+<p>You need to ensure that exported ressources are working and pluginsync is
+enabled.</p>
+
+<h3 id="label-Beginning+with+dehydrated">Beginning with dehydrated</h3>
+
+<p>The very basic steps needed for a user to get the module up and running.
+This can include setup steps, if necessary, or it can be an example of the
+most basic use of the module.</p>
+
+<h2 id="label-Usage">Usage</h2>
+
+<p>Include usage examples for common use cases in the <strong>Usage</strong>
+section. Show your users how to use your module to solve problems, and be
+sure to include code examples. Include three to five examples of the most
+important or common tasks a user can accomplish with your module. Show
+users how to accomplish more complex tasks that involve different types,
+classes, and functions working in tandem.</p>
+
+<h2 id="label-Reference">Reference</h2>
+
+<p>This section is deprecated. Instead, add reference information to your code
+as Puppet Strings comments, and then use Strings to generate a REFERENCE.md
+in your module. For details on how to add code comments and generate
+documentation with Strings, see the Puppet Strings <a
+href="https://puppet.com/docs/puppet/latest/puppet_strings.html">documentation</a>
+and <a
+href="https://puppet.com/docs/puppet/latest/puppet_strings_style.html">style
+guide</a></p>
+
+<p>If you aren&#39;t ready to use Strings yet, manually create a REFERENCE.md
+in the root of your module directory and list out each of your module&#39;s
+classes, defined types, facts, functions, Puppet tasks, task plans, and
+resource types and providers, along with the parameters for each.</p>
+
+<p>For each element (class, defined type, function, and so on), list:</p>
+<ul><li>
+<p>The data type, if applicable.</p>
+</li><li>
+<p>A description of what the element does.</p>
+</li><li>
+<p>Valid values, if the data type doesn&#39;t make it obvious.</p>
+</li><li>
+<p>Default value, if any.</p>
+</li></ul>
+
+<p>For example:</p>
+
+<pre class="code ruby"><code class="ruby">### `pet::cat`
+
+#### Parameters
+
+##### `meow`
+
+Enables vocalization in your cat. Valid options: &#39;string&#39;.
+
+Default: &#39;medium-loud&#39;.
+</code></pre>
+
+<h2 id="label-Limitations">Limitations</h2>
+
+<p>In the Limitations section, list any incompatibilities, known issues, or
+other warnings.</p>
+
+<h2 id="label-Development">Development</h2>
+
+<p>In the Development section, tell other users the ground rules for
+contributing to your project and how they should submit their work.</p>
+
+<h2 id="label-Release+Notes-2FContributors-2FEtc.+Optional">Release Notes/Contributors/Etc. <strong>Optional</strong></h2>
+
+<p>If you aren&#39;t using changelog, put your release notes here (though you
+should consider using changelog). You can also add any additional sections
+you feel are necessary or important to include here. Please use the
+<code>##</code> header.</p>
+</div></div>
+
+      <div id="footer">
+     Generated by <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>.
+</div>
+
+    </div>
+  </body>
+</html>

@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Defined Type: dehydrated::certificate::csr
+  
+    &mdash; Documentation by YARD 0.9.16
+  
+</title>
+
+  <link rel="stylesheet" href="../css/style.css" type="text/css" charset="utf-8" />
+
+  <link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  pathId = "puppet_defined_types::dehydrated::certificate::csr";
+  relpath = '../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../puppet_defined_type_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../_index.html">Index (d)</a> &raquo;
+    <span class='title'><span class='object_link'>Defined Types</span></span>
+     &raquo; 
+    <span class="title">dehydrated::certificate::csr</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="puppet_class_list_link"
+        href="../puppet_class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Defined Type: dehydrated::certificate::csr</h1>
+<div class="box_info">
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>
+      manifests/certificate/csr.pp
+    </dd>
+  </dl>
+</div>
+
+  <h2>Summary</h2>
+  Creates a key file with CSR
+
+<h2>Overview</h2>
+<div class="docstring">
+  <div class="discussion">
+    
+<p>Manage certificate keys and create CSRs for the configured domains /
+altnames.</p>
+
+  </div>
+</div>
+
+
+<div class="tags">
+  
+  <div class="examples">
+    <p class="tag_title">Examples:</p>
+    
+      
+      <pre class="example code"><code>dehydrated::csr { &#39;_wildcard_.example.com&#39;:
+  $subject_alternative_names =&gt; [],
+  $dn                        =&gt; &#39;*.example.com&#39;
+}</code></pre>
+    
+  </div>
+<p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>dn</span>
+      
+      
+        <span class='type'>(<tt>Dehydrated::DN</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>subject_alternative_names</span>
+      
+      
+        <span class='type'>(<tt>Array[Dehydrated::DN]</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>base_filename</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>$name</tt>)</em>
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>csr_filename</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>&quot;${name}.csr&quot;</tt>)</em>
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>key_filename</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>&quot;${name}.key&quot;</tt>)</em>
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>algorithm</span>
+      
+      
+        <span class='type'>(<tt>Dehydrated::Algorithm</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>&#39;rsa&#39;</tt>)</em>
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>key_password</span>
+      
+      
+        <span class='type'>(<tt>Optional[String]</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>undef</tt>)</em>
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>ensure</span>
+      
+      
+        <span class='type'>(<tt>Enum['present', 'absent']</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>&#39;present&#39;</tt>)</em>
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>force</span>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>true</tt>)</em>
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>size</span>
+      
+      
+        <span class='type'>(<tt>Optional[Integer[768]]</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>undef</tt>)</em>
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>digest</span>
+      
+      
+        <span class='type'>(<tt>Pattern[/^(MD[245]|SHA(|-?(1|224|256|384|512)))$/]</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>&#39;SHA512&#39;</tt>)</em>
+      
+      
+    </li>
+  
+</ul>
+
+
+</div><div class="method_details_list">
+  <table class="source_code">
+    <tr>
+      <td>
+        <pre class="lines">
+
+
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99</pre>
+      </td>
+      <td>
+        <pre class="code"><span class="info file"># File 'manifests/certificate/csr.pp', line 14</span>
+
+define dehydrated::certificate::csr(
+  Dehydrated::DN $dn,
+  Array[Dehydrated::DN] $subject_alternative_names,
+  String $base_filename = $name,
+  String $csr_filename = &quot;${name}.csr&quot;,
+  String $key_filename = &quot;${name}.key&quot;,
+  Dehydrated::Algorithm $algorithm = &#39;rsa&#39;,
+  #Optional[String] $country = undef,
+  #Optional[String] $state = undef,
+  #Optional[String] $locality = undef,
+  #Optional[String] $organization = undef,
+  #Optional[String] $unit = undef,
+  #Optional[String] $email = undef,
+  Optional[String] $key_password = undef,
+  Enum[&#39;present&#39;, &#39;absent&#39;] $ensure = &#39;present&#39;,
+  Boolean $force = true,
+  Optional[Integer[768]] $size = undef,
+  Pattern[/^(MD[245]|SHA(|-?(1|224|256|384|512)))$/] $digest = &#39;SHA512&#39;,
+) {
+
+  if ! defined(Class[&#39;dehydrated&#39;]) {
+    fail(&#39;You must include the dehydrated base class first.&#39;)
+  }
+
+  require ::dehydrated::setup
+
+  $base_dir = $::dehydrated::base_dir
+  $csr_dir  = $::dehydrated::csr_dir
+  $key_dir  = $::dehydrated::key_dir
+  $crt_dir  = $::dehydrated::crt_dir
+
+  if (!empty($subject_alternative_names)) {
+    $req_ext = true
+  } else {
+    $req_ext = false
+  }
+
+  $crt = &quot;${crt_dir}/${base_filename}.crt&quot;
+  $key = &quot;${key_dir}/${base_filename}.key&quot;
+  $csr = &quot;${csr_dir}/${base_filename}.csr&quot;
+  $dh  = &quot;${crt_dir}/${base_filename}.dh&quot;
+
+
+  if ($ensure == &#39;present&#39;) {
+    dehydrated_key { $key :
+      ensure    =&gt; $ensure,
+      algorithm =&gt; $algorithm,
+      password  =&gt; $key_password,
+      size      =&gt; $size,
+      require   =&gt; File[$key_dir],
+      before    =&gt; File[$key],
+    }
+    dehydrated_csr { $csr :
+      ensure                    =&gt; $ensure,
+      private_key               =&gt; $key,
+      password                  =&gt; $key_password,
+      algorithm                 =&gt; $algorithm,
+      common_name               =&gt; $dn,
+      subject_alternative_names =&gt; $subject_alternative_names,
+      force                     =&gt; $force,
+      digest                    =&gt; $digest,
+      require                   =&gt; [
+        File[$key],
+        File[$csr_dir],
+        Dehydrated_key[$key],
+      ],
+      before                    =&gt; File[$csr],
+    }
+  }
+
+  file { $key :
+    ensure =&gt; $ensure,
+    owner  =&gt; $::dehydrated::user,
+    group  =&gt; $::dehydrated::group,
+    mode   =&gt; &#39;0640&#39;,
+  }
+  file { $csr :
+    ensure  =&gt; $ensure,
+    owner   =&gt; $::dehydrated::user,
+    group   =&gt; $::dehydrated::group,
+    mode    =&gt; &#39;0644&#39;,
+    require =&gt; Dehydrated_csr[$csr],
+  }
+
+
+}</pre>
+      </td>
+    </tr>
+  </table>
+</div>
+</div>
+
+      <div id="footer">
+     Generated by <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>.
+</div>
+
+    </div>
+  </body>
+</html>

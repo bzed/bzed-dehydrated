@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Defined Type: dehydrated::certificate
+  
+    &mdash; Documentation by YARD 0.9.16
+  
+</title>
+
+  <link rel="stylesheet" href="../css/style.css" type="text/css" charset="utf-8" />
+
+  <link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  pathId = "puppet_defined_types::dehydrated::certificate";
+  relpath = '../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../puppet_defined_type_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../_index.html">Index (d)</a> &raquo;
+    <span class='title'><span class='object_link'>Defined Types</span></span>
+     &raquo; 
+    <span class="title">dehydrated::certificate</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="puppet_class_list_link"
+        href="../puppet_class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Defined Type: dehydrated::certificate</h1>
+<div class="box_info">
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>
+      manifests/certificate.pp
+    </dd>
+  </dl>
+</div>
+
+  <h2>Summary</h2>
+  Creates key & csr and deploys the certificate.
+
+<h2>Overview</h2>
+<div class="docstring">
+  <div class="discussion">
+    
+<p>Triggers key and csr generation and installs the certificate</p>
+
+  </div>
+</div>
+
+
+<div class="tags">
+  
+  <div class="examples">
+    <p class="tag_title">Examples:</p>
+    
+      
+      <pre class="example code"><code>dehydrated::certificate { &#39;test.example.com&#39;: }</code></pre>
+    
+  </div>
+<p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>dn</span>
+      
+      
+        <span class='type'>(<tt>Dehydrated::DN</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>$name</tt>)</em>
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>base_filename</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>regsubst($dn, &#39;^\*&#39;, &#39;_wildcard_&#39;)</tt>)</em>
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>subject_alternative_names</span>
+      
+      
+        <span class='type'>(<tt>Array[Dehydrated::DN]</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>[]</tt>)</em>
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>challengetype</span>
+      
+      
+        <span class='type'>(<tt>Dehydrated::Challengetype</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>$::dehydrated::challengetype</tt>)</em>
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>algorithm</span>
+      
+      
+        <span class='type'>(<tt>Dehydrated::Algorithm</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>$::dehydrated::algorithm</tt>)</em>
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>dh_param_size</span>
+      
+      
+        <span class='type'>(<tt>Integer[768]</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>$::dehydrated::dh_param_size</tt>)</em>
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>dehydrated_host</span>
+      
+      
+        <span class='type'>(<tt>Stdlib::Fqdn</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>$::dehydrated::dehydrated_host</tt>)</em>
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>dehydrated_environment</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>$::dehydrated::dehydrated_environment</tt>)</em>
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>dehydrated_hook</span>
+      
+      
+        <span class='type'>(<tt>Dehydrated::Hook</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>$::dehydrated::dehydrated_hook</tt>)</em>
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>letsencrypt_ca</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>$::dehydrated::letsencrypt_ca</tt>)</em>
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>dehydrated_domain_validation_hook</span>
+      
+      
+        <span class='type'>(<tt>Optional[Dehydrated::Hook]</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>$::dehydrated::dehydrated_domain_validation_hook</tt>)</em>
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>key_password</span>
+      
+      
+        <span class='type'>(<tt>Optional[String]</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>undef</tt>)</em>
+      
+      
+    </li>
+  
+</ul>
+
+
+</div><div class="method_details_list">
+  <table class="source_code">
+    <tr>
+      <td>
+        <pre class="lines">
+
+
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61</pre>
+      </td>
+      <td>
+        <pre class="code"><span class="info file"># File 'manifests/certificate.pp', line 10</span>
+
+define dehydrated::certificate(
+  Dehydrated::DN $dn = $name,
+  String $base_filename = regsubst($dn, &#39;^\*&#39;, &#39;_wildcard_&#39;),
+  Array[Dehydrated::DN] $subject_alternative_names = [],
+  Dehydrated::Challengetype $challengetype = $::dehydrated::challengetype,
+  Dehydrated::Algorithm $algorithm = $::dehydrated::algorithm,
+  Integer[768] $dh_param_size = $::dehydrated::dh_param_size,
+  Stdlib::Fqdn $dehydrated_host = $::dehydrated::dehydrated_host,
+  Hash $dehydrated_environment = $::dehydrated::dehydrated_environment,
+  Dehydrated::Hook $dehydrated_hook = $::dehydrated::dehydrated_hook,
+  String $letsencrypt_ca = $::dehydrated::letsencrypt_ca,
+  Optional[Dehydrated::Hook] $dehydrated_domain_validation_hook = $::dehydrated::dehydrated_domain_validation_hook,
+  Optional[String] $key_password = undef,
+) {
+
+  if ! defined(Class[&#39;dehydrated&#39;]) {
+    fail(&#39;You must include the dehydrated base class first.&#39;)
+  }
+
+  require ::dehydrated::setup
+  require ::dehydrated::params
+
+  $domain_config = {
+    $dn =&gt; {
+      &#39;subject_alternative_names&#39;         =&gt; $subject_alternative_names,
+      &#39;base_filename&#39;                     =&gt; $base_filename,
+      &#39;dh_param_size&#39;                     =&gt; $dh_param_size,
+      &#39;challengetype&#39;                     =&gt; $challengetype,
+      &#39;dehydrated_host&#39;                   =&gt; $dehydrated_host,
+      &#39;dehydrated_environment&#39;            =&gt; $dehydrated_environment,
+      &#39;dehydrated_hook&#39;                   =&gt; $dehydrated_hook,
+      &#39;dehydrated_domain_validation_hook&#39; =&gt; $dehydrated_domain_validation_hook,
+      &#39;letsencrypt_ca&#39;                    =&gt; $letsencrypt_ca,
+    }
+  }
+
+  $json_fragment = to_json($domain_config)
+  ::concat::fragment { &quot;${facts[&#39;fqdn&#39;]}-${dn}&quot; :
+    target  =&gt; $::dehydrated::params::domainfile,
+    content =&gt; $json_fragment,
+    order   =&gt; &#39;50&#39;
+  }
+
+  ::dehydrated::certificate::csr { $base_filename :
+    dn                        =&gt; $dn,
+    subject_alternative_names =&gt; $subject_alternative_names,
+    key_password              =&gt; $key_password,
+    algorithm                 =&gt; $algorithm,
+  }
+
+
+}</pre>
+      </td>
+    </tr>
+  </table>
+</div>
+</div>
+
+      <div id="footer">
+     Generated by <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>.
+</div>
+
+    </div>
+  </body>
+</html>
