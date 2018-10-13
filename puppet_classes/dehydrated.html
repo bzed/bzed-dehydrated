@@ -95,12 +95,13 @@
     <p class="tag_title">Examples:</p>
     
       
-      <pre class="example code"><code>class { &#39;dehydrated&#39; : }
+      <pre class="example code"><code># should be sufficient in most cases.
+include dehydrated
 
+# if you are &quot;upgrading&quot; from bzed-letsencrypt,
+# you might want to use these options to stay
+# compatible with the old group/directory:
 class { &#39;dehydrated&#39; :
-  # if you are &quot;upgrading&quot; from bzed-letsencrypt,
-  # you might want to use these options to stay
-  # compatible with the old group/directory:
   group    =&gt; &#39;letsencrypt&#39;,
   base_dir =&gt; &#39;/etc/letsencrypt&#39;,
 }</code></pre>
@@ -614,7 +615,6 @@ Encrypt CAs this puppet module was tested against.</p>
         <pre class="lines">
 
 
-72
 73
 74
 75
@@ -739,10 +739,11 @@ Encrypt CAs this puppet module was tested against.</p>
 194
 195
 196
-197</pre>
+197
+198</pre>
       </td>
       <td>
-        <pre class="code"><span class="info file"># File 'manifests/init.pp', line 72</span>
+        <pre class="code"><span class="info file"># File 'manifests/init.pp', line 73</span>
 
 class dehydrated
 (
