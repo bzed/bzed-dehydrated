@@ -10,10 +10,21 @@ Gemfile:
         version: '~> 1.7'
       - gem: 'puppet-blacksmith'
       - gem: 'rspec-puppet'
+      - gem: 'puppet-strings'
+      - gem: 'rgen'
 
 Rakefile:
   requires:
       - 'puppet-lint/tasks/puppet-lint'
       - 'puppetlabs_spec_helper/rake_tasks'
-      - 'puppet_blacksmith/rake_tasks'
+  extras:
+      - > 
+          begin
+
+            require 'puppet_blacksmith/rake_tasks'
+            require 'puppet-strings/tasks'
+
+          rescue LoadError
+
+          end
 

@@ -30,6 +30,8 @@ group :development do
   gem "rspec-puppet-facts", '~> 1.7',                  require: false
   gem "puppet-blacksmith",                             require: false
   gem "rspec-puppet",                                  require: false
+  gem "puppet-strings",                                require: false
+  gem "rgen",                                          require: false
 end
 
 puppet_version = ENV['PUPPET_GEM_VERSION']

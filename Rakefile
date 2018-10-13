@@ -4,7 +4,6 @@ require 'puppet_blacksmith/rake_tasks' if Bundler.rubygems.find_name('puppet-bla
 require 'github_changelog_generator/task' if Bundler.rubygems.find_name('github_changelog_generator').any?
 require 'puppet-lint/tasks/puppet-lint'
 require 'puppetlabs_spec_helper/rake_tasks'
-require 'puppet_blacksmith/rake_tasks'
 
 def changelog_user
   return unless Rake.application.top_level_tasks.include? "changelog"
@@ -74,5 +73,13 @@ Gemfile:
         condition: "Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')"
 EOM
   end
+end
+
+begin
+
+  require 'puppet_blacksmith/rake_tasks'
+  require 'puppet-strings/tasks'
+
+rescue LoadError
 end
 
