@@ -6,5 +6,6 @@ fixtures:
      stdlib: "puppetlabs/stdlib"
      vcsrepo: "puppetlabs/vcsrepo"
      concat: "puppetlabs/concat"
+     cron_core: "puppetlabs/cron_core"
   symlinks:
       'dehydrated': "#{source_dir}"
