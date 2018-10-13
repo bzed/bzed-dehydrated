@@ -76,16 +76,37 @@
   </dl>
 </div>
 
+  <h2>Summary</h2>
+  Base class to define necessary variables and include setup classes.
+
 <h2>Overview</h2>
 <div class="docstring">
   <div class="discussion">
     
+<p>Base class to setup the letsencrypt certificate handling with dehydrated.</p>
+
   </div>
 </div>
 
 
 <div class="tags">
-  <p class="tag_title">Parameters:</p>
+  
+  <div class="examples">
+    <p class="tag_title">Examples:</p>
+    
+      
+      <pre class="example code"><code>class { &#39;dehydrated&#39; : }
+
+class { &#39;dehydrated&#39; :
+  # if you are &quot;upgrading&quot; from bzed-letsencrypt,
+  # you might want to use these options to stay
+  # compatible with the old group/directory:
+  group    =&gt; &#39;letsencrypt&#39;,
+  base_dir =&gt; &#39;/etc/letsencrypt&#39;,
+}</code></pre>
+    
+  </div>
+<p class="tag_title">Parameters:</p>
 <ul class="param">
   
     <li>
@@ -98,6 +119,13 @@
       
         <em class="default">(defaults to: <tt>$::dehydrated::params::base_dir</tt>)</em>
       
+      
+        &mdash;
+        <div class='inline'>
+<p>The base directory where keys/csr/certs are stored. Defaults to: - on $::<a
+href="'family'">os</a>==&#39;Debian&#39;: /etc/dehydrated - on other
+Linux/Unix systems: /etc/pki/dehydrated - on windows: C:LE_certs.</p>
+</div>
       
     </li>
   
@@ -112,6 +140,11 @@
         <em class="default">(defaults to: <tt>$::dehydrated::params::crt_dir</tt>)</em>
       
       
+        &mdash;
+        <div class='inline'>
+<p>The directory where certificates are stored. Defaults to $base_dir/certs</p>
+</div>
+      
     </li>
   
     <li>
@@ -124,6 +157,11 @@
       
         <em class="default">(defaults to: <tt>$::dehydrated::params::csr_dir</tt>)</em>
       
+      
+        &mdash;
+        <div class='inline'>
+<p>The directory where CSRs are stored. Defaults to $base_dir/csr</p>
+</div>
       
     </li>
   
@@ -138,6 +176,12 @@
         <em class="default">(defaults to: <tt>$::dehydrated::params::key_dir</tt>)</em>
       
       
+        &mdash;
+        <div class='inline'>
+<p>The directory where pricate keys are stored. Defaults to
+$base_dir/private</p>
+</div>
+      
     </li>
   
     <li>
@@ -150,6 +194,11 @@
       
         <em class="default">(defaults to: <tt>$::dehydrated::params::user</tt>)</em>
       
+      
+        &mdash;
+        <div class='inline'>
+<p>The user who owns the files in /etc/dehydrated.</p>
+</div>
       
     </li>
   
@@ -164,6 +213,12 @@
         <em class="default">(defaults to: <tt>$::dehydrated::params::group</tt>)</em>
       
       
+        &mdash;
+        <div class='inline'>
+<p>The group which owns the files in /etc/dehydrated. If you have a non-root
+process which needs to access private keys, add its user to this group.</p>
+</div>
+      
     </li>
   
     <li>
@@ -176,6 +231,12 @@
       
         <em class="default">(defaults to: <tt>$::dehydrated::params::dehydrated_user</tt>)</em>
       
+      
+        &mdash;
+        <div class='inline'>
+<p>User to run the dehydrated script as. Only used on the host that actually
+requests certificates.</p>
+</div>
       
     </li>
   
@@ -190,6 +251,12 @@
         <em class="default">(defaults to: <tt>$::dehydrated::params::dehydrated_group</tt>)</em>
       
       
+        &mdash;
+        <div class='inline'>
+<p>Group to run the dehydrated script as. Only used on the host that actually
+requests certificates.</p>
+</div>
+      
     </li>
   
     <li>
@@ -202,6 +269,15 @@
       
         <em class="default">(defaults to: <tt>$::dehydrated::params::letsencrypt_ca</tt>)</em>
       
+      
+        &mdash;
+        <div class='inline'>
+<p>Let’s Encrypt CA to use. Defaults to v2-production. See the letsencrypt_cas
+parameter for a way to specify your own Let’s Encrypt / ACME compatible CA.
+This configures the default CA to use, but You can actually define
+different CAs for each certificate, see the ::dehydrated::certificate
+define for details.</p>
+</div>
       
     </li>
   
@@ -216,6 +292,12 @@
         <em class="default">(defaults to: <tt>$::dehydrated::params::letsencrypt_cas</tt>)</em>
       
       
+        &mdash;
+        <div class='inline'>
+<p>Hash with the definitions of the official testing and production Let’s
+Encrypt CAs this puppet module was tested against.</p>
+</div>
+      
     </li>
   
     <li>
@@ -228,6 +310,11 @@
       
         <em class="default">(defaults to: <tt>$::dehydrated::params::dh_param_size</tt>)</em>
       
+      
+        &mdash;
+        <div class='inline'>
+<p>Default size of the DH params we should generate. Defaults to 2048.</p>
+</div>
       
     </li>
   
@@ -527,6 +614,8 @@
         <pre class="lines">
 
 
+72
+73
 74
 75
 76
@@ -650,12 +739,10 @@
 194
 195
 196
-197
-198
-199</pre>
+197</pre>
       </td>
       <td>
-        <pre class="code"><span class="info file"># File 'manifests/init.pp', line 74</span>
+        <pre class="code"><span class="info file"># File 'manifests/init.pp', line 72</span>
 
 class dehydrated
 (
