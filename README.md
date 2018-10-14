@@ -31,6 +31,16 @@ supports it you could also create the necessary files for http-01.
 
 Let’s Encrypt is a trademark of the Internet Security Research Group. All rights reserved.
 
+### Deprecation of bzed-letsencrypt
+With the release of **bzed-dehydrated** my old module *bzed-letsencrypt* will be depricated.
+Renaming the module to avoid trademark related troubles is one of the reasons for a new module,
+the other is that I did not want to break the API for all users of the old module.
+If there is enough interest I'll change bzed-letsencrypt to become a wrapper around
+the new module, but with all the new features and options I don't think that makes much
+sense. So I'm sorry for the extra trouble of migrating an existing installation (to make
+it easier, see below), but I hope that the extra amount of flexibility and less hacks in the
+code make it worth to migrate.
+
 ## Setup
 
 ### What dehydrated affects
@@ -50,11 +60,67 @@ is enabled.
 
 ### Beginning with dehydrated
 
-The very basic steps needed for a user to get the module up and running. This can include setup steps, if necessary, or it can be an example of the most basic use of the module.
+Basic things you need:
+ -  a host with internet access, preferable a puppet master. This will be known as *dehydrated\_host* now.
+ -  a working hook script for dehydrated, for exampes and documentation see https://github.com/lukas2511/dehydrated/tree/master/docs
+ -  bzed-dehydrated installed as _dehydrated_ module in your Puppet environment.
+    You will also need recent versions of puppetlabs-stdlib, puppetlabs-concat, puppetlabs-vcsrepo.
+    For puppet >= 6.0 you'll also need puppetlabs-cron\_core.
+ -  I'd assume at least puppet version 4.8. Not tested or developed for older version.
+ -  Working exportable ressources. Make sure your puppetdb is working well, this module
+    heavily depends on it.
 
 ## Usage
 
-Include usage examples for common use cases in the **Usage** section. Show your users how to use your module to solve problems, and be sure to include code examples. Include three to five examples of the most important or common tasks a user can accomplish with your module. Show users how to accomplish more complex tasks that involve different types, classes, and functions working in tandem.
+This only describes the very basic usage. Almost all things are configurable, see the reference for details.
+So for a basic setup, the following steps should give you a running setup.
+
+ 1.  Do a basic setup of your **dehydrated\_host**:
+         class { 'dehydrated' :
+             dehydrated_host => 'your.dehydrated.host.example.com',
+         }
+ 2.  As example we'll use the dehydrated hook for Cloudflare®. Take
+     https://github.com/socram8888/dehydrated-hook-cloudflare/blob/master/cf-hook.sh
+     and **on your dehydrated_host** install it into _/opt/dehydrated/hooks.d/dns-01.sh_
+ 3.  Add the hook configuration tou your config from above:
+         class { 'dehydrated' :
+             dehydrated_host => 'your.dehydrated.host.example.com',
+             dehydrated_environment => {
+                 'CF_EMAIL' => 'your@email.address',
+                 'CF_KEY'   => 'your-long-Cloudflare-api-key',
+             }
+         }
+ 4.  On the host that needs a new certificate, add this to your puppet code:
+         class { 'dehydrated' :
+             dehydrated_host => 'your.dehydrated.host.example.com',
+             challengetype   => 'dns-01',
+         }
+         ::dehydrated::certificate { 'my-https-host.example.com' :
+             subject_alternative_names => [ 'example.com', 'host2.example.com' ],
+         }
+ 5.  Wait.... it will take a few puppet runs until your certificate will appear.
+     The certificates will be requestd by a cronjob, not directly from puppet.
+     Otherwise puppet runs will take way too much time.
+
+### Monitoring & debugging
+ -  usual Puppet debugging rules apply >:-)
+ -  you'll find the output and errors from the last cronjob run in **/opt/dehydrated/status.json**.
+    Unfortunately proper logging and maybe a better error handling is not implemented yet.
+    Pull requests are welcome :-)
+ -  monitoring the cronjob results is possible by using check\_statusfile. On Debian and derivates
+    this is available in the _nagios-plugins-contrib_ package. Or find the source here: https://github.com/bzed/pkg-nagios-plugins-contrib/blob/master/dsa/checks/dsa-check-statusfile
+        # /usr/lib/nagios/plugins/check_statusfile /opt/dehydrated/monitoring.status
+        dehydrated certificates: OK: 2, FAILED: 1
+        foo.example.com (from bar.example.com): OCSP update failed
+
+## migrating from _bzed-letsencrypt_
+If you were using the bzed-letsencrypt module before, I'd suggest to use the following settings on the hosts that request certificates:
+    class { 'dehydrated' :
+        group    => 'letsencrypt',
+        base_dir => '/etc/letsencrypt',
+    }
+Migrating the files on the dehydrated\_host (former letsencrypt\_host) is a harder task and
+not implemented. A new setup or manual migration is preferred.
 
 ## Reference
 
@@ -74,4 +140,14 @@ the Let’s Encrypt testing CA instead of running into the limit for failed auth
 ## Development
 
 Please use the github issue tracker and send pull requests. Make sure that your pull requests keep travis happy!
+
+### For a release:
+ -  Update gh\_pages:
+        bundle exec rake strings:gh_pages:update
+ -  Create changelog:
+        bundle exec rake changelog
+ -  Update REFERENCE.md:
+        puppet strings generate --format markdown --out REFERENCE.md
+ -  Release:
+        bundle exec rake module:release
 

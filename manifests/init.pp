@@ -51,21 +51,55 @@
 #   Default challengetype to use. Defaults to 'dns-01'. You can specify a different
 #   challengetype for each certificate, see ::dehydrated::certificate.
 # @param algorithm
+#   Default algorithm / elliptic-curve you want to use. Supported: rsa, secp384r1, prime256v1.
+#   Defaults to rsa. You can specify a different algorithm for each certificate,
+#   see ::dehydrated::certificate.
 # @param dehydrated_base_dir
+#   Only used if $facts['fqdn'] == $::dehydrated::dehydrated_host. Path where the dehydrated
+#   script and configurations/csrs are being stored. Defaults to '/opt/dehydrated'.
 # @param dehydrated_git_dir
+#   Only used if $facts['fqdn'] == $::dehydrated::dehydrated_host.
+#   Path where the dehydrated script is being checkout out into using git.
+#   Defaults to ${dehydrated_base_dir}/dehydrated.
 # @param dehydrated_git_tag
+#   Only used if $facts['fqdn'] == $::dehydrated::dehydrated_host.
+#   Version of the dehydrated script we want to use.
+#   Change it on your own risk.
 # @param dehydrated_git_url
+#   Only used if $facts['fqdn'] == $::dehydrated::dehydrated_host.
+#   Git url to clone dehydrated from. If you have an internal mirror/version, you can override
+#   the default github url here.
 # @param dehydrated_host
+#   Default setting for the host you want to request the certificates on.
+#   Required on that host, on all others it is used as default for certificates requested
+#   via ::dehydrated::certificate. You can specify a different dehydrated_host on each
+#   certificate if you want to.
+#   If $facts['fqdn'] == $::dehydrated::dehydrated_host, dehydrated will be installed
+#   and the certificate request cronjob will be setup.
 # @param dehydrated_requests_dir
+#   Only used if $facts['fqdn'] == $::dehydrated::dehydrated_host.
 # @param dehydrated_hooks_dir
+#   Only used if $facts['fqdn'] == $::dehydrated::dehydrated_host.
 # @param dehydrated_requests_config
+#   Only used if $facts['fqdn'] == $::dehydrated::dehydrated_host.
 # @param dehydrated_wellknown_dir
+#   Only used if $facts['fqdn'] == $::dehydrated::dehydrated_host.
 # @param dehydrated_alpncert_dir
+#   Only used if $facts['fqdn'] == $::dehydrated::dehydrated_host.
 # @param dehydrated_host_packages
+#   Only used if $facts['fqdn'] == $::dehydrated::dehydrated_host.
 # @param dehydrated_environment
+#   Only used if $facts['fqdn'] == $::dehydrated::dehydrated_host.
 # @param dehydrated_domain_validation_hook
+#   Only used if $facts['fqdn'] == $::dehydrated::dehydrated_host.
 # @param dehydrated_hook
+#   Only used if $facts['fqdn'] == $::dehydrated::dehydrated_host.
 # @param dehydrated_contact_email
+#   Only used if $facts['fqdn'] == $::dehydrated::dehydrated_host.
+# @param dehydrated_status_file
+#   File the dehydrated job runner will dump its status into. Pretty printed JSON.
+# @param dehydrated_monitoring_status_file
+#   Status file for monitoring with check_statusfile, see README.md for details.
 # @param manage_user
 #   Create $dehydrated_user/$dehydrated_group and $user/$group if necessary.
 # @param manage_packages
