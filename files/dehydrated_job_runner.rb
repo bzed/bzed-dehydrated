@@ -305,7 +305,6 @@ def run_config(dehydrated_requests_config)
 end
 
 def write_status_file(requests_status, status_file, monitoring_status_file)
-
   File.write(status_file, JSON.generate(requests_status))
 
   errormsg = []
@@ -315,8 +314,7 @@ def write_status_file(requests_status, status_file, monitoring_status_file)
     dns.each do |dn, status|
       if status['status'] > 0
         bad_count += 1
-        error_message = status['erorr_message']
-        errormsg << "#{dn} (from #{fqdn}): #{erorr_message}"
+        errormsg << "#{dn} (from #{fqdn}): #{status['erorr_message']}"
       else
         ok_count += 1
       end
@@ -333,7 +331,6 @@ def write_status_file(requests_status, status_file, monitoring_status_file)
 
   File.write(monitoring_status_file, output.join('\n'))
 end
-
 
 if ARGV.empty?
   raise ArgumentError, 'Need to specify config.json as argument'
