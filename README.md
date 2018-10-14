@@ -66,7 +66,7 @@ is enabled.
 
 Basic things you need:
  -  a host with internet access, preferable a puppet master. This will be known as *dehydrated\_host* now.
- -  a working hook script for dehydrated, for exampes and documentation see[lukas2511/dehydrated]( https://github.com/lukas2511/dehydrated/tree/master/docs)
+ -  a working hook script for dehydrated, for exampes and documentation see [lukas2511/dehydrated]( https://github.com/lukas2511/dehydrated/tree/master/docs)
  -  bzed-dehydrated installed as _dehydrated_ module in your Puppet environment.
     You will also need recent versions of puppetlabs-stdlib, puppetlabs-concat, puppetlabs-vcsrepo.
     For puppet >= 6.0 you'll also need puppetlabs-cron\_core.
