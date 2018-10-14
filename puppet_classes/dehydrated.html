@@ -330,6 +330,13 @@ Encrypt CAs this puppet module was tested against.</p>
         <em class="default">(defaults to: <tt>$::dehydrated::params::challengetype</tt>)</em>
       
       
+        &mdash;
+        <div class='inline'>
+<p>Default challengetype to use. Defaults to &#39;dns-01&#39;. You can specify
+a different challengetype for each certificate, see
+::dehydrated::certificate.</p>
+</div>
+      
     </li>
   
     <li>
@@ -342,6 +349,13 @@ Encrypt CAs this puppet module was tested against.</p>
       
         <em class="default">(defaults to: <tt>$::dehydrated::params::algorithm</tt>)</em>
       
+      
+        &mdash;
+        <div class='inline'>
+<p>Default algorithm / elliptic-curve you want to use. Supported: rsa,
+secp384r1, prime256v1. Defaults to rsa. You can specify a different
+algorithm for each certificate, see ::dehydrated::certificate.</p>
+</div>
       
     </li>
   
@@ -356,6 +370,13 @@ Encrypt CAs this puppet module was tested against.</p>
         <em class="default">(defaults to: <tt>$::dehydrated::params::dehydrated_base_dir</tt>)</em>
       
       
+        &mdash;
+        <div class='inline'>
+<p>Only used if $<a href="'fqdn'">facts</a> == $::dehydrated::dehydrated_host.
+Path where the dehydrated script and configurations/csrs are being stored.
+Defaults to &#39;/opt/dehydrated&#39;.</p>
+</div>
+      
     </li>
   
     <li>
@@ -368,6 +389,13 @@ Encrypt CAs this puppet module was tested against.</p>
       
         <em class="default">(defaults to: <tt>&quot;${dehydrated_base_dir}/dehydrated&quot;</tt>)</em>
       
+      
+        &mdash;
+        <div class='inline'>
+<p>Only used if $<a href="'fqdn'">facts</a> == $::dehydrated::dehydrated_host.
+Path where the dehydrated script is being checkout out into using git.
+Defaults to $dehydrated_base_dir/dehydrated.</p>
+</div>
       
     </li>
   
@@ -382,6 +410,13 @@ Encrypt CAs this puppet module was tested against.</p>
         <em class="default">(defaults to: <tt>$::dehydrated::params::dehydrated_git_tag</tt>)</em>
       
       
+        &mdash;
+        <div class='inline'>
+<p>Only used if $<a href="'fqdn'">facts</a> == $::dehydrated::dehydrated_host.
+Version of the dehydrated script we want to use. Change it on your own
+risk.</p>
+</div>
+      
     </li>
   
     <li>
@@ -394,6 +429,13 @@ Encrypt CAs this puppet module was tested against.</p>
       
         <em class="default">(defaults to: <tt>$::dehydrated::params::dehydrated_git_url</tt>)</em>
       
+      
+        &mdash;
+        <div class='inline'>
+<p>Only used if $<a href="'fqdn'">facts</a> == $::dehydrated::dehydrated_host.
+Git url to clone dehydrated from. If you have an internal mirror/version,
+you can override the default github url here.</p>
+</div>
       
     </li>
   
@@ -408,6 +450,16 @@ Encrypt CAs this puppet module was tested against.</p>
         <em class="default">(defaults to: <tt>$::dehydrated::params::dehydrated_host</tt>)</em>
       
       
+        &mdash;
+        <div class='inline'>
+<p>Default setting for the host you want to request the certificates on.
+Required on that host, on all others it is used as default for certificates
+requested via ::dehydrated::certificate. You can specify a different
+dehydrated_host on each certificate if you want to. If $<a
+href="'fqdn'">facts</a> == $::dehydrated::dehydrated_host, dehydrated will
+be installed and the certificate request cronjob will be setup.</p>
+</div>
+      
     </li>
   
     <li>
@@ -420,6 +472,11 @@ Encrypt CAs this puppet module was tested against.</p>
       
         <em class="default">(defaults to: <tt>&quot;${dehydrated_base_dir}/requests&quot;</tt>)</em>
       
+      
+        &mdash;
+        <div class='inline'>
+<p>Only used if $<a href="'fqdn'">facts</a> == $::dehydrated::dehydrated_host.</p>
+</div>
       
     </li>
   
@@ -434,6 +491,11 @@ Encrypt CAs this puppet module was tested against.</p>
         <em class="default">(defaults to: <tt>&quot;${dehydrated_base_dir}/hooks&quot;</tt>)</em>
       
       
+        &mdash;
+        <div class='inline'>
+<p>Only used if $<a href="'fqdn'">facts</a> == $::dehydrated::dehydrated_host.</p>
+</div>
+      
     </li>
   
     <li>
@@ -446,6 +508,11 @@ Encrypt CAs this puppet module was tested against.</p>
       
         <em class="default">(defaults to: <tt>&quot;${dehydrated_base_dir}/requests.json&quot;</tt>)</em>
       
+      
+        &mdash;
+        <div class='inline'>
+<p>Only used if $<a href="'fqdn'">facts</a> == $::dehydrated::dehydrated_host.</p>
+</div>
       
     </li>
   
@@ -460,6 +527,11 @@ Encrypt CAs this puppet module was tested against.</p>
         <em class="default">(defaults to: <tt>&quot;${dehydrated_base_dir}/acme-challenges&quot;</tt>)</em>
       
       
+        &mdash;
+        <div class='inline'>
+<p>Only used if $<a href="'fqdn'">facts</a> == $::dehydrated::dehydrated_host.</p>
+</div>
+      
     </li>
   
     <li>
@@ -472,6 +544,11 @@ Encrypt CAs this puppet module was tested against.</p>
       
         <em class="default">(defaults to: <tt>&quot;${dehydrated_base_dir}/alpn-certs&quot;</tt>)</em>
       
+      
+        &mdash;
+        <div class='inline'>
+<p>Only used if $<a href="'fqdn'">facts</a> == $::dehydrated::dehydrated_host.</p>
+</div>
       
     </li>
   
@@ -486,6 +563,11 @@ Encrypt CAs this puppet module was tested against.</p>
         <em class="default">(defaults to: <tt>$::dehydrated::params::dehydrated_host_packages</tt>)</em>
       
       
+        &mdash;
+        <div class='inline'>
+<p>Only used if $<a href="'fqdn'">facts</a> == $::dehydrated::dehydrated_host.</p>
+</div>
+      
     </li>
   
     <li>
@@ -498,6 +580,11 @@ Encrypt CAs this puppet module was tested against.</p>
       
         <em class="default">(defaults to: <tt>$::dehydrated::params::dehydrated_environment</tt>)</em>
       
+      
+        &mdash;
+        <div class='inline'>
+<p>Only used if $<a href="'fqdn'">facts</a> == $::dehydrated::dehydrated_host.</p>
+</div>
       
     </li>
   
@@ -512,6 +599,11 @@ Encrypt CAs this puppet module was tested against.</p>
         <em class="default">(defaults to: <tt>$::dehydrated::params::dehydrated_domain_validation_hook</tt>)</em>
       
       
+        &mdash;
+        <div class='inline'>
+<p>Only used if $<a href="'fqdn'">facts</a> == $::dehydrated::dehydrated_host.</p>
+</div>
+      
     </li>
   
     <li>
@@ -524,6 +616,11 @@ Encrypt CAs this puppet module was tested against.</p>
       
         <em class="default">(defaults to: <tt>&quot;${challengetype}.sh&quot;</tt>)</em>
       
+      
+        &mdash;
+        <div class='inline'>
+<p>Only used if $<a href="'fqdn'">facts</a> == $::dehydrated::dehydrated_host.</p>
+</div>
       
     </li>
   
@@ -538,6 +635,49 @@ Encrypt CAs this puppet module was tested against.</p>
         <em class="default">(defaults to: <tt>$::dehydrated::params::dehydrated_contact_email</tt>)</em>
       
       
+        &mdash;
+        <div class='inline'>
+<p>Only used if $<a href="'fqdn'">facts</a> == $::dehydrated::dehydrated_host.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>dehydrated_status_file</span>
+      
+      
+        <span class='type'>(<tt>Stdlib::Absolutepath</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>&quot;${dehydrated_base_dir}/status.json&quot;</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>File the dehydrated job runner will dump its status into. Pretty printed
+JSON.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>dehydrated_monitoring_status_file</span>
+      
+      
+        <span class='type'>(<tt>Stdlib::Absolutepath</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>&quot;${dehydrated_base_dir}/monitoring.status&quot;</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Status file for monitoring with check_statusfile, see README.md for
+details.</p>
+</div>
+      
     </li>
   
     <li>
@@ -550,6 +690,11 @@ Encrypt CAs this puppet module was tested against.</p>
       
         <em class="default">(defaults to: <tt>$::dehydrated::params::manage_user</tt>)</em>
       
+      
+        &mdash;
+        <div class='inline'>
+<p>Create $dehydrated_user/$dehydrated_group and $user/$group if necessary.</p>
+</div>
       
     </li>
   
@@ -564,6 +709,12 @@ Encrypt CAs this puppet module was tested against.</p>
         <em class="default">(defaults to: <tt>$::dehydrated::params::manage_packages</tt>)</em>
       
       
+        &mdash;
+        <div class='inline'>
+<p>Install required packages using ensure_packages? Should be safe to leave
+enabled in most cases.</p>
+</div>
+      
     </li>
   
     <li>
@@ -577,6 +728,11 @@ Encrypt CAs this puppet module was tested against.</p>
         <em class="default">(defaults to: <tt>$::dehydrated::params::pki_packages</tt>)</em>
       
       
+        &mdash;
+        <div class='inline'>
+<p>Required packages to create /etc/pki. Not really used yet.</p>
+</div>
+      
     </li>
   
     <li>
@@ -589,6 +745,12 @@ Encrypt CAs this puppet module was tested against.</p>
       
         <em class="default">(defaults to: <tt>$::dehydrated::params::packages</tt>)</em>
       
+      
+        &mdash;
+        <div class='inline'>
+<p>The list of packages we actually need to install to make this module work
+properly. You are free to modify this list if you need to.</p>
+</div>
       
     </li>
   
@@ -615,47 +777,6 @@ Encrypt CAs this puppet module was tested against.</p>
         <pre class="lines">
 
 
-73
-74
-75
-76
-77
-78
-79
-80
-81
-82
-83
-84
-85
-86
-87
-88
-89
-90
-91
-92
-93
-94
-95
-96
-97
-98
-99
-100
-101
-102
-103
-104
-105
-106
-107
-108
-109
-110
-111
-112
-113
 114
 115
 116
@@ -740,10 +861,53 @@ Encrypt CAs this puppet module was tested against.</p>
 195
 196
 197
-198</pre>
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241</pre>
       </td>
       <td>
-        <pre class="code"><span class="info file"># File 'manifests/init.pp', line 73</span>
+        <pre class="code"><span class="info file"># File 'manifests/init.pp', line 114</span>
 
 class dehydrated
 (
@@ -772,6 +936,8 @@ class dehydrated
   Stdlib::Absolutepath $dehydrated_requests_config = &quot;${dehydrated_base_dir}/requests.json&quot;,
   Stdlib::Absolutepath $dehydrated_wellknown_dir = &quot;${dehydrated_base_dir}/acme-challenges&quot;,
   Stdlib::Absolutepath $dehydrated_alpncert_dir = &quot;${dehydrated_base_dir}/alpn-certs&quot;,
+  Stdlib::Absolutepath $dehydrated_status_file = &quot;${dehydrated_base_dir}/status.json&quot;,
+  Stdlib::Absolutepath $dehydrated_monitoring_status_file = &quot;${dehydrated_base_dir}/monitoring.status&quot;,
   Array $dehydrated_host_packages = $::dehydrated::params::dehydrated_host_packages,
   Hash $dehydrated_environment = $::dehydrated::params::dehydrated_environment,
   Optional[Dehydrated::Hook] $dehydrated_domain_validation_hook = $::dehydrated::params::dehydrated_domain_validation_hook,

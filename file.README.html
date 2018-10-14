@@ -124,18 +124,68 @@ enabled.</p>
 
 <h3 id="label-Beginning+with+dehydrated">Beginning with dehydrated</h3>
 
-<p>The very basic steps needed for a user to get the module up and running.
-This can include setup steps, if necessary, or it can be an example of the
-most basic use of the module.</p>
+<p>Basic things you need:  - a host with internet access, preferable a puppet
+master. This will be known as <em>dehydrated_host</em> now.  - a working
+hook script for dehydrated, for exampes and documentation see <a
+href="https://github.com/lukas2511/dehydrated/tree/master/docs">github.com/lukas2511/dehydrated/tree/master/docs</a>
+- bzed-dehydrated installed as <em>dehydrated</em> module in your Puppet
+environment.  You will also need recent versions of puppetlabs-stdlib,
+puppetlabs-concat, puppetlabs-vcsrepo.  For puppet &gt;= 6.0 you&#39;ll
+also need puppetlabs-cron_core.  - I&#39;d assume at least puppet version
+4.8. Not tested or developed for older version.  - Working exportable
+ressources. Make sure your puppetdb is working well, this module  heavily
+depends on it.</p>
 
 <h2 id="label-Usage">Usage</h2>
 
-<p>Include usage examples for common use cases in the <strong>Usage</strong>
-section. Show your users how to use your module to solve problems, and be
-sure to include code examples. Include three to five examples of the most
-important or common tasks a user can accomplish with your module. Show
-users how to accomplish more complex tasks that involve different types,
-classes, and functions working in tandem.</p>
+<p>This only describes the very basic usage. Almost all things are
+configurable, see the reference for details. So for a basic setup, the
+following steps should give you a running setup.</p>
+<ol><li>
+<p>Do a basic setup of your <strong>dehydrated_host</strong>:  class {
+&#39;dehydrated&#39; :  dehydrated_host =&gt;
+&#39;your.dehydrated.host.example.com&#39;,  }</p>
+</li><li>
+<p>As example we&#39;ll use the dehydrated hook for Cloudflare®. Take  <a
+href="https://github.com/socram8888/dehydrated-hook-cloudflare/blob/master/cf-hook.sh">github.com/socram8888/dehydrated-hook-cloudflare/blob/master/cf-hook.sh</a>
+and <strong>on your dehydrated_host</strong> install it into
+<em>/opt/dehydrated/hooks.d/dns-01.sh</em></p>
+</li><li>
+<p>Add the hook configuration tou your config from above:  class {
+&#39;dehydrated&#39; :  dehydrated_host =&gt;
+&#39;your.dehydrated.host.example.com&#39;,  dehydrated_environment =&gt; {
+&#39;CF_EMAIL&#39; =&gt; &#39;your@email.address&#39;,  &#39;CF_KEY&#39;
+=&gt; &#39;your-long-Cloudflare-api-key&#39;,  }  }</p>
+</li><li>
+<p>On the host that needs a new certificate, add this to your puppet code: 
+class { &#39;dehydrated&#39; :  dehydrated_host =&gt;
+&#39;your.dehydrated.host.example.com&#39;,  challengetype =&gt;
+&#39;dns-01&#39;,  }  ::dehydrated::certificate {
+&#39;my-https-host.example.com&#39; :  subject_alternative_names =&gt; [
+&#39;example.com&#39;, &#39;host2.example.com&#39; ],  }</p>
+</li><li>
+<p>Wait.… it will take a few puppet runs until your certificate will appear. 
+The certificates will be requestd by a cronjob, not directly from puppet. 
+Otherwise puppet runs will take way too much time.</p>
+</li></ol>
+
+<h3 id="label-Monitoring+-26+debugging">Monitoring &amp; debugging</h3>
+<ul><li>
+<p>usual Puppet debugging rules apply &gt;:-)</p>
+</li><li>
+<p>you&#39;ll find the output and errors from the last cronjob run in
+<strong>/opt/dehydrated/status.json</strong>. Unfortunately proper logging
+and maybe a better error handling is not implemented yet. Pull requests are
+welcome :-)</p>
+</li><li>
+<p>monitoring the cronjob results is possible by using check_statusfile. On
+Debian and derivates this is available in the
+<em>nagios-plugins-contrib</em> package. Or find the source here: <a
+href="https://github.com/bzed/pkg-nagios-plugins-contrib/blob/master/dsa/checks/dsa-check-statusfile">github.com/bzed/pkg-nagios-plugins-contrib/blob/master/dsa/checks/dsa-check-statusfile</a>
+# /usr/lib/nagios/plugins/check_statusfile
+/opt/dehydrated/monitoring.status  dehydrated certificates: OK: 2, FAILED:
+1  foo.example.com (from bar.example.com): OCSP update failed</p>
+</li></ul>
 
 <h2 id="label-Reference">Reference</h2>
 
@@ -161,6 +211,10 @@ authorizations and blaiming me for it ;)</p>
 
 <p>Please use the github issue tracker and send pull requests. Make sure that
 your pull requests keep travis happy!</p>
+
+<h3 id="label-For+a+release-3A">For a release:</h3>
+
+<p>-</p>
 </div></div>
 
       <div id="footer">

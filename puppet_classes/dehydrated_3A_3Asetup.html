@@ -183,7 +183,9 @@ creation and crt storage. It shoudld never be included in your puppet code.</p>
 94
 95
 96
-97</pre>
+97
+98
+99</pre>
       </td>
       <td>
         <pre class="code"><span class="info file"># File 'manifests/setup.pp', line 9</span>
@@ -224,16 +226,18 @@ class dehydrated::setup {
   }
 
   $config = {
-    &#39;base_dir&#39;                   =&gt; $::dehydrated::base_dir,
-    &#39;crt_dir&#39;                    =&gt; $::dehydrated::crt_dir,
-    &#39;csr_dir&#39;                    =&gt; $::dehydrated::csr_dir,
-    &#39;dehydrated_base_dir&#39;        =&gt; $::dehydrated::dehydrated_base_dir,
-    &#39;dehydrated_git_dir&#39;         =&gt; $::dehydrated::dehydrated_git_dir,
-    &#39;dehydrated_host&#39;            =&gt; $::dehydrated::dehydrated_host,
-    &#39;dehydrated_puppetmaster&#39;    =&gt; $::dehydrated::params::dehydrated_puppetmaster,
-    &#39;dehydrated_requests_dir&#39;    =&gt; $::dehydrated::dehydrated_requests_dir,
-    &#39;dehydrated_requests_config&#39; =&gt; $::dehydrated::dehydrated_requests_config,
-    &#39;key_dir&#39;                    =&gt; $::dehydrated::key_dir,
+    &#39;base_dir&#39;                          =&gt; $::dehydrated::base_dir,
+    &#39;crt_dir&#39;                           =&gt; $::dehydrated::crt_dir,
+    &#39;csr_dir&#39;                           =&gt; $::dehydrated::csr_dir,
+    &#39;dehydrated_base_dir&#39;               =&gt; $::dehydrated::dehydrated_base_dir,
+    &#39;dehydrated_git_dir&#39;                =&gt; $::dehydrated::dehydrated_git_dir,
+    &#39;dehydrated_host&#39;                   =&gt; $::dehydrated::dehydrated_host,
+    &#39;dehydrated_puppetmaster&#39;           =&gt; $::dehydrated::params::dehydrated_puppetmaster,
+    &#39;dehydrated_requests_dir&#39;           =&gt; $::dehydrated::dehydrated_requests_dir,
+    &#39;dehydrated_requests_config&#39;        =&gt; $::dehydrated::dehydrated_requests_config,
+    &#39;dehydrated_status_file&#39;            =&gt; $::dehydrated::dehydrated_status_file,
+    &#39;dehydrated_monitoring_status_file&#39; =&gt; $::dehydrated::dehydrated_monitoring_status_file,
+    &#39;key_dir&#39;                           =&gt; $::dehydrated::key_dir,
   }
 
   $config_json = to_json($config)
