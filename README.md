@@ -77,7 +77,8 @@ Basic things you need:
 This only describes the very basic usage. Almost all things are configurable, see the reference for details.
 So for a basic setup, the following steps should give you a running setup.
 
- 1.  Do a basic setup of your **dehydrated\_host**: ```
+ 1.  Do a basic setup of your **dehydrated\_host**:
+     ```
          class { 'dehydrated' :
              dehydrated_host => 'your.dehydrated.host.example.com',
          }
@@ -85,7 +86,8 @@ So for a basic setup, the following steps should give you a running setup.
  2.  As example we'll use the dehydrated hook for Cloudflare®. Take
      https://github.com/socram8888/dehydrated-hook-cloudflare/blob/master/cf-hook.sh
      and **on your dehydrated_host** install it into _/opt/dehydrated/hooks.d/dns-01.sh_
- 3.  Add the hook configuration tou your config from above:
+ 3.  Add the hook configuration to your config from above:
+         
          class { 'dehydrated' :
              dehydrated_host => 'your.dehydrated.host.example.com',
              dehydrated_environment => {
@@ -93,7 +95,9 @@ So for a basic setup, the following steps should give you a running setup.
                  'CF_KEY'   => 'your-long-Cloudflare-api-key',
              }
          }
+         
  4.  On the host that needs a new certificate, add this to your puppet code:
+         
          class { 'dehydrated' :
              dehydrated_host => 'your.dehydrated.host.example.com',
              challengetype   => 'dns-01',
@@ -101,6 +105,7 @@ So for a basic setup, the following steps should give you a running setup.
          ::dehydrated::certificate { 'my-https-host.example.com' :
              subject_alternative_names => [ 'example.com', 'host2.example.com' ],
          }
+         
  5.  Wait.... it will take a few puppet runs until your certificate will appear.
      The certificates will be requestd by a cronjob, not directly from puppet.
      Otherwise puppet runs will take way too much time.
@@ -112,16 +117,20 @@ So for a basic setup, the following steps should give you a running setup.
     Pull requests are welcome :-)
  -  monitoring the cronjob results is possible by using check\_statusfile. On Debian and derivates
     this is available in the _nagios-plugins-contrib_ package. Or find the source here: https://github.com/bzed/pkg-nagios-plugins-contrib/blob/master/dsa/checks/dsa-check-statusfile
+        
         # /usr/lib/nagios/plugins/check_statusfile /opt/dehydrated/monitoring.status
         dehydrated certificates: OK: 2, FAILED: 1
         foo.example.com (from bar.example.com): OCSP update failed
+        
 
 ## Migrating from _bzed-letsencrypt_
 If you were using the bzed-letsencrypt module before, I'd suggest to use the following settings on the hosts that request certificates:
+
     class { 'dehydrated' :
         group    => 'letsencrypt',
         base_dir => '/etc/letsencrypt',
     }
+
 Migrating the files on the dehydrated\_host (former letsencrypt\_host) is a harder task and
 not implemented. A new setup or manual migration is preferred.
 
@@ -147,11 +156,18 @@ Please use the github issue tracker and send pull requests. Make sure that your 
 
 ### For a release:
  -  Update gh\_pages:
+        
         bundle exec rake strings:gh_pages:update
+        
  -  Create changelog:
+        
         bundle exec rake changelog
+
  -  Update REFERENCE.md:
+ 
         puppet strings generate --format markdown --out REFERENCE.md
+        
  -  Release:
+ 
         bundle exec rake module:release
 
