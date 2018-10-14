@@ -4,10 +4,79 @@
 # @summary Base class to define necessary variables and include setup classes.
 #
 # @example
+#   # should be sufficient in most cases.
 #   include dehydrated
 #
+#   # if you are "upgrading" from bzed-letsencrypt,
+#   # you might want to use these options to stay
+#   # compatible with the old group/directory:
+#   class { 'dehydrated' :
+#     group    => 'letsencrypt',
+#     base_dir => '/etc/letsencrypt',
+#   }
+#
 # @api public
-
+# @param base_dir
+#   The base directory where keys/csr/certs are stored.
+#   Defaults to:
+#   - on $::os['family']=='Debian': /etc/dehydrated 
+#   - on other Linux/Unix systems: /etc/pki/dehydrated
+#   - on windows: C:\LE_certs.
+# @param crt_dir
+#   The directory where certificates are stored. Defaults to ${base_dir}/certs
+# @param csr_dir
+#   The directory where CSRs are stored. Defaults to ${base_dir}/csr
+# @param key_dir
+#   The directory where pricate keys are stored. Defaults to ${base_dir}/private
+# @param user
+#   The user who owns the files in /etc/dehydrated.
+# @param group
+#   The group which owns the files in /etc/dehydrated. If you have a non-root process which
+#   needs to access private keys, add its user to this group.
+# @param dehydrated_user
+#   User to run the dehydrated script as. Only used on the host that actually requests certificates.
+# @param dehydrated_group
+#   Group to run the dehydrated script as. Only used on the host that actually requests certificates.
+# @param letsencrypt_ca
+#   Let’s Encrypt CA to use. Defaults to v2-production. See the letsencrypt_cas parameter for a way
+#   to specify your own Let’s Encrypt / ACME compatible CA. This configures the default CA to use, but
+#   You can actually define different CAs for each certificate, see the ::dehydrated::certificate
+#   define for details.
+# @param letsencrypt_cas
+#   Hash with the definitions of the official testing and production Let’s Encrypt CAs this
+#   puppet module was tested against.
+# @param dh_param_size
+#   Default size of the DH params we should generate. Defaults to 2048.
+# @param challengetype
+#   Default challengetype to use. Defaults to 'dns-01'. You can specify a different
+#   challengetype for each certificate, see ::dehydrated::certificate.
+# @param algorithm
+# @param dehydrated_base_dir
+# @param dehydrated_git_dir
+# @param dehydrated_git_tag
+# @param dehydrated_git_url
+# @param dehydrated_host
+# @param dehydrated_requests_dir
+# @param dehydrated_hooks_dir
+# @param dehydrated_requests_config
+# @param dehydrated_wellknown_dir
+# @param dehydrated_alpncert_dir
+# @param dehydrated_host_packages
+# @param dehydrated_environment
+# @param dehydrated_domain_validation_hook
+# @param dehydrated_hook
+# @param dehydrated_contact_email
+# @param manage_user
+#   Create $dehydrated_user/$dehydrated_group and $user/$group if necessary.
+# @param manage_packages
+#   Install required packages using ensure_packages?
+#   Should be safe to leave enabled in most cases.
+# @param pki_packages
+#   Required packages to create /etc/pki. Not really used yet.
+# @param packages
+#   The list of packages we actually need to install to make this module work properly.
+#   You are free to modify this list if you need to.
+# @param certificates
 class dehydrated
 (
   Stdlib::Absolutepath $base_dir = $::dehydrated::params::base_dir,
