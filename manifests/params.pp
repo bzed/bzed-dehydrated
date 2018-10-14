@@ -87,7 +87,7 @@ class dehydrated::params {
   $domainfile = join([$configdir, 'domains.json'], $path_seperator)
 
   # letsencrypt settings
-  $letsencrypt_ca = 'v2-staging'
+  $letsencrypt_ca = 'v2-production'
   $letsencrypt_cas = {
     'production' => {
       'url'  => 'https://acme-v01.api.letsencrypt.org/directory',
