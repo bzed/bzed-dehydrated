@@ -35,6 +35,8 @@ class dehydrated
   Stdlib::Absolutepath $dehydrated_requests_config = "${dehydrated_base_dir}/requests.json",
   Stdlib::Absolutepath $dehydrated_wellknown_dir = "${dehydrated_base_dir}/acme-challenges",
   Stdlib::Absolutepath $dehydrated_alpncert_dir = "${dehydrated_base_dir}/alpn-certs",
+  Stdlib::Absolutepath $dehydrated_status_file = "${dehydrated_base_dir}/status.json",
+  Stdlib::Absolutepath $dehydrated_monitoring_status_file = "${dehydrated_base_dir}/monitoring.status",
   Array $dehydrated_host_packages = $::dehydrated::params::dehydrated_host_packages,
   Hash $dehydrated_environment = $::dehydrated::params::dehydrated_environment,
   Optional[Dehydrated::Hook] $dehydrated_domain_validation_hook = $::dehydrated::params::dehydrated_domain_validation_hook,
