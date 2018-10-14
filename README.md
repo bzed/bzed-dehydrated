@@ -13,8 +13,10 @@ Centralized CSR signing using Let’s Encrypt™ - keeping your keys safe on the
     * [Setup requirements](#setup-requirements)
     * [Beginning with dehydrated](#beginning-with-dehydrated)
 3. [Usage - Configuration options and additional functionality](#usage)
-4. [Limitations - OS compatibility, etc.](#limitations)
-5. [Development - Guide for contributing to the module](#development)
+    * [Monitoring and debugging](#monitoring--debugging)
+4. [Migrating from bzed-letsencrypt](#migrating-from-bzed-letsencrypt)
+5. [Limitations - OS compatibility, etc.](#limitations)
+6. [Development - Guide for contributing to the module](#development)
 
 ## Description
 
@@ -75,10 +77,11 @@ Basic things you need:
 This only describes the very basic usage. Almost all things are configurable, see the reference for details.
 So for a basic setup, the following steps should give you a running setup.
 
- 1.  Do a basic setup of your **dehydrated\_host**:
+ 1.  Do a basic setup of your **dehydrated\_host**: ```
          class { 'dehydrated' :
              dehydrated_host => 'your.dehydrated.host.example.com',
          }
+     ```
  2.  As example we'll use the dehydrated hook for Cloudflare®. Take
      https://github.com/socram8888/dehydrated-hook-cloudflare/blob/master/cf-hook.sh
      and **on your dehydrated_host** install it into _/opt/dehydrated/hooks.d/dns-01.sh_
@@ -113,7 +116,7 @@ So for a basic setup, the following steps should give you a running setup.
         dehydrated certificates: OK: 2, FAILED: 1
         foo.example.com (from bar.example.com): OCSP update failed
 
-## migrating from _bzed-letsencrypt_
+## Migrating from _bzed-letsencrypt_
 If you were using the bzed-letsencrypt module before, I'd suggest to use the following settings on the hosts that request certificates:
     class { 'dehydrated' :
         group    => 'letsencrypt',
@@ -125,6 +128,7 @@ not implemented. A new setup or manual migration is preferred.
 ## Reference
 
 An html version of the reference is available here: https://bzed.github.io/bzed-dehydrated/
+There is also a markdown version in REFERENCE.md
 
 ## Monitoring
 
