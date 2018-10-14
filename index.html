@@ -83,6 +83,12 @@ the host they belong to.</p>
 </li><li>
 <p><a href="#label-Usage">Usage - Configuration options and additional
 functionality</a></p>
+<ul><li>
+<p><a href="#label-Monitoring++debugging">Monitoring and debugging</a></p>
+</li></ul>
+</li><li>
+<p><a href="#label-Migrating+from+bzed+letsencrypt">Migrating from
+bzed-letsencrypt</a></p>
 </li><li>
 <p><a href="#label-Limitations">Limitations - OS compatibility, etc.</a></p>
 </li><li>
@@ -91,6 +97,9 @@ module</a></p>
 </li></ol>
 
 <h2 id="label-Description">Description</h2>
+
+<p><strong>BETA RELEASE. THERE MIGHT BE BUGS AND GREMLINS. PLEASE REPORT THEM
+(or send plushies).</strong></p>
 
 <p>bzed-dehydrated creates private keys and CSRs, transfers the CSR to a
 central host (for example your puppetmaster) where it is signed using the
@@ -105,6 +114,19 @@ create the necessary files for http-01.</p>
 
 <p>Let’s Encrypt is a trademark of the Internet Security Research Group. All
 rights reserved.</p>
+
+<h3 id="label-Deprecation+of+bzed-letsencrypt">Deprecation of bzed-letsencrypt</h3>
+
+<p>With the release of <strong>bzed-dehydrated</strong> my old module
+<em>bzed-letsencrypt</em> will be depricated. Renaming the module to avoid
+trademark related troubles is one of the reasons for a new module, the
+other is that I did not want to break the API for all users of the old
+module. If there is enough interest I&#39;ll change bzed-letsencrypt to
+become a wrapper around the new module, but with all the new features and
+options I don&#39;t think that makes much sense. So I&#39;m sorry for the
+extra trouble of migrating an existing installation (to make it easier, see
+below), but I hope that the extra amount of flexibility and less hacks in
+the code make it worth to migrate.</p>
 
 <h2 id="label-Setup">Setup</h2>
 
@@ -127,7 +149,7 @@ enabled.</p>
 <p>Basic things you need:  - a host with internet access, preferable a puppet
 master. This will be known as <em>dehydrated_host</em> now.  - a working
 hook script for dehydrated, for exampes and documentation see <a
-href="https://github.com/lukas2511/dehydrated/tree/master/docs">github.com/lukas2511/dehydrated/tree/master/docs</a>
+href="https://github.com/lukas2511/dehydrated/tree/master/docs">lukas2511/dehydrated</a>
 - bzed-dehydrated installed as <em>dehydrated</em> module in your Puppet
 environment.  You will also need recent versions of puppetlabs-stdlib,
 puppetlabs-concat, puppetlabs-vcsrepo.  For puppet &gt;= 6.0 you&#39;ll
@@ -142,29 +164,39 @@ depends on it.</p>
 configurable, see the reference for details. So for a basic setup, the
 following steps should give you a running setup.</p>
 <ol><li>
-<p>Do a basic setup of your <strong>dehydrated_host</strong>:  class {
-&#39;dehydrated&#39; :  dehydrated_host =&gt;
-&#39;your.dehydrated.host.example.com&#39;,  }</p>
+<p>Do a basic setup of your <strong>dehydrated_host</strong>:  <code>     
+class { &#39;dehydrated&#39; :          dehydrated_host =&gt;
+&#39;your.dehydrated.host.example.com&#39;,      } </code></p>
 </li><li>
-<p>As example we&#39;ll use the dehydrated hook for Cloudflare®. Take  <a
-href="https://github.com/socram8888/dehydrated-hook-cloudflare/blob/master/cf-hook.sh">github.com/socram8888/dehydrated-hook-cloudflare/blob/master/cf-hook.sh</a>
+<p>As example we&#39;ll use the dehydrated hook for Cloudflare®. Take
+[socram8888/dehydrated-hook-cloudflare](  <a
+href="https://github.com/socram8888/dehydrated-hook-cloudflare/blob/master/cf-hook.sh">github.com/socram8888/dehydrated-hook-cloudflare/blob/master/cf-hook.sh</a>)
 and <strong>on your dehydrated_host</strong> install it into
 <em>/opt/dehydrated/hooks.d/dns-01.sh</em></p>
 </li><li>
-<p>Add the hook configuration tou your config from above:  class {
-&#39;dehydrated&#39; :  dehydrated_host =&gt;
-&#39;your.dehydrated.host.example.com&#39;,  dehydrated_environment =&gt; {
-&#39;CF_EMAIL&#39; =&gt; &#39;your@email.address&#39;,  &#39;CF_KEY&#39;
-=&gt; &#39;your-long-Cloudflare-api-key&#39;,  }  }</p>
+<p>Add the hook configuration to your config from above:</p>
+
+<pre class="code ruby"><code class="ruby"> class { &#39;dehydrated&#39; :
+     dehydrated_host =&gt; &#39;your.dehydrated.host.example.com&#39;,
+     dehydrated_environment =&gt; {
+         &#39;CF_EMAIL&#39; =&gt; &#39;your@email.address&#39;,
+         &#39;CF_KEY&#39;   =&gt; &#39;your-long-Cloudflare-api-key&#39;,
+     }
+ }
+</code></pre>
 </li><li>
-<p>On the host that needs a new certificate, add this to your puppet code: 
-class { &#39;dehydrated&#39; :  dehydrated_host =&gt;
-&#39;your.dehydrated.host.example.com&#39;,  challengetype =&gt;
-&#39;dns-01&#39;,  }  ::dehydrated::certificate {
-&#39;my-https-host.example.com&#39; :  subject_alternative_names =&gt; [
-&#39;example.com&#39;, &#39;host2.example.com&#39; ],  }</p>
+<p>On the host that needs a new certificate, add this to your puppet code:</p>
+
+<pre class="code ruby"><code class="ruby"> class { &#39;dehydrated&#39; :
+     dehydrated_host =&gt; &#39;your.dehydrated.host.example.com&#39;,
+     challengetype   =&gt; &#39;dns-01&#39;,
+ }
+ ::dehydrated::certificate { &#39;my-https-host.example.com&#39; :
+     subject_alternative_names =&gt; [ &#39;example.com&#39;, &#39;host2.example.com&#39; ],
+ }
+</code></pre>
 </li><li>
-<p>Wait.… it will take a few puppet runs until your certificate will appear. 
+<p>Wait.... it will take a few puppet runs until your certificate will appear.
 The certificates will be requestd by a cronjob, not directly from puppet. 
 Otherwise puppet runs will take way too much time.</p>
 </li></ol>
@@ -181,16 +213,34 @@ welcome :-)</p>
 <p>monitoring the cronjob results is possible by using check_statusfile. On
 Debian and derivates this is available in the
 <em>nagios-plugins-contrib</em> package. Or find the source here: <a
-href="https://github.com/bzed/pkg-nagios-plugins-contrib/blob/master/dsa/checks/dsa-check-statusfile">github.com/bzed/pkg-nagios-plugins-contrib/blob/master/dsa/checks/dsa-check-statusfile</a>
-# /usr/lib/nagios/plugins/check_statusfile
-/opt/dehydrated/monitoring.status  dehydrated certificates: OK: 2, FAILED:
-1  foo.example.com (from bar.example.com): OCSP update failed</p>
+href="https://github.com/bzed/pkg-nagios-plugins-contrib/blob/master/dsa/checks/dsa-check-statusfile">check_statusfile</a></p>
+
+<pre class="code ruby"><code class="ruby"># /usr/lib/nagios/plugins/check_statusfile /opt/dehydrated/monitoring.status
+dehydrated certificates: OK: 2, FAILED: 1
+foo.example.com (from bar.example.com): OCSP update failed
+</code></pre>
 </li></ul>
+
+<h2 id="label-Migrating+from+bzed-letsencrypt">Migrating from <em>bzed-letsencrypt</em></h2>
+
+<p>If you were using the bzed-letsencrypt module before, I&#39;d suggest to
+use the following settings on the hosts that request certificates:</p>
+
+<pre class="code ruby"><code class="ruby">class { &#39;dehydrated&#39; :
+    group    =&gt; &#39;letsencrypt&#39;,
+    base_dir =&gt; &#39;/etc/letsencrypt&#39;,
+}
+</code></pre>
+
+<p>Migrating the files on the dehydrated_host (former letsencrypt_host) is a
+harder task and not implemented. A new setup or manual migration is
+preferred.</p>
 
 <h2 id="label-Reference">Reference</h2>
 
 <p>An html version of the reference is available here: <a
-href="https://bzed.github.io/bzed-dehydrated">bzed.github.io/bzed-dehydrated</a>/</p>
+href="https://bzed.github.io/bzed-dehydrated">bzed.github.io/bzed-dehydrated</a>/
+There is also a markdown version in REFERENCE.md</p>
 
 <h2 id="label-Monitoring">Monitoring</h2>
 
@@ -198,7 +248,7 @@ href="https://bzed.github.io/bzed-dehydrated">bzed.github.io/bzed-dehydrated</a>
 compatible with check_statusfile, which is - in Debian and derivates -
 packaged in the <em>nagios-plugins-contrib</em> package. If you ar enot
 using Debian you can retrieve the source code here: <a
-href="https://github.com/bzed/pkg-nagios-plugins-contrib/blob/master/dsa/checks/dsa-check-statusfile">github.com/bzed/pkg-nagios-plugins-contrib/blob/master/dsa/checks/dsa-check-statusfile</a></p>
+href="https://github.com/bzed/pkg-nagios-plugins-contrib/blob/master/dsa/checks/dsa-check-statusfile">check_statusfile</a></p>
 
 <h2 id="label-Limitations">Limitations</h2>
 
@@ -213,8 +263,27 @@ authorizations and blaiming me for it ;)</p>
 your pull requests keep travis happy!</p>
 
 <h3 id="label-For+a+release-3A">For a release:</h3>
+<ul><li>
+<p>Update gh_pages:</p>
 
-<p>-</p>
+<pre class="code ruby"><code class="ruby">bundle exec rake strings:gh_pages:update
+</code></pre>
+</li><li>
+<p>Create changelog:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_bundle'>bundle</span> <span class='id identifier rubyid_exec'>exec</span> <span class='id identifier rubyid_rake'>rake</span> <span class='id identifier rubyid_changelog'>changelog</span>
+</code></pre>
+</li><li>
+<p>Update REFERENCE.md:</p>
+
+<pre class="code ruby"><code class="ruby">puppet strings generate --format markdown --out REFERENCE.md
+</code></pre>
+</li><li>
+<p>Release:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_bundle'>bundle</span> <span class='id identifier rubyid_exec'>exec</span> <span class='id identifier rubyid_rake'>rake</span> <span class='label'>module:</span><span class='id identifier rubyid_release'>release</span>
+</code></pre>
+</li></ul>
 </div></div>
 
       <div id="footer">
