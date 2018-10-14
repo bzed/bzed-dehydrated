@@ -173,3 +173,4 @@ Please use the github issue tracker and send pull requests. Make sure that your 
  
         pdk build
 
+ -  Bump version number: bump/change the version in metadata.json.
