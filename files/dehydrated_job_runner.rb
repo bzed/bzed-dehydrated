@@ -305,7 +305,7 @@ def run_config(dehydrated_requests_config)
 end
 
 def write_status_file(requests_status, status_file, monitoring_status_file)
-  File.write(status_file, JSON.generate(requests_status))
+  File.write(status_file, JSON.pretty_generate(requests_status))
 
   errormsg = []
   ok_count = 0
@@ -314,7 +314,7 @@ def write_status_file(requests_status, status_file, monitoring_status_file)
     dns.each do |dn, status|
       if status['statuscode'].to_i > 0
         bad_count += 1
-        errormsg << "#{dn} (from #{fqdn}): #{status['erorr_message']}"
+        errormsg << "#{dn} (from #{fqdn}): #{status['error_message']}"
       else
         ok_count += 1
       end
