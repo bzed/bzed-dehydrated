@@ -161,14 +161,14 @@ Please use the github issue tracker and send pull requests. Make sure that your 
         
         bundle exec rake strings:gh_pages:update
         
- -  Create changelog:
-        
-        bundle exec rake changelog
-
  -  Update REFERENCE.md:
  
         puppet strings generate --format markdown --out REFERENCE.md
         
+ -  Create changelog:
+        
+        bundle exec rake changelog
+
  -  Release:
  
         pdk build
