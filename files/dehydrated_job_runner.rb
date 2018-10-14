@@ -312,7 +312,7 @@ def write_status_file(requests_status, status_file, monitoring_status_file)
   bad_count = 0
   requests_status.each do |fqdn, dns|
     dns.each do |dn, status|
-      if status['status'] > 0
+      if status['statuscode'].to_i > 0
         bad_count += 1
         errormsg << "#{dn} (from #{fqdn}): #{status['erorr_message']}"
       else
