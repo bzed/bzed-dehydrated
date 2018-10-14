@@ -28,7 +28,6 @@ group :development do
   gem "puppet-module-win-dev-r#{minor_version}",       require: false, platforms: [:mswin, :mingw, :x64_mingw]
   gem "github_changelog_generator",                    require: false, git: 'https://github.com/skywinder/github-changelog-generator', ref: '20ee04ba1234e9e83eb2ffb5056e23d641c7a018' if Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')
   gem "rspec-puppet-facts", '~> 1.7',                  require: false
-  gem "puppet-blacksmith",                             require: false
   gem "rspec-puppet",                                  require: false
   gem "puppet-strings",                                require: false
   gem "rgen",                                          require: false

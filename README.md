@@ -171,5 +171,5 @@ Please use the github issue tracker and send pull requests. Make sure that your 
         
  -  Release:
  
-        bundle exec rake module:release
+        pdk build
 

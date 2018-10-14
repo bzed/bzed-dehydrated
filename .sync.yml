@@ -8,7 +8,6 @@ Gemfile:
         condition: "Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')"
       - gem: 'rspec-puppet-facts'
         version: '~> 1.7'
-      - gem: 'puppet-blacksmith'
       - gem: 'rspec-puppet'
       - gem: 'puppet-strings'
       - gem: 'rgen'
@@ -21,7 +20,6 @@ Rakefile:
       - > 
           begin
 
-            require 'puppet_blacksmith/rake_tasks'
             require 'puppet-strings/tasks'
 
           rescue LoadError

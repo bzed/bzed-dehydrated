@@ -77,7 +77,6 @@ end
 
 begin
 
-  require 'puppet_blacksmith/rake_tasks'
   require 'puppet-strings/tasks'
 
 rescue LoadError
