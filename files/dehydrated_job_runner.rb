@@ -322,9 +322,9 @@ def write_status_file(requests_status, status_file, monitoring_status_file)
   end
 
   monitoring_status = if bad_count > 0
-                        2
+                        'CRITICAL'
                       else
-                        0
+                        'OK'
                       end
   output = [monitoring_status.to_s, "dehydrated certificates: OK: #{ok_count}, FAILED: #{bad_count}"]
   output += errormsg
