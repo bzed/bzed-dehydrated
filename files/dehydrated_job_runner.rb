@@ -301,8 +301,39 @@ def run_config(dehydrated_requests_config)
       }
     end
   end
-  p requests_status
+  requests_status
 end
+
+def write_status_file(requests_status, status_file, monitoring_status_file)
+
+  File.write(status_file, JSON.generate(requests_status))
+
+  errormsg = []
+  ok_count = 0
+  bad_count = 0
+  requests_status.each do |fqdn, dns|
+    dns.each do |dn, status|
+      if status['status'] > 0
+        bad_count += 1
+        error_message = status['erorr_message']
+        errormsg << "#{dn} (from #{fqdn}): #{erorr_message}"
+      else
+        ok_count += 1
+      end
+    end
+  end
+
+  monitoring_status = if bad_count > 0
+                        2
+                      else
+                        0
+                      end
+  output = [monitoring_status.to_s, "dehydrated certificates: OK: #{ok_count}, FAILED: #{bad_count}"]
+  output += errormsg
+
+  File.write(monitoring_status_file, output.join('\n'))
+end
+
 
 if ARGV.empty?
   raise ArgumentError, 'Need to specify config.json as argument'
@@ -314,9 +345,16 @@ dehydrated_requests_config_file = dehydrated_host_config['dehydrated_requests_co
 dehydrated_requests_config = JSON.parse(File.read(dehydrated_requests_config_file))
 # dehydrated_base_dir = dehydrated_host_config['dehydrated_base_dir']
 dehydrated_git_dir = dehydrated_host_config['dehydrated_git_dir']
+dehydrated_status_file = dehydrated_host_config['dehydrated_status_file']
+dehydrated_monitoring_status_file = dehydrated_host_config['dehydrated_monitoring_status_file']
 DEHYDRATED = File.join(dehydrated_git_dir, 'dehydrated')
 
-run_config(dehydrated_requests_config)
+request_status = run_config(dehydrated_requests_config)
+write_status_file(
+  request_status,
+  dehydrated_status_file,
+  dehydrated_monitoring_status_file,
+)
 
 # rubocop:disable all
 #{
