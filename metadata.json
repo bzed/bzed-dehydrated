@@ -5,6 +5,8 @@
   "summary": "Puppet module for centralized CSR signing using Let’s Encrypt™ and lukas2511/dehydrated - keeping your keys safe on the host they belong to.",
   "license": "Apache-2.0",
   "source": "https://github.com/bzed/bzed-dehydrated",
+  "project_page": "https://bzed.github.io/bzed-dehydrated/",
+  "issues_url": "https://github.com/bzed/bzed-dehydrated/issues",
   "dependencies": [
     {
       "name": "puppetlabs-stdlib",
