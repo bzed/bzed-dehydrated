@@ -329,7 +329,7 @@ def write_status_file(requests_status, status_file, monitoring_status_file)
   output = [monitoring_status.to_s, "dehydrated certificates: OK: #{ok_count}, FAILED: #{bad_count}"]
   output += errormsg
 
-  File.write(monitoring_status_file, output.join('\n'))
+  File.write(monitoring_status_file, output.join("\n"))
 end
 
 if ARGV.empty?
