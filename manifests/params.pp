@@ -78,10 +78,6 @@ class dehydrated::params {
     default : { fail('Your OS is not supported!')}
   }
 
-  $csr_dir = join([$base_dir, 'csr'], $path_seperator)
-  $crt_dir = join([$base_dir, 'certs'], $path_seperator)
-  $key_dir = join([$base_dir, 'private'], $path_seperator)
-
   $configdir = join([$puppet_vardir, 'bzed-dehydrated'], $path_seperator)
   $configfile = join([$configdir, 'config.json'], $path_seperator)
   $domainfile = join([$configdir, 'domains.json'], $path_seperator)
