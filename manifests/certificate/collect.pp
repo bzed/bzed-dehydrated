@@ -34,7 +34,7 @@ define dehydrated::certificate::collect(
     $ca_file = "${request_base_dir}/${request_base_filename}_ca.pem"
     $ocsp_file = "${crt_file}.ocsp"
 
-    if find_file($crt) {
+    if find_file($crt_file) {
       $crt = file($crt_file)
     } else {
       $crt = undef
