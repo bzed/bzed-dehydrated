@@ -196,7 +196,8 @@
 38
 39
 40
-41</pre>
+41
+42</pre>
       </td>
       <td>
         <pre class="code"><span class="info file"># File 'manifests/certificate/dh.pp', line 13</span>
@@ -218,7 +219,8 @@ define dehydrated::certificate::dh(
   $dh  = &quot;${crt_dir}/${base_filename}.dh&quot;
 
   dehydrated_dhparam { $dh :
-    size =&gt; $dh_param_size,
+    ensure =&gt; present,
+    size   =&gt; $dh_param_size,
   }
 
   file { $dh:

@@ -269,20 +269,22 @@ your pull requests keep travis happy!</p>
 <pre class="code ruby"><code class="ruby">bundle exec rake strings:gh_pages:update
 </code></pre>
 </li><li>
-<p>Create changelog:</p>
-
-<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_bundle'>bundle</span> <span class='id identifier rubyid_exec'>exec</span> <span class='id identifier rubyid_rake'>rake</span> <span class='id identifier rubyid_changelog'>changelog</span>
-</code></pre>
-</li><li>
 <p>Update REFERENCE.md:</p>
 
 <pre class="code ruby"><code class="ruby">puppet strings generate --format markdown --out REFERENCE.md
 </code></pre>
 </li><li>
+<p>Create changelog:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_bundle'>bundle</span> <span class='id identifier rubyid_exec'>exec</span> <span class='id identifier rubyid_rake'>rake</span> <span class='id identifier rubyid_changelog'>changelog</span>
+</code></pre>
+</li><li>
 <p>Release:</p>
 
-<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_bundle'>bundle</span> <span class='id identifier rubyid_exec'>exec</span> <span class='id identifier rubyid_rake'>rake</span> <span class='label'>module:</span><span class='id identifier rubyid_release'>release</span>
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_pdk'>pdk</span> <span class='id identifier rubyid_build'>build</span>
 </code></pre>
+</li><li>
+<p>Bump version number: bump/change the version in metadata.json.</p>
 </li></ul>
 </div></div>
 

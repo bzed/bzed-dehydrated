@@ -212,11 +212,7 @@
 128
 129
 130
-131
-132
-133
-134
-135</pre>
+131</pre>
       </td>
       <td>
         <pre class="code"><span class="info file"># File 'manifests/params.pp', line 8</span>
@@ -294,10 +290,6 @@ class dehydrated::params {
     default : { fail(&#39;Your OS is not supported!&#39;)}
   }
 
-  $csr_dir = join([$base_dir, &#39;csr&#39;], $path_seperator)
-  $crt_dir = join([$base_dir, &#39;certs&#39;], $path_seperator)
-  $key_dir = join([$base_dir, &#39;private&#39;], $path_seperator)
-
   $configdir = join([$puppet_vardir, &#39;bzed-dehydrated&#39;], $path_seperator)
   $configfile = join([$configdir, &#39;config.json&#39;], $path_seperator)
   $domainfile = join([$configdir, &#39;domains.json&#39;], $path_seperator)
@@ -307,19 +299,19 @@ class dehydrated::params {
   $letsencrypt_cas = {
     &#39;production&#39; =&gt; {
       &#39;url&#39;  =&gt; &#39;https://acme-v01.api.letsencrypt.org/directory&#39;,
-      &#39;hash&#39; =&gt; &#39;aHR0cHM6Ly9hY21lLXYwMS5hcGkubGV0c2VuY3J5cHQub3JnL2RpcmVjdG9yeQo&#39;
+      &#39;hash&#39; =&gt; &#39;aHR0cHM6Ly9hY21lLXYwMS5hcGkubGV0c2VuY3J5cHQub3JnL2RpcmVjdG9yeQo&#39;,
     },
     &#39;staging&#39;    =&gt; {
       &#39;url&#39;  =&gt; &#39;https://acme-staging.api.letsencrypt.org/directory&#39;,
-      &#39;hash&#39; =&gt; &#39;aHR0cHM6Ly9hY21lLXN0YWdpbmcuYXBpLmxldHNlbmNyeXB0Lm9yZy9kaXJlY3RvcnkK&#39;
+      &#39;hash&#39; =&gt; &#39;aHR0cHM6Ly9hY21lLXN0YWdpbmcuYXBpLmxldHNlbmNyeXB0Lm9yZy9kaXJlY3RvcnkK&#39;,
     },
     &#39;v2-production&#39; =&gt; {
       &#39;url&#39;  =&gt; &#39;https://acme-v02.api.letsencrypt.org/directory&#39;,
-      &#39;hash&#39; =&gt; &#39;aHR0cHM6Ly9hY21lLXYwMi5hcGkubGV0c2VuY3J5cHQub3JnL2RpcmVjdG9yeQo&#39;
+      &#39;hash&#39; =&gt; &#39;aHR0cHM6Ly9hY21lLXYwMi5hcGkubGV0c2VuY3J5cHQub3JnL2RpcmVjdG9yeQo&#39;,
     },
     &#39;v2-staging&#39;    =&gt; {
       &#39;url&#39;  =&gt; &#39;https://acme-staging-v02.api.letsencrypt.org/directory&#39;,
-      &#39;hash&#39; =&gt; &#39;aHR0cHM6Ly9hY21lLXN0YWdpbmctdjAyLmFwaS5sZXRzZW5jcnlwdC5vcmcvZGlyZWN0b3J5Cg&#39;
+      &#39;hash&#39; =&gt; &#39;aHR0cHM6Ly9hY21lLXN0YWdpbmctdjAyLmFwaS5sZXRzZW5jcnlwdC5vcmcvZGlyZWN0b3J5Cg&#39;,
     },
   }
 
