@@ -114,9 +114,9 @@
 class dehydrated
 (
   Stdlib::Absolutepath $base_dir = $::dehydrated::params::base_dir,
-  Stdlib::Absolutepath $crt_dir = $::dehydrated::params::crt_dir,
-  Stdlib::Absolutepath $csr_dir = $::dehydrated::params::csr_dir,
-  Stdlib::Absolutepath $key_dir = $::dehydrated::params::key_dir,
+  Stdlib::Absolutepath $crt_dir = join([$base_dir, 'certs'], $::dehydrated::params::path_seperator),
+  Stdlib::Absolutepath $csr_dir = join([$base_dir, 'csr'], $::dehydrated::params::path_seperator),
+  Stdlib::Absolutepath $key_dir = join([$base_dir, 'private'], $::dehydrated::params::path_seperator),
   String $user = $::dehydrated::params::user,
   Optional[String] $group = $::dehydrated::params::group,
   Optional[String] $dehydrated_user = $::dehydrated::params::dehydrated_user,
