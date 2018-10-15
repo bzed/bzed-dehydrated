@@ -12,7 +12,7 @@ Puppet::Type.type(:dehydrated_dhparam).provide(:openssl) do
                # replace dhparms regularily to avoid logjam attacks
                # should not be necessary with dhparams >= 2048.
                # please send pull requests if my knowledge is wrong :)
-               Pathname.new(resource[:path]).exist? && (File.mtime(resource[:path]) + 24 * 60 * 60) < Time.now
+               Pathname.new(resource[:path]).exist? && (File.mtime(resource[:path]) + 24 * 60 * 60) > Time.now
              else
                Pathname.new(resource[:path]).exist?
              end
