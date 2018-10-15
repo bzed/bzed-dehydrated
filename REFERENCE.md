@@ -82,7 +82,7 @@ Data type: `Stdlib::Absolutepath`
 
 The directory where certificates are stored. Defaults to ${base_dir}/certs
 
-Default value: $::dehydrated::params::crt_dir
+Default value: join([$base_dir, 'certs'], $::dehydrated::params::path_seperator)
 
 ##### `csr_dir`
 
@@ -90,7 +90,7 @@ Data type: `Stdlib::Absolutepath`
 
 The directory where CSRs are stored. Defaults to ${base_dir}/csr
 
-Default value: $::dehydrated::params::csr_dir
+Default value: join([$base_dir, 'csr'], $::dehydrated::params::path_seperator)
 
 ##### `key_dir`
 
@@ -98,7 +98,7 @@ Data type: `Stdlib::Absolutepath`
 
 The directory where pricate keys are stored. Defaults to ${base_dir}/private
 
-Default value: $::dehydrated::params::key_dir
+Default value: join([$base_dir, 'private'], $::dehydrated::params::path_seperator)
 
 ##### `user`
 
@@ -237,6 +237,7 @@ Default value: $::dehydrated::params::dehydrated_host
 Data type: `Stdlib::Absolutepath`
 
 Only used if $facts['fqdn'] == $::dehydrated::dehydrated_host.
+Path where requests that need to be handled are being stored.
 
 Default value: "${dehydrated_base_dir}/requests"
 
@@ -301,6 +302,8 @@ Default value: $::dehydrated::params::dehydrated_domain_validation_hook
 Data type: `Dehydrated::Hook`
 
 Only used if $facts['fqdn'] == $::dehydrated::dehydrated_host.
+Name of the hook script dehydrated will use to validate the authorization request. The hook script
+must live in the $dehydrated_hooks_dir directory.
 
 Default value: "${challengetype}.sh"
 
@@ -308,7 +311,8 @@ Default value: "${challengetype}.sh"
 
 Data type: `Optional[Dehydrated::Email]`
 
-Only used if $facts['fqdn'] == $::dehydrated::dehydrated_host.
+Contact email address for created accounts. We'll create one account for each
+puppet host.
 
 Default value: $::dehydrated::params::dehydrated_contact_email
 
