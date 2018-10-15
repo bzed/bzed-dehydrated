@@ -198,7 +198,7 @@ def handle_request(fqdn, dn, config)
   ca_file = File.join(request_base_dir, "#{base_filename}_ca.pem")
   ocsp_file = "#{crt_file}.ocsp"
   subject_alternative_names = config['subject_alternative_names']
-  dehydrated_domain_validation_hook = config['dehydrated_domain_validation_hook']
+  dehydrated_domain_validation_hook_script = config['dehydrated_domain_validation_hook_script']
   dehydrated_hook_script = config['dehydrated_hook_script']
 
   new_dn_config = {
@@ -232,9 +232,9 @@ def handle_request(fqdn, dn, config)
     end
   end
 
-  if dehydrated_domain_validation_hook && !dehydrated_domain_validation_hook.empty?
+  if dehydrated_domain_validation_hook_script && !dehydrated_domain_validation_hook_script.empty?
     stdout, stderr, status = run_domain_validation_hook(
-      dehydrated_domain_validation_hook,
+      dehydrated_domain_validation_hook_script,
       dn,
       subject_alternative_names,
     )
@@ -367,7 +367,7 @@ write_status_file(
 #      "dehydrated_environment": {
 #      },
 #      "dehydrated_hook_script": "dns-01.sh",
-#      "dehydrated_domain_validation_hook": null,
+#      "dehydrated_domain_validation_hook_script": null,
 #      "dehydrated_contact_email": "",
 #      "letsencrypt_ca_url": "https://acme-staging-v02.api.letsencrypt.org/directory",
 #      "letsencrypt_ca_hash": "aHR0cHM6Ly9hY21lLXN0YWdpbmctdjAyLmFwaS5sZXRzZW5jcnlwdC5vcmcvZGlyZWN0b3J5Cg",
@@ -384,7 +384,7 @@ write_status_file(
 #      "dehydrated_environment": {
 #      },
 #      "dehydrated_hook_script": "dns-01.sh",
-#      "dehydrated_domain_validation_hook": null,
+#      "dehydrated_domain_validation_hook_script": null,
 #      "dehydrated_contact_email": "",
 #      "letsencrypt_ca_url": "https://acme-staging-v02.api.letsencrypt.org/directory",
 #      "letsencrypt_ca_hash": "aHR0cHM6Ly9hY21lLXN0YWdpbmctdjAyLmFwaS5sZXRzZW5jcnlwdC5vcmcvZGlyZWN0b3J5Cg",

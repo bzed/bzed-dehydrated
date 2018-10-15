@@ -42,12 +42,17 @@ define dehydrated::certificate::request(
     )
   }
 
-  $letsencrypt_ca = $config['letsencrypt_ca']
-  if ($config['dehydrated_domain_validation_hook'] == '') {
-    $dehydrated_domain_validation_hook = undef
+  $dehydrated_domain_validation_hook = $config['dehydrated_domain_validation_hook']
+  if (!$dehydrated_domain_validation_hook or $dehydrated_domain_validation_hook == '') {
+    $dehydrated_domain_validation_hook_script = undef
   } else {
-    $dehydrated_domain_validation_hook = $config['dehydrated_domain_validation_hook']
+    $dehydrated_domain_validation_hook_script = join(
+      [$::dehydrated::dehydrated_hooks_dir, $dehydrated_domain_validation_hook],
+      $::dehydrated::params::path_seperator,
+    )
   }
+
+  $letsencrypt_ca = $config['letsencrypt_ca']
   $dehydrated_contact_email = pick_default($config['dehydrated_contact_email'], '')
 
   $challengetype = $config['challengetype']
@@ -124,18 +129,18 @@ define dehydrated::certificate::request(
   $request_config = {
     $request_fqdn =>  {
       $dn           => {
-        'subject_alternative_names'         => $subject_alternative_names,
-        'base_filename'                     => $base_filename,
-        'crt_serial'                        => $crt_serial,
-        'request_fqdn_dir'                  => $request_fqdn_dir,
-        'request_base_dir'                  => $request_base_dir,
-        'dehydrated_environment'            => $dehydrated_environment,
-        'dehydrated_hook_script'            => $dehydrated_hook_script,
-        'dehydrated_domain_validation_hook' => $dehydrated_domain_validation_hook,
-        'dehydrated_contact_email'          => $dehydrated_contact_email,
-        'letsencrypt_ca_url'                => $letsencrypt_ca_url,
-        'letsencrypt_ca_hash'               => $letsencrypt_ca_hash,
-        'dehydrated_config'                       => $dehydrated_config,
+        'subject_alternative_names'                => $subject_alternative_names,
+        'base_filename'                            => $base_filename,
+        'crt_serial'                               => $crt_serial,
+        'request_fqdn_dir'                         => $request_fqdn_dir,
+        'request_base_dir'                         => $request_base_dir,
+        'dehydrated_environment'                   => $dehydrated_environment,
+        'dehydrated_hook_script'                   => $dehydrated_hook_script,
+        'dehydrated_domain_validation_hook_script' => $dehydrated_domain_validation_hook_script,
+        'dehydrated_contact_email'                 => $dehydrated_contact_email,
+        'letsencrypt_ca_url'                       => $letsencrypt_ca_url,
+        'letsencrypt_ca_hash'                      => $letsencrypt_ca_hash,
+        'dehydrated_config'                        => $dehydrated_config,
       }
     }
   }
