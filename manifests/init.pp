@@ -16,6 +16,7 @@
 #   }
 #
 # @api public
+#
 # @param base_dir
 #   The base directory where keys/csr/certs are stored.
 #   Defaults to:
@@ -78,6 +79,7 @@
 #   and the certificate request cronjob will be setup.
 # @param dehydrated_requests_dir
 #   Only used if $facts['fqdn'] == $::dehydrated::dehydrated_host.
+#   Path where requests that need to be handled are being stored.
 # @param dehydrated_hooks_dir
 #   Only used if $facts['fqdn'] == $::dehydrated::dehydrated_host.
 # @param dehydrated_requests_config
@@ -94,8 +96,11 @@
 #   Only used if $facts['fqdn'] == $::dehydrated::dehydrated_host.
 # @param dehydrated_hook
 #   Only used if $facts['fqdn'] == $::dehydrated::dehydrated_host.
+#   Name of the hook script dehydrated will use to validate the authorization request. The hook script
+#   must live in the $dehydrated_hooks_dir directory.
 # @param dehydrated_contact_email
-#   Only used if $facts['fqdn'] == $::dehydrated::dehydrated_host.
+#   Contact email address for created accounts. We'll create one account for each
+#   puppet host.
 # @param dehydrated_status_file
 #   File the dehydrated job runner will dump its status into. Pretty printed JSON.
 # @param dehydrated_monitoring_status_file
