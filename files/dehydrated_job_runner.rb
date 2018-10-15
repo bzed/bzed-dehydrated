@@ -5,12 +5,13 @@ require 'open3'
 require 'uri'
 require 'openssl'
 require 'net/http'
+require 'shellwords'
 
 def run_domain_validation_hook(hook, dn, subject_alternative_names = [])
   if hook && File.exist?(hook) && File.executable?(hook)
     domains = [dn] + subject_alternative_names
     escaped_domains = domains.each do |domain|
-      domain.shellescape
+      Shellwords.escape(domain)
     end
     args = escaped_domains.join(' ')
     cmd = "#{hook} #{args}"
