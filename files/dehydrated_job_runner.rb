@@ -156,10 +156,11 @@ end
 def sign_csr(dehydrated_config, csr_file, crt_file)
   stdout, stderr, status = run_dehydrated(dehydrated_config, "--signcsr '#{csr_file}'")
   if status.zero?
-    if stdout =~ %r{.*-+BEGIN CERTIFICATE-+.*-+END CERTIFICATE-+.*}m
-      File.write(crt_file, stdout)
-    else
-      # this case should never happen
+    begin
+      crt = OpenSSL::X509::Certificate.new(stdout)
+      File.write(crt_file, crt.to_pem)
+      stdout = crt
+    rescue OpenSSL::X509::CertificateError
       stdout = "# -- is this a certificate?? -- \n #{stdout}"
       status = 255
     end
