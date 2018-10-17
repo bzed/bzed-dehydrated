@@ -42,12 +42,6 @@ define dehydrated::certificate::csr(
   $key_dir  = $::dehydrated::key_dir
   $crt_dir  = $::dehydrated::crt_dir
 
-  if (!empty($subject_alternative_names)) {
-    $req_ext = true
-  } else {
-    $req_ext = false
-  }
-
   $crt = "${crt_dir}/${base_filename}.crt"
   $key = "${key_dir}/${base_filename}.key"
   $csr = "${csr_dir}/${base_filename}.csr"
