@@ -36,6 +36,10 @@ _Private Defined types_
 * [`dehydrated_dhparam`](#dehydrated_dhparam): DH params for dehydrated
 * [`dehydrated_key`](#dehydrated_key): Create a private key for dehydrated.
 
+**Functions**
+
+* [`dehydrated::file`](#dehydratedfile): Returns the contents of a file - or nil if the file does not exist. based on file.rb from puppet.
+
 ## Classes
 
 ### dehydrated
@@ -634,4 +638,32 @@ The optional password for the key
 The key size, used for RSA only.
 
 Default value: 2048
+
+## Functions
+
+### dehydrated::file
+
+Type: Ruby 4.x API
+
+Returns the contents of a file - or nil
+if the file does not exist. based on file.rb from puppet.
+
+#### `dehydrated::file(String $files, Optional[String] *$more_files)`
+
+Returns the contents of a file - or nil
+if the file does not exist. based on file.rb from puppet.
+
+Returns: `Any`
+
+##### `files`
+
+Data type: `String`
+
+
+
+##### `*more_files`
+
+Data type: `Optional[String]`
+
+
 
