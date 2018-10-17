@@ -3,10 +3,12 @@
 
 Puppet::Functions.create_function(:'dehydrated::file') do
   dispatch :getfile do
-    required_param 'Array', :files
+    required_param 'String', :files
+    optional_repeated_param 'String', :more_files
   end
 
-  def getfile(files)
+  def getfile(files, *more_files)
+    files = [files] + more_files
     files.each do |file|
       unless Puppet::Util.absolute_path?(file)
         raise(Puppet::ParseError, 'Files must be fully qualified')
