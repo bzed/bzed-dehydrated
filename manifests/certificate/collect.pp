@@ -34,9 +34,9 @@ define dehydrated::certificate::collect(
     $ca_file = "${request_base_dir}/${request_base_filename}_ca.pem"
     $ocsp_file = "${crt_file}.ocsp"
 
-    $crt = dehydrated_file($crt_file)
-    $ocsp = dehydrated_file($ocsp_file)
-    $ca = dehydrated_file($ca_file)
+    $crt = dehydrated::file($crt_file)
+    $ocsp = dehydrated::file($ocsp_file)
+    $ca = dehydrated::file($ca_file)
 
   } else {
     # we are on a non-puppetmaster host
