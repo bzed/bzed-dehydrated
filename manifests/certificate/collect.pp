@@ -34,21 +34,9 @@ define dehydrated::certificate::collect(
     $ca_file = "${request_base_dir}/${request_base_filename}_ca.pem"
     $ocsp_file = "${crt_file}.ocsp"
 
-    if find_file($crt_file) {
-      $crt = file($crt_file)
-    } else {
-      $crt = undef
-    }
-    if find_file($ocsp_file) {
-      $ocsp = binary_file($ocsp_file)
-    } else {
-      $ocsp = undef
-    }
-    if find_file($ca_file) {
-      $ca = file($ca_file)
-    } else {
-      $ca = undef
-    }
+    $crt = dehydrated_file($crt_file)
+    $ocsp = dehydrated_file($ocsp_file)
+    $ca = dehydrated_file($ca_file)
 
   } else {
     # we are on a non-puppetmaster host
