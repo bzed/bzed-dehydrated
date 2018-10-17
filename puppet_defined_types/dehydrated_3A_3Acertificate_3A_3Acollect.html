@@ -251,19 +251,7 @@
 110
 111
 112
-113
-114
-115
-116
-117
-118
-119
-120
-121
-122
-123
-124
-125</pre>
+113</pre>
       </td>
       <td>
         <pre class="code"><span class="info file"># File 'manifests/certificate/collect.pp', line 15</span>
@@ -290,21 +278,9 @@ define dehydrated::certificate::collect(
     $ca_file = &quot;${request_base_dir}/${request_base_filename}_ca.pem&quot;
     $ocsp_file = &quot;${crt_file}.ocsp&quot;
 
-    if find_file($crt_file) {
-      $crt = file($crt_file)
-    } else {
-      $crt = undef
-    }
-    if find_file($ocsp_file) {
-      $ocsp = binary_file($ocsp_file)
-    } else {
-      $ocsp = undef
-    }
-    if find_file($ca_file) {
-      $ca = file($ca_file)
-    } else {
-      $ca = undef
-    }
+    $crt = dehydrated::file($crt_file)
+    $ocsp = dehydrated::file($ocsp_file)
+    $ca = dehydrated::file($ca_file)
 
   } else {
     # we are on a non-puppetmaster host
@@ -349,7 +325,7 @@ define dehydrated::certificate::collect(
       file_content =&gt; $crt,
       tag          =&gt; [
         &quot;request_fqdn:${request_fqdn}&quot;,
-        &quot;request_dn:${request_dn}&quot;
+        &quot;request_base_filename:${request_base_filename}&quot;,
       ],
     }
   }
@@ -361,7 +337,7 @@ define dehydrated::certificate::collect(
       file_content =&gt; $ca,
       tag          =&gt; [
         &quot;request_fqdn:${request_fqdn}&quot;,
-        &quot;request_dn:${request_dn}&quot;
+        &quot;request_base_filename:${request_base_filename}&quot;,
       ],
     }
   }
@@ -373,7 +349,7 @@ define dehydrated::certificate::collect(
       file_content =&gt; $ocsp,
       tag          =&gt; [
         &quot;request_fqdn:${request_fqdn}&quot;,
-        &quot;request_dn:${request_dn}&quot;
+        &quot;request_base_filename:${request_base_filename}&quot;,
       ],
     }
   }

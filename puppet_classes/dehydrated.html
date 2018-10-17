@@ -1007,7 +1007,7 @@ class dehydrated
 
     Dehydrated::Certificate::Transfer&lt;&lt;|
       tag == &quot;request_fqdn:${facts[&#39;fqdn&#39;]}&quot; and
-      tag == &quot;request_dn:${_dn}&quot;
+      tag == &quot;request_base_filename:${_base_filename}&quot;
     |&gt;&gt;
 
     if $_config[&#39;ready_for_merge&#39;] {

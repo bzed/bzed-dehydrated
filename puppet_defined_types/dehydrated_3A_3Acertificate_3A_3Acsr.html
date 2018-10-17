@@ -326,13 +326,7 @@ altnames.</p>
 90
 91
 92
-93
-94
-95
-96
-97
-98
-99</pre>
+93</pre>
       </td>
       <td>
         <pre class="code"><span class="info file"># File 'manifests/certificate/csr.pp', line 14</span>
@@ -367,12 +361,6 @@ define dehydrated::certificate::csr(
   $csr_dir  = $::dehydrated::csr_dir
   $key_dir  = $::dehydrated::key_dir
   $crt_dir  = $::dehydrated::crt_dir
-
-  if (!empty($subject_alternative_names)) {
-    $req_ext = true
-  } else {
-    $req_ext = false
-  }
 
   $crt = &quot;${crt_dir}/${base_filename}.crt&quot;
   $key = &quot;${key_dir}/${base_filename}.key&quot;
