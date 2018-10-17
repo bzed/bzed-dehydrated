@@ -81,7 +81,7 @@ define dehydrated::certificate::collect(
       file_content => $crt,
       tag          => [
         "request_fqdn:${request_fqdn}",
-        "request_dn:${request_dn}"
+        "request_dn:${request_dn}",
       ],
     }
   }
@@ -93,7 +93,7 @@ define dehydrated::certificate::collect(
       file_content => $ca,
       tag          => [
         "request_fqdn:${request_fqdn}",
-        "request_dn:${request_dn}"
+        "request_dn:${request_dn}",
       ],
     }
   }
@@ -105,7 +105,7 @@ define dehydrated::certificate::collect(
       file_content => $ocsp,
       tag          => [
         "request_fqdn:${request_fqdn}",
-        "request_dn:${request_dn}"
+        "request_dn:${request_dn}",
       ],
     }
   }
