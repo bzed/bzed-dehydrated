@@ -8,16 +8,17 @@ Puppet::Functions.create_function(:'dehydrated::file') do
   end
 
   def getfile(files, *more_files)
+    ret = nil
     files = [files] + more_files
     files.each do |file|
       unless Puppet::Util.absolute_path?(file)
         raise(Puppet::ParseError, 'Files must be fully qualified')
       end
       if FileTest.exists?(file)
-        File.read(file)
+        ret = File.read(file)
         break
       end
     end
-    nil
+    ret
   end
 end
