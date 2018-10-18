@@ -1,6 +1,8 @@
 # Returns the contents of a file - or nil
 # if the file does not exist. based on file.rb from puppet.
 
+require 'base64'
+
 Puppet::Functions.create_function(:'dehydrated::file') do
   dispatch :getfile do
     required_param 'String', :files
@@ -14,10 +16,12 @@ Puppet::Functions.create_function(:'dehydrated::file') do
       unless Puppet::Util.absolute_path?(file)
         raise(Puppet::ParseError, 'Files must be fully qualified')
       end
-      if FileTest.exists?(file)
-        ret = File.read(file)
-        break
-      end
+      next unless File.exist?(file)
+      ret = if file =~ %r{.*\.ocsp$}
+              Base64.strict_encode64(File.read(file))
+            else
+              File.read(file)
+            end
     end
     ret
   end
