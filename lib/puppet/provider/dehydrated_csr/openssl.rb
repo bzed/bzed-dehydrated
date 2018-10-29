@@ -91,6 +91,17 @@ Puppet::Type.type(:dehydrated_csr).provide(:openssl) do
     name
   end
 
+  def self.check_subject(resource)
+    if File.exist?(resource[:path])
+      request = OpenSSL::X509::Request.new(File.read(resource[:path]))
+      old_name = request.subject
+      new_name = create_subject(resource)
+      old_name == new_name
+    else
+      false
+    end
+  end
+
   def self.create_san_attribute(subject_alternative_names)
     unless subject_alternative_names.is_a?(Array)
       raise Puppet::Error, 'subject_alternative_names must be an array!'
@@ -138,7 +149,9 @@ Puppet::Type.type(:dehydrated_csr).provide(:openssl) do
                false
              end
     if exists && resource[:force]
-      self.class.check_private_key(resource) && self.class.check_sans(resource)
+      self.class.check_private_key(resource) &&
+        self.class.check_sans(resource) &&
+        self.class.check_subject(resource)
     else
       exists
     end
