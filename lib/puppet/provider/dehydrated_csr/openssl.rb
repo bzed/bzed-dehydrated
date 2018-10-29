@@ -80,16 +80,14 @@ Puppet::Type.type(:dehydrated_csr).provide(:openssl) do
 
   def self.create_subject(resource)
     name = OpenSSL::X509::Name.new
-    # lets stay with CN for now
-    # other entries can be added propely later.
     # name.add_entry('serialNumber', serial_number) unless resource[:serial_number].blank?
-    # name.add_entry('C', country) unless resource[:country].blank?
-    # name.add_entry('ST', state) unless resource[:state].blank?
-    # name.add_entry('L', locality) unless resource[:locality].blank?
-    # name.add_entry('O', organization) unless resource[:organization].blank?
-    # name.add_entry('OU', organizational_unit) unless resource[:organizational_unit].blank?
+    name.add_entry('C', country) unless resource[:country].blank?
+    name.add_entry('ST', state) unless resource[:state].blank?
+    name.add_entry('L', locality) unless resource[:locality].blank?
+    name.add_entry('O', organization) unless resource[:organization].blank?
+    name.add_entry('OU', organizational_unit) unless resource[:organizational_unit].blank?
     name.add_entry('CN', resource[:common_name])
-    # name.add_entry('emailAddress', email_address) unless resource[:email_address].blank?
+    name.add_entry('emailAddress', email_address) unless resource[:email_address].blank?
     name
   end
 
