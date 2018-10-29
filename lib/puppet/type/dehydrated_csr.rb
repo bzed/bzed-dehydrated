@@ -76,7 +76,7 @@ Puppet::Type.newtype(:dehydrated_csr) do
   newparam(:country) do
     desc 'country part of the certificate name'
     validate do |value|
-      if value && !value.blank?
+      if value && !value.empty?
         unless value =~ %r{^([A-Z]{2}|(COM|EDU|GOV|INT|MIL|NET|ORG)|ARPA)$}
           raise Puppet::Error, 'valid ssl country name (usually two capital letters) required'
         end
