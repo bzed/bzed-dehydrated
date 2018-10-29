@@ -2,7 +2,6 @@
 # Apache License, Version 2.0, January 2004
 
 require 'pathname'
-require 'URI::MailTo'
 
 Puppet::Type.newtype(:dehydrated_csr) do
   desc 'CSRs for dehydrated'
@@ -105,7 +104,8 @@ Puppet::Type.newtype(:dehydrated_csr) do
     desc 'emailAddress part of the certificate name'
     validate do |value|
       if value && !value.blank?
-        raise Puppet::Error, 'email_address should be valid!' unless value =~ URI::MailTo::EMAIL_REGEXP
+        raise Puppet::Error, 'email_address should be valid!' unless value =~ %r{\A[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@
+(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\z}
       end
     end
   end
