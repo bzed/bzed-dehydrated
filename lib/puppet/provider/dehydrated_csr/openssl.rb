@@ -80,17 +80,26 @@ Puppet::Type.type(:dehydrated_csr).provide(:openssl) do
 
   def self.create_subject(resource)
     name = OpenSSL::X509::Name.new
-    # lets stay with CN for now
-    # other entries can be added propely later.
     # name.add_entry('serialNumber', serial_number) unless resource[:serial_number].blank?
-    # name.add_entry('C', country) unless resource[:country].blank?
-    # name.add_entry('ST', state) unless resource[:state].blank?
-    # name.add_entry('L', locality) unless resource[:locality].blank?
-    # name.add_entry('O', organization) unless resource[:organization].blank?
-    # name.add_entry('OU', organizational_unit) unless resource[:organizational_unit].blank?
+    name.add_entry('C', resource[:country]) if resource[:country] && resource[:country] != ''
+    name.add_entry('ST', resource[:state]) if resource[:state] && resource[:state] != ''
+    name.add_entry('L', resource[:locality]) if resource[:locality] && resource[:locality] != ''
+    name.add_entry('O', resource[:organization]) if resource[:organization] && resource[:organization] != ''
+    name.add_entry('OU', resource[:organizational_unit]) if resource[:organizational_unit] && resource[:organizational_unit] != ''
     name.add_entry('CN', resource[:common_name])
-    # name.add_entry('emailAddress', email_address) unless resource[:email_address].blank?
+    name.add_entry('emailAddress', resource[:email_address]) if resource[:email_address] && resource[:email_address] != ''
     name
+  end
+
+  def self.check_subject(resource)
+    if File.exist?(resource[:path])
+      request = OpenSSL::X509::Request.new(File.read(resource[:path]))
+      old_name = request.subject
+      new_name = create_subject(resource)
+      old_name == new_name
+    else
+      false
+    end
   end
 
   def self.create_san_attribute(subject_alternative_names)
@@ -140,7 +149,9 @@ Puppet::Type.type(:dehydrated_csr).provide(:openssl) do
                false
              end
     if exists && resource[:force]
-      self.class.check_private_key(resource) && self.class.check_sans(resource)
+      self.class.check_private_key(resource) &&
+        self.class.check_sans(resource) &&
+        self.class.check_subject(resource)
     else
       exists
     end

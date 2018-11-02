@@ -35,7 +35,7 @@ define dehydrated::certificate::collect(
     $ocsp_file = "${crt_file}.ocsp"
 
     $crt = dehydrated::file($crt_file)
-    $ocsp = String(Binary(dehydrated::file($ocsp_file)))
+    $ocsp = dehydrated::file($ocsp_file)
     $ca = dehydrated::file($ca_file)
 
   } else {

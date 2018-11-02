@@ -84,8 +84,22 @@ class dehydrated::setup::dehydrated_host {
     require => File[$::dehydrated::params::configfile],
   }
 
+  $dehydrated_host_script_lock = "${dehydrated_host_script}.lock"
+
+  $dehydrated_host_script_lock_command = join([
+    '/usr/bin/flock -x -n -E 0',
+    $dehydrated_host_script_lock,
+    '/usr/bin/timeout -k 10 7200',
+  ], ' ')
+
+  $cron_command = join([
+    $dehydrated_host_script_lock_command,
+    $dehydrated_host_script,
+    $dehydrated_host_script_config,
+  ], ' ')
+
   cron { 'dehydrated_host_script':
-    command => "${dehydrated_host_script} ${dehydrated_host_script_config}",
+    command => $cron_command,
     user    => $::dehydrated::dehydrated_user,
     minute  => [3,18,33,48,]
   }

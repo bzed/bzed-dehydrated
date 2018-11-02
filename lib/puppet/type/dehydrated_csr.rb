@@ -2,6 +2,7 @@
 # Apache License, Version 2.0, January 2004
 
 require 'pathname'
+
 Puppet::Type.newtype(:dehydrated_csr) do
   desc 'CSRs for dehydrated'
 
@@ -69,6 +70,43 @@ Puppet::Type.newtype(:dehydrated_csr) do
     defaultto []
     validate do |value|
       raise Puppet::Error, 'subject_alternative_names must be an array!' unless value.is_a?(Array)
+    end
+  end
+
+  newparam(:country) do
+    desc 'country part of the certificate name'
+    validate do |value|
+      if value && !value.empty?
+        unless value =~ %r{^([A-Z]{2}|(COM|EDU|GOV|INT|MIL|NET|ORG)|ARPA)$}
+          raise Puppet::Error, 'valid ssl country name (usually two capital letters) required'
+        end
+      end
+    end
+  end
+
+  newparam(:locality) do
+    desc 'locality part of the certificate name'
+  end
+
+  newparam(:organization) do
+    desc 'locality part of the certificate name'
+  end
+
+  newparam(:state) do
+    desc 'state part of the certificate name'
+  end
+
+  newparam(:organizational_unit) do
+    desc 'organizational_unit part of the certificate name'
+  end
+
+  newparam(:email_address) do
+    desc 'emailAddress part of the certificate name'
+    validate do |value|
+      if value && !value.blank?
+        raise Puppet::Error, 'email_address should be valid!' unless value =~ %r{\A[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@
+(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\z}
+      end
     end
   end
 
