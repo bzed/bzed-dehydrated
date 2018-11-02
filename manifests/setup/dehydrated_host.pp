@@ -86,7 +86,12 @@ class dehydrated::setup::dehydrated_host {
 
   $dehydrated_host_script_lock = "${dehydrated_host_script}.lock"
 
-  $dehydrated_host_script_lock_command = '/usr/bin/flock -x -n -E 0 /usr/bin/timeout -k 10 7200'
+  $dehydrated_host_script_lock_command = join([
+    '/usr/bin/flock -x -n -E 0',
+    $dehydrated_host_script_lock,
+    '/usr/bin/timeout -k 10 7200',
+  ], ' ')
+
   $cron_command = join([
     $dehydrated_host_script_lock_command,
     $dehydrated_host_script,
