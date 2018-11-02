@@ -38,7 +38,7 @@ _Private Defined types_
 
 **Functions**
 
-* [`dehydrated::file`](#dehydratedfile): Returns the contents of a file - or nil if the file does not exist. based on file.rb from puppet.
+* [`dehydrated::file`](#dehydratedfile): 
 
 ## Classes
 
@@ -567,6 +567,30 @@ SANs to request
 
 Default value: []
 
+##### `country`
+
+country part of the certificate name
+
+##### `locality`
+
+locality part of the certificate name
+
+##### `organization`
+
+locality part of the certificate name
+
+##### `state`
+
+state part of the certificate name
+
+##### `organizational_unit`
+
+organizational_unit part of the certificate name
+
+##### `email_address`
+
+emailAddress part of the certificate name
+
 ### dehydrated_dhparam
 
 DH params for dehydrated
@@ -645,13 +669,11 @@ Default value: 2048
 
 Type: Ruby 4.x API
 
-Returns the contents of a file - or nil
-if the file does not exist. based on file.rb from puppet.
+The dehydrated::file function.
 
 #### `dehydrated::file(String $files, Optional[String] *$more_files)`
 
-Returns the contents of a file - or nil
-if the file does not exist. based on file.rb from puppet.
+The dehydrated::file function.
 
 Returns: `Any`
 
