@@ -98,9 +98,6 @@ module</a></p>
 
 <h2 id="label-Description">Description</h2>
 
-<p><strong>BETA RELEASE. THERE MIGHT BE BUGS AND GREMLINS. PLEASE REPORT THEM
-(or send plushies).</strong></p>
-
 <p>bzed-dehydrated creates private keys and CSRs, transfers the CSR to a
 central host (for example your puppetmaster) where it is signed using the
 well known dehydrated <a
@@ -200,6 +197,38 @@ and <strong>on your dehydrated_host</strong> install it into
 The certificates will be requestd by a cronjob, not directly from puppet. 
 Otherwise puppet runs will take way too much time.</p>
 </li></ol>
+
+<h3 id="label-Using+hiera">Using hiera</h3>
+
+<p>To use hiera, make sure you include your dehdrated class somewhere. As
+default configuration for all hosts setup the defaults, in this case we are
+using dehydrated in the way to be compatible to the old bzed-letsencrypt
+setup:</p>
+
+<pre class="code ruby"><code class="ruby">dehydrated::dehydrated_host: &#39;my.dehydrated.host&#39;
+dehydrated::base_dir: &#39;/etc/letsencrypt&#39;
+dehydrated::group: &#39;letsencrypt&#39;
+dehydrated::letsencrypt_ca: &#39;v2-production&#39;
+dehydrated::challengetype: &#39;dns-01&#39;
+dehydrated::dehydrated_hook: &#39;tophosting_hook.py&#39;
+dehydrated::dehydrated_domain_validation_hook: &#39;domain_validation_hook.sh&#39;
+</code></pre>
+
+<p>And to request certificates:</p>
+
+<pre class="code ruby"><code class="ruby">dehydrated::certificates:
+    - &quot;*.subdomain.example.com&quot;
+    - &quot;subdomain.example.com&quot;
+    - - &quot;san.example.com&quot;
+      - [ &quot;second_domain.san.example.com&quot;, &quot;third_domain.san.example.com&quot; ]
+</code></pre>
+
+<p>With the yaml snippet above you&#39;d request the following certificates: 
+- wildcard certificate <strong>*.subdomain.example.com</strong>  - “normal”
+certificate <strong>subdomain.example.com</strong>  - SAN certificate
+<strong>san.example.com</strong> with
+<strong>second_domain.san.example.com</strong>  and
+<strong>third_domain.san.example.com</strong> as subject alternative names.</p>
 
 <h3 id="label-Monitoring+-26+debugging">Monitoring &amp; debugging</h3>
 <ul><li>

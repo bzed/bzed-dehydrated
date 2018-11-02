@@ -200,7 +200,21 @@
 117
 118
 119
-120</pre>
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134</pre>
       </td>
       <td>
         <pre class="code"><span class="info file"># File 'manifests/setup/dehydrated_host.pp', line 9</span>
@@ -283,8 +297,22 @@ class dehydrated::setup::dehydrated_host {
     require =&gt; File[$::dehydrated::params::configfile],
   }
 
+  $dehydrated_host_script_lock = &quot;${dehydrated_host_script}.lock&quot;
+
+  $dehydrated_host_script_lock_command = join([
+    &#39;/usr/bin/flock -x -n -E 0&#39;,
+    $dehydrated_host_script_lock,
+    &#39;/usr/bin/timeout -k 10 7200&#39;,
+  ], &#39; &#39;)
+
+  $cron_command = join([
+    $dehydrated_host_script_lock_command,
+    $dehydrated_host_script,
+    $dehydrated_host_script_config,
+  ], &#39; &#39;)
+
   cron { &#39;dehydrated_host_script&#39;:
-    command =&gt; &quot;${dehydrated_host_script} ${dehydrated_host_script_config}&quot;,
+    command =&gt; $cron_command,
     user    =&gt; $::dehydrated::dehydrated_user,
     minute  =&gt; [3,18,33,48,]
   }
