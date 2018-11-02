@@ -20,8 +20,6 @@ Centralized CSR signing using Let’s Encrypt™ - keeping your keys safe on the
 
 ## Description
 
-**BETA RELEASE. THERE MIGHT BE BUGS AND GREMLINS. PLEASE REPORT THEM (or send plushies).**
-
 bzed-dehydrated creates private keys and CSRs, transfers
 the CSR to a central host (for example your puppetmaster)
 where it is signed using the well known dehydrated
@@ -111,6 +109,33 @@ So for a basic setup, the following steps should give you a running setup.
  5.  Wait.... it will take a few puppet runs until your certificate will appear.
      The certificates will be requestd by a cronjob, not directly from puppet.
      Otherwise puppet runs will take way too much time.
+
+### Using hiera
+To use hiera, make sure you include your dehdrated class somewhere. As default configuration for all
+hosts setup the defaults, in this case we are using dehydrated in the way to be compatible to the
+old bzed-letsencrypt setup:
+
+    dehydrated::dehydrated_host: 'my.dehydrated.host'
+    dehydrated::base_dir: '/etc/letsencrypt'
+    dehydrated::group: 'letsencrypt'
+    dehydrated::letsencrypt_ca: 'v2-production'
+    dehydrated::challengetype: 'dns-01'
+    dehydrated::dehydrated_hook: 'tophosting_hook.py'
+    dehydrated::dehydrated_domain_validation_hook: 'domain_validation_hook.sh'
+
+And to request certificates:
+
+    dehydrated::certificates:
+        - "*.subdomain.example.com"
+        - "subdomain.example.com"
+        - - "san.example.com"
+          - [ "second_domain.san.example.com", "third_domain.san.example.com" ]
+
+With the yaml snippet above you'd request the following certificates:
+ -  wildcard certificate __*.subdomain.example.com__
+ -  "normal" certificate __subdomain.example.com__
+ -  SAN certificate __san.example.com__ with **second_domain.san.example.com**
+    and **third_domain.san.example.com** as subject alternative names.
 
 ### Monitoring & debugging
  -  usual Puppet debugging rules apply >:-)
