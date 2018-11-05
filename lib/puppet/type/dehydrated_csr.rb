@@ -71,6 +71,10 @@ Puppet::Type.newtype(:dehydrated_csr) do
     validate do |value|
       raise Puppet::Error, 'subject_alternative_names must be an array!' unless value.is_a?(Array)
     end
+
+    munge do |val|
+      val.unique
+    end
   end
 
   newparam(:country) do
