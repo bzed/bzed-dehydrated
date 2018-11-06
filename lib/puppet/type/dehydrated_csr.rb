@@ -73,7 +73,7 @@ Puppet::Type.newtype(:dehydrated_csr) do
     end
 
     munge do |val|
-      val.unique
+      val.uniq
     end
   end
 
