@@ -168,7 +168,7 @@ def sign_csr(dehydrated_config, csr_file, crt_file)
   [stdout, stderr, status]
 end
 
-def cert_still_valid(crt_file)
+def cert_still_valid(crt_file, dn, subject_alternative_names)
   if File.exist?(crt_file)
     raw_crt = File.read(crt_file)
     crt = OpenSSL::X509::Certificate.new(raw_crt)
@@ -199,12 +199,14 @@ def handle_request(fqdn, dn, config)
   csr_file = File.join(request_base_dir, "#{base_filename}.csr")
   ca_file = File.join(request_base_dir, "#{base_filename}_ca.pem")
   ocsp_file = "#{crt_file}.ocsp"
-  subject_alternative_names = config['subject_alternative_names']
+  subject_alternative_names = config['subject_alternative_names'].sort.uniq
   dehydrated_domain_validation_hook_script = config['dehydrated_domain_validation_hook_script']
   dehydrated_hook_script = config['dehydrated_hook_script']
 
   new_dn_config = {
     'letsencrypt_ca_hash' => letsencrypt_ca_hash,
+    'dn' => dn,
+    'subject_alternative_names' => subject_alternative_names,
   }
   # read old dn config if it exists
   current_dn_config = if File.exist?(dn_config_file)
@@ -212,7 +214,8 @@ def handle_request(fqdn, dn, config)
                       else
                         new_dn_config
                       end
-  force_update = (current_dn_config['letsencrypt_ca_hash'] != new_dn_config['letsencrypt_ca_hash'])
+  # use >= to allow to add new things to the config hash
+  force_update = new_dn_config >= current_dn_config
 
   # register / update account
   account_json = File.join(request_fqdn_dir, 'accounts', letsencrypt_ca_hash, 'registration_info.json')
@@ -268,6 +271,11 @@ def handle_request(fqdn, dn, config)
     end
   end
 
+
+  # track currently used config
+  # we do this before the OCSP stuff as we have a valid cert already.
+  File.write(dn_config_file, JSON.generate(new_dn_config))
+
   if cert_still_valid(crt_file) && cert_still_valid(ca_file)
     unless File.exist?(ocsp_file) && (File.mtime(ocsp_file) + 24 * 60 * 60) > Time.now
       stdout, stderr, status = update_ocsp(ocsp_file, crt_file, ca_file)
@@ -277,9 +285,6 @@ def handle_request(fqdn, dn, config)
   old_env.each do |key, value|
     ENV[key] = value
   end
-
-  # track current used CA
-  File.write(dn_config_file, JSON.generate(new_dn_config))
 
   [
     'CRT/CA/OCSP uptodate',
