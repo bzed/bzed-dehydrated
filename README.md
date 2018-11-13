@@ -1,6 +1,6 @@
 # dehydrated
 
-[![Puppet Forge](http://img.shields.io/puppetforge/v/bzed/dehydrated.svg)](https://forge.puppetlabs.com/bzed/dehydrated) [![Build Status](https://travis-ci.org/bzed/bzed-dehydrated.png?branch=master)](https://travis-ci.org/bzed/bzed-dehydrated)
+[![Puppet Forge](http://img.shields.io/puppetforge/v/bzed/dehydrated.svg)](https://forge.puppet.com/bzed/dehydrated) [![Build Status](https://travis-ci.org/bzed/bzed-dehydrated.png?branch=master)](https://travis-ci.org/bzed/bzed-dehydrated)
 
 Centralized CSR signing using Let’s Encrypt™ - keeping your keys safe on the host they belong to.
 
