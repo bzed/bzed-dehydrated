@@ -218,7 +218,7 @@ def handle_request(fqdn, dn, config)
   force_update = !(if Gem::Version.new(RUBY_VERSION) > Gem::Version.new('2.3')
                      new_dn_config >= current_dn_config
                    else
-                     current_dn_config.reduce(True) do |uptodate, n|
+                     current_dn_config.reduce(true) do |uptodate, n|
                        c = n[0]
                        s = n[1]
                        uptodate && (new_dn_config[c] == s)
