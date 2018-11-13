@@ -168,7 +168,7 @@ def sign_csr(dehydrated_config, csr_file, crt_file)
   [stdout, stderr, status]
 end
 
-def cert_still_valid(crt_file, dn, subject_alternative_names)
+def cert_still_valid(crt_file)
   if File.exist?(crt_file)
     raw_crt = File.read(crt_file)
     crt = OpenSSL::X509::Certificate.new(raw_crt)
@@ -215,7 +215,16 @@ def handle_request(fqdn, dn, config)
                         new_dn_config
                       end
   # use >= to allow to add new things to the config hash
-  force_update = new_dn_config >= current_dn_config
+  force_update = !(if Gem::Version.new(RUBY_VERSION) > Gem::Version.new('2.3')
+                     new_dn_config >= current_dn_config
+                   else
+                     current_dn_config.reduce(True) do |uptodate, n|
+                       c = n[0]
+                       s = n[1]
+                       uptodate && (new_dn_config[c] == s)
+                     end
+                   end
+                  )
 
   # register / update account
   account_json = File.join(request_fqdn_dir, 'accounts', letsencrypt_ca_hash, 'registration_info.json')
@@ -270,7 +279,6 @@ def handle_request(fqdn, dn, config)
       return ['CA certificate update failed', stdout, stderr, status]
     end
   end
-
 
   # track currently used config
   # we do this before the OCSP stuff as we have a valid cert already.
