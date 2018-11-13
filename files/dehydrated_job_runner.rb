@@ -246,27 +246,27 @@ def handle_request(fqdn, dn, config)
     end
   end
 
-  if dehydrated_domain_validation_hook_script && !dehydrated_domain_validation_hook_script.empty?
-    stdout, stderr, status = run_domain_validation_hook(
-      dehydrated_domain_validation_hook_script,
-      dn,
-      subject_alternative_names,
-    )
-    return ['Domain validation hook failed', stdout, stderr, status] if status > 0
-  end
-
-  unless dehydrated_hook_script.empty?
-    unless File.exist?(dehydrated_hook_script) && File.executable?(dehydrated_hook_script)
-      return ['Configured Dehydrated hook does not exist or is not executable',
-              dehydrated_hook_script,
-              '',
-              255]
-    end
-    # nothing else to do here, the hook is configured
-    # in the dehydrated config file already.
-  end
-
   if !cert_still_valid(crt_file) || force_update
+    if dehydrated_domain_validation_hook_script && !dehydrated_domain_validation_hook_script.empty?
+      stdout, stderr, status = run_domain_validation_hook(
+        dehydrated_domain_validation_hook_script,
+        dn,
+        subject_alternative_names,
+      )
+      return ['Domain validation hook failed', stdout, stderr, status] if status > 0
+    end
+
+    unless dehydrated_hook_script.empty?
+      unless File.exist?(dehydrated_hook_script) && File.executable?(dehydrated_hook_script)
+        return ['Configured Dehydrated hook does not exist or is not executable',
+                dehydrated_hook_script,
+                '',
+                255]
+      end
+      # nothing else to do here, the hook is configured
+      # in the dehydrated config file already.
+    end
+
     stdout, stderr, status = sign_csr(dehydrated_config, csr_file, crt_file)
     if status > 0 || !cert_still_valid(crt_file)
       return ['CSR signing failed', stdout, stderr, status] if status > 0
