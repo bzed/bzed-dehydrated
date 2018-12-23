@@ -13,7 +13,7 @@ script:
   - 'bundle exec rake $CHECK'
 bundler_args: --without system_tests
 rvm:
-  - 2.5.0
+  - 2.5.1
 env:
   global:
     - BEAKER_PUPPET_COLLECTION=puppet6 PUPPET_GEM_VERSION="~> 6.0"
