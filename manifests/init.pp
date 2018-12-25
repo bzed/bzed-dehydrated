@@ -213,11 +213,6 @@ class dehydrated
       tag == "request_base_filename:${_base_filename}"
     |>>
 
-    if $_config['ready_for_merge'] {
-      dehydrated::certificate::deploy { $_dn :
-      }
-    }
-
   }
 
   if ($dehydrated_host == $facts['fqdn']) {

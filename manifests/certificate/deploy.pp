@@ -9,6 +9,7 @@
 #
 define dehydrated::certificate::deploy(
   Dehydrated::DN $dn = $name,
+  Optional[String] $key_password = undef,
 ) {
 
   if ! defined(Class['dehydrated']) {

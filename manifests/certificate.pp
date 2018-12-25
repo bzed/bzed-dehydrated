@@ -58,4 +58,14 @@ define dehydrated::certificate(
   }
 
 
+  $ready_for_merge = pick(
+    $facts.dig('dehydrated_domains', $dn, 'ready_for_merge'),
+    false
+  )
+  if $ready_for_merge {
+    dehydrated::certificate::deploy { $dn :
+      key_password => $key_password,
+    }
+  }
+
 }
