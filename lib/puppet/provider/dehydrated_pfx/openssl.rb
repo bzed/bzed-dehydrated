@@ -32,7 +32,11 @@ Puppet::Type.type(:dehydrated_pfx).provide(:openssl) do
         ca = self.class.certificate(resource[:ca], true)
         cert = self.class.certificate(resource[:certificate], false)
         key = self.class.private_key(resource)
-        pfx.ca_certs == ca && pfx.certificate == cert && pfx.key == key
+        pfx_ca_serials = pfx.ca_certs.map { |cert| cert.serial.to_s }.sort
+        ca_serials = ca.map { |cert| cert.serial.to_s }.sort
+        pfx_ca_serials == ca_serials && \
+          pfx.certificate.serial.to_s == cert.serial.to_s && \
+          key.to_pem == pfx.key.to_pem
       rescue OpenSSL::PKCS12::PKCS12Error
         false
       rescue OpenSSL::X509::CertificateError
