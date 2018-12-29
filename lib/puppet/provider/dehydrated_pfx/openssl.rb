@@ -54,7 +54,7 @@ Puppet::Type.type(:dehydrated_pfx).provide(:openssl) do
 
     pfx = OpenSSL::PKCS12.create(
       resource[:password],
-      resource[:name],
+      resource[:pkcs12_name],
       key,
       cert,
       ca,

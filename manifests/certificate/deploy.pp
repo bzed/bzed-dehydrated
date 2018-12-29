@@ -81,7 +81,7 @@ define dehydrated::certificate::deploy(
   }
 
   dehydrated_pfx { $pfx:
-    name         => $dn,
+    pkcs12_name  => $dn,
     key_password => $key_password,
     password     => $key_password,
     ca           => $ca,
