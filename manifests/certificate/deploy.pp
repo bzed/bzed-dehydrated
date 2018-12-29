@@ -30,6 +30,7 @@ define dehydrated::certificate::deploy(
   $cnf = "${base_dir}/${base_filename}.cnf"
   $crt = "${crt_dir}/${base_filename}.crt"
   $key = "${key_dir}/${base_filename}.key"
+  $pfx = "${key_dir}/${base_filename}.pfx"
   $csr = "${csr_dir}/${base_filename}.csr"
   $dh  = "${crt_dir}/${base_filename}.dh"
   $ca = "${crt_dir}/${base_filename}_ca.pem"
@@ -46,7 +47,8 @@ define dehydrated::certificate::deploy(
     mode => '0644',
   }
   concat { $crt_full_chain_with_key :
-    mode => '0640',
+    mode   => '0640',
+    notify => Dehydrated_pfx[$pfx],
   }
 
   concat::fragment { "${dn}_key" :
@@ -76,6 +78,15 @@ define dehydrated::certificate::deploy(
     target => $crt_full_chain,
     source => $ca,
     order  => '50',
+  }
+
+  dehydrated_pfx { $pfx:
+    name         => $dn,
+    key_password => $key_password,
+    password     => $key_password,
+    ca           => $ca,
+    crt          => $crt,
+    private_key  => $key,
   }
 
 }
