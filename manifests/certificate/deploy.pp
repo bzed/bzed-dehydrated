@@ -85,7 +85,7 @@ define dehydrated::certificate::deploy(
     key_password => $key_password,
     password     => $key_password,
     ca           => $ca,
-    crt          => $crt,
+    certificate  => $crt,
     private_key  => $key,
   }
 
