@@ -14,7 +14,7 @@ Puppet::Type.type(:dehydrated_key).provide(:openssl) do
     if resource[:algorithm] == :rsa
       OpenSSL::PKey::RSA.new(resource[:size])
     elsif resource[:algorithm] == :prime256v1 || resource[:algorithm] == :secp384r1
-      OpenSSL::PKey::EC.generate(resource[:short_name])
+      OpenSSL::PKey::EC.generate(resource[:algorithm])
     else
       raise Puppet::Error, "Don't know how to handle #{resource[:algorithm]} keys."
     end
