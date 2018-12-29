@@ -16,7 +16,7 @@ Puppet::Type.type(:dehydrated_pfx).provide(:openssl) do
 
   def self.private_key(resource)
     file = File.read(resource[:private_key])
-    if (file =~ /BEGIN PUBLIC KEY/)
+    if (file =~ /BEGIN RSA PRIVATE KEY/)
       OpenSSL::PKey::RSA.new(file, resource[:key_password])
     elsif (file =~ /BEGIN EC PRIVATE KEY/)
       OpenSSL::PKey::EC.new(file, resource[:key_password])
