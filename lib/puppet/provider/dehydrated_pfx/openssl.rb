@@ -6,7 +6,7 @@ Puppet::Type.type(:dehydrated_pfx).provide(:openssl) do
   def self.certificate(filename, read_array)
     file = File.read(filename)
     if read_array
-      file.split('-----BEGIN ').select{ |cert| cert =~ /^CERTIFICATE.*/}.map do |cert|
+      file.split('-----BEGIN ').select { |cert| cert =~ %r{^CERTIFICATE.*} }.map do |cert|
         OpenSSL::X509::Certificate.new('-----BEGIN ' + cert)
       end
     else
@@ -16,12 +16,12 @@ Puppet::Type.type(:dehydrated_pfx).provide(:openssl) do
 
   def self.private_key(resource)
     file = File.read(resource[:private_key])
-    if (file =~ /BEGIN RSA PRIVATE KEY/)
+    if file =~ %r{BEGIN RSA PRIVATE KEY}
       OpenSSL::PKey::RSA.new(file, resource[:key_password])
-    elsif (file =~ /BEGIN EC PRIVATE KEY/)
+    elsif file =~ %r{BEGIN EC PRIVATE KEY}
       OpenSSL::PKey::EC.new(file, resource[:key_password])
     else
-      raise Puppet::Error, "Unknown private key type"
+      raise Puppet::Error, 'Unknown private key type'
     end
   end
 
@@ -32,8 +32,8 @@ Puppet::Type.type(:dehydrated_pfx).provide(:openssl) do
         ca = self.class.certificate(resource[:ca], true)
         cert = self.class.certificate(resource[:certificate], false)
         key = self.class.private_key(resource)
-        pfx_ca_serials = pfx.ca_certs.map { |cert| cert.serial.to_s }.sort
-        ca_serials = ca.map { |cert| cert.serial.to_s }.sort
+        pfx_ca_serials = pfx.ca_certs.map { |pfx_cert| pfx_cert.serial.to_s }.sort
+        ca_serials = ca.map { |pfx_cert| pfx_cert.serial.to_s }.sort
         pfx_ca_serials == ca_serials && \
           pfx.certificate.serial.to_s == cert.serial.to_s && \
           key.to_pem == pfx.key.to_pem
@@ -64,7 +64,7 @@ Puppet::Type.type(:dehydrated_pfx).provide(:openssl) do
       ca,
     )
 
-    File.write(resource[:path], pfx.to_der())
+    File.write(resource[:path], pfx.to_der)
   end
 
   def destroy

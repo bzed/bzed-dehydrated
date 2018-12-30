@@ -46,7 +46,7 @@ Puppet::Type.newtype(:dehydrated_pfx) do
     desc 'A string describing the key / pkcs12 container'
     defaultto do
       path = Pathname.new(@resource[:path])
-      "#{path.basename(path.extname)}"
+      path.basename(path.extname).to_s
     end
   end
 

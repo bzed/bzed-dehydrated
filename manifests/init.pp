@@ -116,6 +116,18 @@
 #   The list of packages we actually need to install to make this module work properly.
 #   You are free to modify this list if you need to.
 # @param certificates
+#   Allows to request certificates instead of using ::dehydrated::certificate.
+#   The puppet definition of this rather complex parameter is
+#       Array[Variant[Dehydrated::DN, Tuple[Dehydrated::DN, Array[Dehydrated::DN]]]]
+#   So basically, you need to specify an Array. Contents are either a
+#   - distinguished name
+#   - tuple with [distinguished name, array of distinguished names]
+#   The first case requests a default certificate. The tuple version will request a
+#   SAN certificate.
+# @param build_pfx_files
+#   Create PKCS12 container with key, certificate and ca certificates.
+#   Defaults to true on windows, to false on all other OS.
+#
 class dehydrated
 (
   Stdlib::Absolutepath $base_dir = $::dehydrated::params::base_dir,
@@ -158,6 +170,7 @@ class dehydrated
   Array $packages = $::dehydrated::params::packages,
   Array[Variant[Dehydrated::DN, Tuple[Dehydrated::DN, Array[Dehydrated::DN]]]] $certificates = [],
 
+  Boolean $build_pfx_files = $::dehydrated::params::build_pfx_files,
 ) inherits ::dehydrated::params {
 
   require ::dehydrated::setup

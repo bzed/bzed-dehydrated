@@ -31,6 +31,7 @@ class dehydrated::params {
       $dehydrated_group = undef
       $pki_packages = []
       $dehydrated_host_packages = []
+      $build_pfx_files = true
     }
     'Linux' : {
       $puppet_user = pick(
@@ -74,6 +75,7 @@ class dehydrated::params {
       $packages = ['git', 'openssl']
       $manage_packages = true
       $dehydrated_host_packages = ['jq']
+      $build_pfx_files = false
     }
     default : { fail('Your OS is not supported!')}
   }
