@@ -92,7 +92,12 @@ class dehydrated::setup::dehydrated_host {
     '/usr/bin/timeout -k 10 7200',
   ], ' ')
 
+  $escaped_path = shell_escape($facts['path'])
+  $cron_escaped_path = regsubst($escaped_path, '%', '\%', 'G')
+
   $cron_command = join([
+    '/usr/bin/env',
+    "PATH=${cron_escaped_path}",
     $dehydrated_host_script_lock_command,
     $dehydrated_host_script,
     $dehydrated_host_script_config,
