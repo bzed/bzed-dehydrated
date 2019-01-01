@@ -95,9 +95,8 @@
 # @param dehydrated_domain_validation_hook
 #   Only used if $facts['fqdn'] == $::dehydrated::dehydrated_host.
 # @param dehydrated_hook
-#   Only used if $facts['fqdn'] == $::dehydrated::dehydrated_host.
 #   Name of the hook script dehydrated will use to validate the authorization request. The hook script
-#   must live in the $dehydrated_hooks_dir directory.
+#   must live in the $dehydrated_hooks_dir on $::dehydrated::dehydrated_host.
 # @param dehydrated_contact_email
 #   Contact email address for created accounts. We'll create one account for each
 #   puppet host.
