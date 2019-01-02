@@ -12,8 +12,8 @@ class dehydrated::params {
     'windows' : {
       $puppet_user = $facts.dig('identity', 'user')
       $puppet_group = undef
-      $user = $puppet_user
-      $group = $puppet_group
+      $user = undef
+      $group = undef
       $base_dir = 'C:/LE_certs'
       $manage_user = false
       if ($facts['puppet_vardir'] =~ /\/tmp\/.*/) {
