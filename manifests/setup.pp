@@ -58,17 +58,32 @@ class dehydrated::setup {
 
   $config_json = to_json($config)
 
+  # puppet runs as system account in windows.
+  # system accounts can't own files....
+  case $facts['kernel'] {
+    'windows' : {
+      $config_user = $::dehydrated::user
+      $config_group = $::dehydrated::group
+    }
+    'Linux' : {
+      $config_user = $::dehydrated::params::puppet_user
+      $config_group = $::dehydrated::params::puppet_group
+    }
+    default : {
+      fail('Unknown OS')
+    }
+  }
   file { $::dehydrated::params::configdir :
     ensure => directory,
-    owner  => $::dehydrated::params::puppet_user,
-    group  => $::dehydrated::params::puppet_group,
+    owner  => $config_user,
+    group  => $config_group,
     mode   => '0750',
   }
 
   file { $::dehydrated::params::configfile :
     ensure  => file,
-    owner   => $::dehydrated::params::puppet_user,
-    group   => $::dehydrated::params::puppet_group,
+    owner   => $config_user,
+    group   => $config_group,
     mode    => '0640',
     content => $config_json,
   }

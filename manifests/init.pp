@@ -30,10 +30,12 @@
 # @param key_dir
 #   The directory where pricate keys are stored. Defaults to ${base_dir}/private
 # @param user
-#   The user who owns the files in /etc/dehydrated.
+#   Linux: The user who owns the files in /etc/dehydrated.
+#   Windows: The user who owns the files in C:\LE_Certs. Needs to be specified!
 # @param group
-#   The group which owns the files in /etc/dehydrated. If you have a non-root process which
-#   needs to access private keys, add its user to this group.
+#   Linux: The group which owns the files in /etc/dehydrated.
+#     If you have a non-root process which needs to access private keys, add its user to this group.
+#   Windows: The group which owns the files in C:\LE_Certs. Needs to be specified!
 # @param dehydrated_user
 #   User to run the dehydrated script as. Only used on the host that actually requests certificates.
 # @param dehydrated_group
@@ -133,8 +135,8 @@ class dehydrated
   Stdlib::Absolutepath $crt_dir = join([$base_dir, 'certs'], $::dehydrated::params::path_seperator),
   Stdlib::Absolutepath $csr_dir = join([$base_dir, 'csr'], $::dehydrated::params::path_seperator),
   Stdlib::Absolutepath $key_dir = join([$base_dir, 'private'], $::dehydrated::params::path_seperator),
-  Optional[String] $user = $::dehydrated::params::user,
-  Optional[String] $group = $::dehydrated::params::group,
+  String $user = $::dehydrated::params::user,
+  String $group = $::dehydrated::params::group,
   Optional[String] $dehydrated_user = $::dehydrated::params::dehydrated_user,
   Optional[String] $dehydrated_group = $::dehydrated::params::dehydrated_group,
 
