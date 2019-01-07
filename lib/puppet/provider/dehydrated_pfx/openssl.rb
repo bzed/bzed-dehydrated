@@ -67,7 +67,7 @@ Puppet::Type.type(:dehydrated_pfx).provide(:openssl) do
     )
 
     # use binary mode as windows is extra picky.
-    File.open(pfx_file, 'wb') { |f| f.write(pfx.to_der) }
+    File.open(resource[:path], 'wb') { |f| f.write(pfx.to_der) }
   end
 
   def destroy
