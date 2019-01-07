@@ -16,6 +16,9 @@ Puppet::Type.newtype(:dehydrated_pfx) do
 
   newparam(:password) do
     desc 'The optional password for the pkcs12 container'
+    defaultto do
+      nil
+    end
   end
 
   newparam(:key_password) do
