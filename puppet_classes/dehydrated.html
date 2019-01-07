@@ -198,7 +198,8 @@ $base_dir/private</p>
       
         &mdash;
         <div class='inline'>
-<p>The user who owns the files in /etc/dehydrated.</p>
+<p>Linux: The user who owns the files in /etc/dehydrated. Windows: The user
+who owns the files in C:LE_Certs. Needs to be specified!</p>
 </div>
       
     </li>
@@ -208,7 +209,7 @@ $base_dir/private</p>
         <span class='name'>group</span>
       
       
-        <span class='type'>(<tt>Optional[String]</tt>)</span>
+        <span class='type'>(<tt>String</tt>)</span>
       
       
         <em class="default">(defaults to: <tt>$::dehydrated::params::group</tt>)</em>
@@ -216,8 +217,10 @@ $base_dir/private</p>
       
         &mdash;
         <div class='inline'>
-<p>The group which owns the files in /etc/dehydrated. If you have a non-root
-process which needs to access private keys, add its user to this group.</p>
+<p>Linux: The group which owns the files in /etc/dehydrated.  If you have a
+non-root process which needs to access private keys, add its user to this
+group. Windows: The group which owns the files in C:LE_Certs. Needs to be
+specified!</p>
 </div>
       
     </li>
@@ -620,9 +623,9 @@ Path where requests that need to be handled are being stored.</p>
       
         &mdash;
         <div class='inline'>
-<p>Only used if $<a href="'fqdn'">facts</a> == $::dehydrated::dehydrated_host.
-Name of the hook script dehydrated will use to validate the authorization
-request. The hook script must live in the $dehydrated_hooks_dir directory.</p>
+<p>Name of the hook script dehydrated will use to validate the authorization
+request. The hook script must live in the $dehydrated_hooks_dir on
+$::dehydrated::dehydrated_host.</p>
 </div>
       
     </li>
@@ -769,6 +772,36 @@ properly. You are free to modify this list if you need to.</p>
         <em class="default">(defaults to: <tt>[]</tt>)</em>
       
       
+        &mdash;
+        <div class='inline'>
+<p>Allows to request certificates instead of using ::dehydrated::certificate.
+The puppet definition of this rather complex parameter is 
+Array[Variant[Dehydrated::DN, Tuple[Dehydrated::DN, <a
+href="Dehydrated::DN">Array</a>]]] So basically, you need to specify an
+Array. Contents are either a - distinguished name - tuple with
+[distinguished name, array of distinguished names] The first case requests
+a default certificate. The tuple version will request a SAN certificate.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>build_pfx_files</span>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>$::dehydrated::params::build_pfx_files</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Create PKCS12 container with key, certificate and ca certificates. Defaults
+to true on windows, to false on all other OS.</p>
+</div>
+      
     </li>
   
 </ul>
@@ -781,19 +814,6 @@ properly. You are free to modify this list if you need to.</p>
         <pre class="lines">
 
 
-119
-120
-121
-122
-123
-124
-125
-126
-127
-128
-129
-130
-131
 132
 133
 134
@@ -908,10 +928,19 @@ properly. You are free to modify this list if you need to.</p>
 243
 244
 245
-246</pre>
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255</pre>
       </td>
       <td>
-        <pre class="code"><span class="info file"># File 'manifests/init.pp', line 119</span>
+        <pre class="code"><span class="info file"># File 'manifests/init.pp', line 132</span>
 
 class dehydrated
 (
@@ -920,7 +949,7 @@ class dehydrated
   Stdlib::Absolutepath $csr_dir = join([$base_dir, &#39;csr&#39;], $::dehydrated::params::path_seperator),
   Stdlib::Absolutepath $key_dir = join([$base_dir, &#39;private&#39;], $::dehydrated::params::path_seperator),
   String $user = $::dehydrated::params::user,
-  Optional[String] $group = $::dehydrated::params::group,
+  String $group = $::dehydrated::params::group,
   Optional[String] $dehydrated_user = $::dehydrated::params::dehydrated_user,
   Optional[String] $dehydrated_group = $::dehydrated::params::dehydrated_group,
 
@@ -955,6 +984,7 @@ class dehydrated
   Array $packages = $::dehydrated::params::packages,
   Array[Variant[Dehydrated::DN, Tuple[Dehydrated::DN, Array[Dehydrated::DN]]]] $certificates = [],
 
+  Boolean $build_pfx_files = $::dehydrated::params::build_pfx_files,
 ) inherits ::dehydrated::params {
 
   require ::dehydrated::setup
@@ -1009,11 +1039,6 @@ class dehydrated
       tag == &quot;request_fqdn:${facts[&#39;fqdn&#39;]}&quot; and
       tag == &quot;request_base_filename:${_base_filename}&quot;
     |&gt;&gt;
-
-    if $_config[&#39;ready_for_merge&#39;] {
-      dehydrated::certificate::deploy { $_dn :
-      }
-    }
 
   }
 

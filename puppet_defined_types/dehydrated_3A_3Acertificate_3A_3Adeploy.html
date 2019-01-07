@@ -107,6 +107,19 @@
       
     </li>
   
+    <li>
+      
+        <span class='name'>key_password</span>
+      
+      
+        <span class='type'>(<tt>Optional[String]</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>undef</tt>)</em>
+      
+      
+    </li>
+  
 </ul>
 
 
@@ -187,13 +200,32 @@
 77
 78
 79
-80</pre>
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98</pre>
       </td>
       <td>
         <pre class="code"><span class="info file"># File 'manifests/certificate/deploy.pp', line 10</span>
 
 define dehydrated::certificate::deploy(
   Dehydrated::DN $dn = $name,
+  Optional[String] $key_password = undef,
 ) {
 
   if ! defined(Class[&#39;dehydrated&#39;]) {
@@ -214,6 +246,7 @@ define dehydrated::certificate::deploy(
   $cnf = &quot;${base_dir}/${base_filename}.cnf&quot;
   $crt = &quot;${crt_dir}/${base_filename}.crt&quot;
   $key = &quot;${key_dir}/${base_filename}.key&quot;
+  $pfx = &quot;${key_dir}/${base_filename}.pfx&quot;
   $csr = &quot;${csr_dir}/${base_filename}.csr&quot;
   $dh  = &quot;${crt_dir}/${base_filename}.dh&quot;
   $ca = &quot;${crt_dir}/${base_filename}_ca.pem&quot;
@@ -230,7 +263,8 @@ define dehydrated::certificate::deploy(
     mode =&gt; &#39;0644&#39;,
   }
   concat { $crt_full_chain_with_key :
-    mode =&gt; &#39;0640&#39;,
+    mode   =&gt; &#39;0640&#39;,
+    notify =&gt; Dehydrated_pfx[$pfx],
   }
 
   concat::fragment { &quot;${dn}_key&quot; :
@@ -260,6 +294,21 @@ define dehydrated::certificate::deploy(
     target =&gt; $crt_full_chain,
     source =&gt; $ca,
     order  =&gt; &#39;50&#39;,
+  }
+
+  if ($::dehydrated::build_pfx_files) {
+    $dehydrated_pfx_ensure = &#39;present&#39;
+  } else {
+    $dehydrated_pfx_ensure = &#39;absent&#39;
+  }
+  dehydrated_pfx { $pfx:
+    ensure       =&gt; $dehydrated_pfx_ensure,
+    pkcs12_name  =&gt; $dn,
+    key_password =&gt; $key_password,
+    password     =&gt; $key_password,
+    ca           =&gt; $ca,
+    certificate  =&gt; $crt,
+    private_key  =&gt; $key,
   }
 
 }</pre>

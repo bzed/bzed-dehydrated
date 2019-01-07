@@ -212,7 +212,9 @@
 128
 129
 130
-131</pre>
+131
+132
+133</pre>
       </td>
       <td>
         <pre class="code"><span class="info file"># File 'manifests/params.pp', line 8</span>
@@ -224,8 +226,8 @@ class dehydrated::params {
     &#39;windows&#39; : {
       $puppet_user = $facts.dig(&#39;identity&#39;, &#39;user&#39;)
       $puppet_group = undef
-      $user = $puppet_user
-      $group = $puppet_group
+      $user = undef
+      $group = undef
       $base_dir = &#39;C:/LE_certs&#39;
       $manage_user = false
       if ($facts[&#39;puppet_vardir&#39;] =~ /\/tmp\/.*/) {
@@ -243,6 +245,7 @@ class dehydrated::params {
       $dehydrated_group = undef
       $pki_packages = []
       $dehydrated_host_packages = []
+      $build_pfx_files = true
     }
     &#39;Linux&#39; : {
       $puppet_user = pick(
@@ -286,6 +289,7 @@ class dehydrated::params {
       $packages = [&#39;git&#39;, &#39;openssl&#39;]
       $manage_packages = true
       $dehydrated_host_packages = [&#39;jq&#39;]
+      $build_pfx_files = false
     }
     default : { fail(&#39;Your OS is not supported!&#39;)}
   }

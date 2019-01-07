@@ -185,7 +185,22 @@ creation and crt storage. It shoudld never be included in your puppet code.</p>
 96
 97
 98
-99</pre>
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114</pre>
       </td>
       <td>
         <pre class="code"><span class="info file"># File 'manifests/setup.pp', line 9</span>
@@ -242,17 +257,32 @@ class dehydrated::setup {
 
   $config_json = to_json($config)
 
+  # puppet runs as system account in windows.
+  # system accounts can&#39;t own files....
+  case $facts[&#39;kernel&#39;] {
+    &#39;windows&#39; : {
+      $config_user = $::dehydrated::user
+      $config_group = $::dehydrated::group
+    }
+    &#39;Linux&#39; : {
+      $config_user = $::dehydrated::params::puppet_user
+      $config_group = $::dehydrated::params::puppet_group
+    }
+    default : {
+      fail(&#39;Unknown OS&#39;)
+    }
+  }
   file { $::dehydrated::params::configdir :
     ensure =&gt; directory,
-    owner  =&gt; $::dehydrated::params::puppet_user,
-    group  =&gt; $::dehydrated::params::puppet_group,
+    owner  =&gt; $config_user,
+    group  =&gt; $config_group,
     mode   =&gt; &#39;0750&#39;,
   }
 
   file { $::dehydrated::params::configfile :
     ensure  =&gt; file,
-    owner   =&gt; $::dehydrated::params::puppet_user,
-    group   =&gt; $::dehydrated::params::puppet_group,
+    owner   =&gt; $config_user,
+    group   =&gt; $config_group,
     mode    =&gt; &#39;0640&#39;,
     content =&gt; $config_json,
   }

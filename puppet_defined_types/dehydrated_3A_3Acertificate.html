@@ -311,7 +311,17 @@
 58
 59
 60
-61</pre>
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71</pre>
       </td>
       <td>
         <pre class="code"><span class="info file"># File 'manifests/certificate.pp', line 10</span>
@@ -366,6 +376,16 @@ define dehydrated::certificate(
     algorithm                 =&gt; $algorithm,
   }
 
+
+  $ready_for_merge = pick(
+    $facts.dig(&#39;dehydrated_domains&#39;, $dn, &#39;ready_for_merge&#39;),
+    false
+  )
+  if $ready_for_merge {
+    dehydrated::certificate::deploy { $dn :
+      key_password =&gt; $key_password,
+    }
+  }
 
 }</pre>
       </td>

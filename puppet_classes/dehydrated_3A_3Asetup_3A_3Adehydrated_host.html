@@ -214,7 +214,12 @@
 131
 132
 133
-134</pre>
+134
+135
+136
+137
+138
+139</pre>
       </td>
       <td>
         <pre class="code"><span class="info file"># File 'manifests/setup/dehydrated_host.pp', line 9</span>
@@ -305,7 +310,12 @@ class dehydrated::setup::dehydrated_host {
     &#39;/usr/bin/timeout -k 10 7200&#39;,
   ], &#39; &#39;)
 
+  $escaped_path = shell_escape($facts[&#39;path&#39;])
+  $cron_escaped_path = regsubst($escaped_path, &#39;%&#39;, &#39;\%&#39;, &#39;G&#39;)
+
   $cron_command = join([
+    &#39;/usr/bin/env&#39;,
+    &quot;PATH=${cron_escaped_path}&quot;,
     $dehydrated_host_script_lock_command,
     $dehydrated_host_script,
     $dehydrated_host_script_config,
