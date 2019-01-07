@@ -35,6 +35,7 @@ _Private Defined types_
 * [`dehydrated_csr`](#dehydrated_csr): CSRs for dehydrated
 * [`dehydrated_dhparam`](#dehydrated_dhparam): DH params for dehydrated
 * [`dehydrated_key`](#dehydrated_key): Create a private key for dehydrated.
+* [`dehydrated_pfx`](#dehydrated_pfx): pkcs12 / pfx files for dehydrated
 
 **Functions**
 
@@ -108,16 +109,18 @@ Default value: join([$base_dir, 'private'], $::dehydrated::params::path_seperato
 
 Data type: `String`
 
-The user who owns the files in /etc/dehydrated.
+Linux: The user who owns the files in /etc/dehydrated.
+Windows: The user who owns the files in C:\LE_Certs. Needs to be specified!
 
 Default value: $::dehydrated::params::user
 
 ##### `group`
 
-Data type: `Optional[String]`
+Data type: `String`
 
-The group which owns the files in /etc/dehydrated. If you have a non-root process which
-needs to access private keys, add its user to this group.
+Linux: The group which owns the files in /etc/dehydrated.
+  If you have a non-root process which needs to access private keys, add its user to this group.
+Windows: The group which owns the files in C:\LE_Certs. Needs to be specified!
 
 Default value: $::dehydrated::params::group
 
@@ -305,9 +308,8 @@ Default value: $::dehydrated::params::dehydrated_domain_validation_hook
 
 Data type: `Dehydrated::Hook`
 
-Only used if $facts['fqdn'] == $::dehydrated::dehydrated_host.
 Name of the hook script dehydrated will use to validate the authorization request. The hook script
-must live in the $dehydrated_hooks_dir directory.
+must live in the $dehydrated_hooks_dir on $::dehydrated::dehydrated_host.
 
 Default value: "${challengetype}.sh"
 
@@ -374,9 +376,25 @@ Default value: $::dehydrated::params::packages
 
 Data type: `Array[Variant[Dehydrated::DN, Tuple[Dehydrated::DN, Array[Dehydrated::DN]]]]`
 
-
+Allows to request certificates instead of using ::dehydrated::certificate.
+The puppet definition of this rather complex parameter is
+    Array[Variant[Dehydrated::DN, Tuple[Dehydrated::DN, Array[Dehydrated::DN]]]]
+So basically, you need to specify an Array. Contents are either a
+- distinguished name
+- tuple with [distinguished name, array of distinguished names]
+The first case requests a default certificate. The tuple version will request a
+SAN certificate.
 
 Default value: []
+
+##### `build_pfx_files`
+
+Data type: `Boolean`
+
+Create PKCS12 container with key, certificate and ca certificates.
+Defaults to true on windows, to false on all other OS.
+
+Default value: $::dehydrated::params::build_pfx_files
 
 ### dehydrated::params
 
@@ -662,6 +680,54 @@ The optional password for the key
 The key size, used for RSA only.
 
 Default value: 2048
+
+### dehydrated_pfx
+
+pkcs12 / pfx files for dehydrated
+
+#### Properties
+
+The following properties are available in the `dehydrated_pfx` type.
+
+##### `ensure`
+
+Valid values: present, absent
+
+The basic property that the resource should be in.
+
+Default value: present
+
+#### Parameters
+
+The following parameters are available in the `dehydrated_pfx` type.
+
+##### `path`
+
+
+
+##### `password`
+
+The optional password for the pkcs12 container
+
+##### `key_password`
+
+The optional password for the private key
+
+##### `certificate`
+
+The path of the certificate to put into the pkcs12 container
+
+##### `ca`
+
+The path of the ca certificates to put into the pkcs12 container
+
+##### `pkcs12_name`
+
+A string describing the key / pkcs12 container
+
+##### `private_key`
+
+
 
 ## Functions
 
