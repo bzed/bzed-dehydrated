@@ -28,7 +28,9 @@ Puppet::Type.type(:dehydrated_pfx).provide(:openssl) do
   def exists?
     if File.exist?(resource[:path])
       begin
-        pfx = OpenSSL::PKCS12.new(File.read(resource[:path]))
+        # use binary mode as ruby is picky on windows.
+        pfx_data = File.open(resource[:path], 'rb') { |f| f.read }
+        pfx = OpenSSL::PKCS12.new(pfx_data)
         ca = self.class.certificate(resource[:ca], true)
         cert = self.class.certificate(resource[:certificate], false)
         key = self.class.private_key(resource)
@@ -64,7 +66,8 @@ Puppet::Type.type(:dehydrated_pfx).provide(:openssl) do
       ca,
     )
 
-    File.write(resource[:path], pfx.to_der)
+    # use binary mode as windows is extra picky.
+    File.open(pfx_file, 'wb') { |f| f.write(pfx.to_der) }
   end
 
   def destroy
