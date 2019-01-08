@@ -69,7 +69,6 @@
 #   can configure the default for your setup.
 # @param key_password
 #   If your key should be protected by a password, specify it here.
-
 define dehydrated::certificate(
   Dehydrated::DN $dn = $name,
   String $base_filename = regsubst($dn, '^\*', '_wildcard_'),
