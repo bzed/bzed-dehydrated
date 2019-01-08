@@ -199,3 +199,13 @@ Please use the github issue tracker and send pull requests. Make sure that your 
         pdk build
 
  -  Bump version number: bump/change the version in metadata.json.
+
+## Support and help
+There is no official commercial support for this puppet module, but I'm happy to help you if you open a bug in the issue tracker.
+Please make sure to add enough information about what you have done so far and how your setup looks like.
+I'm also reachable by [email](mailto:bernd@bzed.de). Use GPG to encrypt confidential data: 
+
+    ECA1 E3F2 8E11 2432 D485  DD95 EB36 171A 6FF9 435F
+
+If you are happy, I also have an [amazon wishlist](https://www.amazon.de/registry/wishlist/1TXINPFZU79GL) :)
+
