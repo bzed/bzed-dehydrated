@@ -69,16 +69,37 @@
   </dl>
 </div>
 
+  <h2>Summary</h2>
+  Creates key & csr and request the certificate.
+
 <h2>Overview</h2>
 <div class="docstring">
   <div class="discussion">
     
+<p>Triggers key and csr generation and requests the certificate via the host
+configured in $dehydrated_host. This is the main defined type to use if you
+want to have a certificate. Together with the defaults in the dehydrated
+class you should have everything to make requesting certificates possible.
+Especially the dehydrated::certificate::* types do not have a public API
+and can change without warning. Don&#39;t rely on them. <a
+href="$dn">Dehydrated::Certificate</a> is also what you want to use to
+subscribe to if you want to restart services after certificates have been
+installed/updated.</p>
+
   </div>
 </div>
 
 
 <div class="tags">
-  <p class="tag_title">Parameters:</p>
+  
+  <div class="examples">
+    <p class="tag_title">Examples:</p>
+    
+      
+      <pre class="example code"><code>dehydrated::certificate { &#39;test.example.com&#39;: }</code></pre>
+    
+  </div>
+<p class="tag_title">Parameters:</p>
 <ul class="param">
   
     <li>
@@ -91,6 +112,11 @@
       
         <em class="default">(defaults to: <tt>$name</tt>)</em>
       
+      
+        &mdash;
+        <div class='inline'>
+<p>The main distinguished name to use for the certificate. Defaults to $name.</p>
+</div>
       
     </li>
   
@@ -105,6 +131,13 @@
         <em class="default">(defaults to: <tt>regsubst($dn, &#39;^\*&#39;, &#39;_wildcard_&#39;)</tt>)</em>
       
       
+        &mdash;
+        <div class='inline'>
+<p>The base part of the filename of all related files. For wildcard
+certificates the * is replaced by <em>wildcard</em>. Feel free to use
+whatever a valid filename is.</p>
+</div>
+      
     </li>
   
     <li>
@@ -117,6 +150,12 @@
       
         <em class="default">(defaults to: <tt>[]</tt>)</em>
       
+      
+        &mdash;
+        <div class='inline'>
+<p>To request a SAN certificate, pass an array with the alternative names
+here. The main $dn will be added automatically.</p>
+</div>
       
     </li>
   
@@ -131,6 +170,13 @@
         <em class="default">(defaults to: <tt>$::dehydrated::challengetype</tt>)</em>
       
       
+        &mdash;
+        <div class='inline'>
+<p>Default challengetype to use. Defaults to $::dehydrated::challengetype,
+which defaults to &#39;dns-01&#39;. You can specify a different
+challengetype for each certificate here.</p>
+</div>
+      
     </li>
   
     <li>
@@ -143,6 +189,14 @@
       
         <em class="default">(defaults to: <tt>$::dehydrated::algorithm</tt>)</em>
       
+      
+        &mdash;
+        <div class='inline'>
+<p>Algorithm / elliptic-curve you want to use. Supported: rsa, secp384r1,
+prime256v1. Defaults to $::dehydrated::algorithm, which defaults to
+&#39;rsa&#39;. You can specify a different algorithm for each certificate
+here.</p>
+</div>
       
     </li>
   
@@ -157,6 +211,13 @@
         <em class="default">(defaults to: <tt>$::dehydrated::dh_param_size</tt>)</em>
       
       
+        &mdash;
+        <div class='inline'>
+<p>Size of the DH params we should generate. Defaults to
+$::dehydrated::dh_param_size, which defaults to 2048. You can specify a
+different DH param size for each certificate here.</p>
+</div>
+      
     </li>
   
     <li>
@@ -169,6 +230,13 @@
       
         <em class="default">(defaults to: <tt>$::dehydrated::dehydrated_host</tt>)</em>
       
+      
+        &mdash;
+        <div class='inline'>
+<p>$::fqdn of the host which is responsible to request the certificates from
+the Let&#39;s Encrypt CA. Defaults to $::dehydrated::dehydrated_host where
+you can configure your default.</p>
+</div>
       
     </li>
   
@@ -183,6 +251,14 @@
         <em class="default">(defaults to: <tt>$::dehydrated::dehydrated_environment</tt>)</em>
       
       
+        &mdash;
+        <div class='inline'>
+<p>Hash with the environment variables to set for the
+$dehydrated_domain_validation_hook and also for running the hook in
+dehydrated. Defaults to $::dehydrated::dehydrated_environment, empty by
+default.</p>
+</div>
+      
     </li>
   
     <li>
@@ -195,6 +271,14 @@
       
         <em class="default">(defaults to: <tt>$::dehydrated::dehydrated_hook</tt>)</em>
       
+      
+        &mdash;
+        <div class='inline'>
+<p>Name of the hook script you want to use. Can be left on undef if http-01 is
+being used as challengetype to use the built-in http-01 implementation of
+dehydrated. Defaults to $::dehydrated::dehydrated_hook, which will use
+“$challengetype.sh” if the challengetype is not http-01.</p>
+</div>
       
     </li>
   
@@ -209,6 +293,16 @@
         <em class="default">(defaults to: <tt>$::dehydrated::letsencrypt_ca</tt>)</em>
       
       
+        &mdash;
+        <div class='inline'>
+<p>Defines the CA you want to use to request certificates. If you want to use
+a non-supported CA, you need to configure it in
+$::dehydrated::letsencrypt_cas on your $dehydrated_host. Normally, the
+following CAs are pre-configured: staging, production, v2-staging,
+v2-production Defaults to $::dehydrated::letsencrypt_ca, which points to
+v2-production.</p>
+</div>
+      
     </li>
   
     <li>
@@ -221,6 +315,16 @@
       
         <em class="default">(defaults to: <tt>$::dehydrated::dehydrated_domain_validation_hook</tt>)</em>
       
+      
+        &mdash;
+        <div class='inline'>
+<p>Name of the hook script to run before dehydrated is actually executed. Used
+to check if a domain is still valid or if you are allowed to modify it. Or
+whatever else you want to do as preparation. Good thing to use before
+running into limits by trying to request certificates for domains you
+don&#39;t own. Defaults to $::dehydrated::dehydrated_domain_validation_hook
+where you can configure the default for your setup.</p>
+</div>
       
     </li>
   
@@ -235,6 +339,11 @@
         <em class="default">(defaults to: <tt>undef</tt>)</em>
       
       
+        &mdash;
+        <div class='inline'>
+<p>If your key should be protected by a password, specify it here.</p>
+</div>
+      
     </li>
   
 </ul>
@@ -247,6 +356,7 @@
         <pre class="lines">
 
 
+72
 73
 74
 75
@@ -307,11 +417,10 @@
 130
 131
 132
-133
-134</pre>
+133</pre>
       </td>
       <td>
-        <pre class="code"><span class="info file"># File 'manifests/certificate.pp', line 73</span>
+        <pre class="code"><span class="info file"># File 'manifests/certificate.pp', line 72</span>
 
 define dehydrated::certificate(
   Dehydrated::DN $dn = $name,
