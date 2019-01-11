@@ -19,7 +19,7 @@ _Private Classes_
 
 _Public Defined types_
 
-* [`dehydrated::certificate`](#dehydratedcertificate): Creates key & csr and deploys the certificate.
+* [`dehydrated::certificate`](#dehydratedcertificate): Creates key & csr and request the certificate.
 
 _Private Defined types_
 
@@ -408,8 +408,17 @@ The dehydrated::setup::dehydrated_host class.
 
 ### dehydrated::certificate
 
-Triggers key and csr generation and installs the
-certificate
+Triggers key and csr generation and requests the certificate
+via the host configured in $dehydrated_host.
+This is the main defined type to use if you want to have a
+certificate. Together with the defaults in the dehydrated
+class you should have everything to make requesting certificates
+possible. Especially the dehydrated::certificate::* types do not
+have a public API and can change without warning. Don't rely on
+them.
+Dehydrated::Certificate[$dn] is also what you want to use to
+subscribe to if you want to restart services after certificates
+have been installed/updated.
 
 #### Examples
 
@@ -427,7 +436,8 @@ The following parameters are available in the `dehydrated::certificate` defined 
 
 Data type: `Dehydrated::DN`
 
-
+The main distinguished name to use for the certificate.
+Defaults to $name.
 
 Default value: $name
 
@@ -435,7 +445,9 @@ Default value: $name
 
 Data type: `String`
 
-
+The base part of the filename of all related files.
+For wildcard certificates the * is replaced by _wildcard_.
+Feel free to use whatever a valid filename is.
 
 Default value: regsubst($dn, '^\*', '_wildcard_')
 
@@ -443,7 +455,8 @@ Default value: regsubst($dn, '^\*', '_wildcard_')
 
 Data type: `Array[Dehydrated::DN]`
 
-
+To request a SAN certificate, pass an array with the
+alternative names here. The main $dn will be added automatically.
 
 Default value: []
 
@@ -451,7 +464,9 @@ Default value: []
 
 Data type: `Dehydrated::Challengetype`
 
-
+Default challengetype to use. Defaults to $::dehydrated::challengetype,
+which defaults to 'dns-01'. You can specify a different
+challengetype for each certificate here.
 
 Default value: $::dehydrated::challengetype
 
@@ -459,7 +474,9 @@ Default value: $::dehydrated::challengetype
 
 Data type: `Dehydrated::Algorithm`
 
-
+Algorithm / elliptic-curve you want to use. Supported: rsa, secp384r1, prime256v1.
+Defaults to $::dehydrated::algorithm, which defaults to 'rsa'.
+You can specify a different algorithm for each certificate here.
 
 Default value: $::dehydrated::algorithm
 
@@ -467,7 +484,8 @@ Default value: $::dehydrated::algorithm
 
 Data type: `Integer[768]`
 
-
+Size of the DH params we should generate. Defaults to $::dehydrated::dh_param_size,
+which defaults to 2048. You can specify a different DH param size for each certificate here.
 
 Default value: $::dehydrated::dh_param_size
 
@@ -475,7 +493,9 @@ Default value: $::dehydrated::dh_param_size
 
 Data type: `Stdlib::Fqdn`
 
-
+$::fqdn of the host which is responsible to request the certificates from
+the Let's Encrypt CA. Defaults to $::dehydrated::dehydrated_host where you can
+configure your default.
 
 Default value: $::dehydrated::dehydrated_host
 
@@ -483,7 +503,9 @@ Default value: $::dehydrated::dehydrated_host
 
 Data type: `Hash`
 
-
+Hash with the environment variables to set for the $dehydrated_domain_validation_hook
+and also for running the hook in dehydrated.
+Defaults to $::dehydrated::dehydrated_environment, empty by default.
 
 Default value: $::dehydrated::dehydrated_environment
 
@@ -491,7 +513,10 @@ Default value: $::dehydrated::dehydrated_environment
 
 Data type: `Dehydrated::Hook`
 
-
+Name of the hook script you want to use. Can be left on undef if http-01 is being
+used as challengetype to use the built-in http-01 implementation of dehydrated.
+Defaults to $::dehydrated::dehydrated_hook, which will use "${challengetype}.sh"
+if the challengetype is not http-01.
 
 Default value: $::dehydrated::dehydrated_hook
 
@@ -499,7 +524,12 @@ Default value: $::dehydrated::dehydrated_hook
 
 Data type: `String`
 
-
+Defines the CA you want to use to request certificates. If you want to use a
+non-supported CA, you need to configure it in $::dehydrated::letsencrypt_cas on
+your $dehydrated_host.
+Normally, the following CAs are pre-configured:
+staging, production, v2-staging, v2-production
+Defaults to $::dehydrated::letsencrypt_ca, which points to v2-production.
 
 Default value: $::dehydrated::letsencrypt_ca
 
@@ -507,7 +537,13 @@ Default value: $::dehydrated::letsencrypt_ca
 
 Data type: `Optional[Dehydrated::Hook]`
 
-
+Name of the hook script to run before dehydrated is actually executed.
+Used to check if a domain is still valid or if you are allowed to modify it.
+Or whatever else you want to do as preparation.
+Good thing to use before running into limits by trying to request
+certificates for domains you don't own.
+Defaults to $::dehydrated::dehydrated_domain_validation_hook where you
+can configure the default for your setup.
 
 Default value: $::dehydrated::dehydrated_domain_validation_hook
 
@@ -515,7 +551,7 @@ Default value: $::dehydrated::dehydrated_domain_validation_hook
 
 Data type: `Optional[String]`
 
-
+If your key should be protected by a password, specify it here.
 
 Default value: `undef`
 
