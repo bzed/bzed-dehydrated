@@ -34,7 +34,7 @@ supports it you could also create the necessary files for http-01.
 Let’s Encrypt is a trademark of the Internet Security Research Group. All rights reserved.
 
 ### Deprecation of bzed-letsencrypt
-With the release of **bzed-dehydrated** my old module *bzed-letsencrypt* will be depricated.
+With the release of **bzed-dehydrated** my old module *bzed-letsencrypt* will be deprecated.
 Renaming the module to avoid trademark related troubles is one of the reasons for a new module,
 the other is that I did not want to break the API for all users of the old module.
 If there is enough interest I'll change bzed-letsencrypt to become a wrapper around
