@@ -11,6 +11,10 @@ Gemfile:
       - gem: 'rspec-puppet'
       - gem: 'puppet-strings'
       - gem: 'rgen'
+      - gem: 'hiera-eyaml'
+      - gem: 'puppet-lint-resource_reference_syntax'
+      - gem: 'puppet-lint-trailing_comma-check'
+      - gem: 'puppet-lint-variable_contains_upcase'
 
 Rakefile:
   requires:
