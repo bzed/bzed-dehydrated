@@ -17,6 +17,7 @@ define dehydrated::certificate::deploy(
   }
 
   require ::dehydrated::setup
+  include ::dehydrated::certificate::notify
 
   $dehydrated_domains = $facts['dehydrated_domains']
   $_config = $dehydrated_domains[$dn]
@@ -44,11 +45,15 @@ define dehydrated::certificate::deploy(
   }
 
   concat { $crt_full_chain :
-    mode => '0644',
+    mode   => '0644',
+    notify => Class['::dehydrated::certificate::notify'],
   }
   concat { $crt_full_chain_with_key :
     mode   => '0640',
-    notify => Dehydrated_pfx[$pfx],
+    notify => [
+      Dehydrated_pfx[$pfx],
+      Class['::dehydrated::certificate::notify'],
+    ],
   }
 
   concat::fragment { "${dn}_key" :
