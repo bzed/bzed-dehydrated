@@ -29,7 +29,6 @@ define dehydrated::certificate::dh(
   dehydrated_dhparam { $dh :
     ensure => present,
     size   => $dh_param_size,
-    notify => Class['::dehydrated::certificate::notify'],
   }
 
   file { $dh:
