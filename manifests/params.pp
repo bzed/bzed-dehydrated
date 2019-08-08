@@ -112,7 +112,7 @@ class dehydrated::params {
 
   # dehydrated setting
   $dehydrated_git_url = 'https://github.com/lukas2511/dehydrated.git'
-  $dehydrated_git_tag = 'v0.6.2'
+  $dehydrated_git_tag = 'v0.6.5'
 
   $dehydrated_base_dir = '/opt/dehydrated'
 
