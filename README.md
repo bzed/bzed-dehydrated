@@ -85,7 +85,7 @@ So for a basic setup, the following steps should give you a running setup.
      ```
  2.  As example we'll use the dehydrated hook for Cloudflare®. Take [socram8888/dehydrated-hook-cloudflare](
      https://github.com/socram8888/dehydrated-hook-cloudflare/blob/master/cf-hook.sh)
-     and **on your dehydrated_host** install it into _/opt/dehydrated/hooks.d/dns-01.sh_
+     and **on your dehydrated_host** install it into _/opt/dehydrated/hooks/dns-01.sh_
  3.  Add the hook configuration to your config from above:
          
          class { 'dehydrated' :
