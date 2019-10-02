@@ -41,6 +41,19 @@ _Private Defined types_
 
 * [`dehydrated::file`](#dehydratedfile): 
 
+**Data types**
+
+* [`Dehydrated::Algorithm`](#dehydratedalgorithm): 
+* [`Dehydrated::CRT`](#dehydratedcrt): 
+* [`Dehydrated::CSR`](#dehydratedcsr): 
+* [`Dehydrated::Challengetype`](#dehydratedchallengetype): 
+* [`Dehydrated::DN`](#dehydrateddn): what we can request certificates for.
+* [`Dehydrated::Email`](#dehydratedemail): 
+* [`Dehydrated::GitSSHUrl`](#dehydratedgitsshurl): 
+* [`Dehydrated::GitUrl`](#dehydratedgiturl): a type that hopefully matches all possible git urls.
+* [`Dehydrated::Hook`](#dehydratedhook): 
+* [`Dehydrated::WildcardDN`](#dehydratedwildcarddn): based on Stdlib::Fqdn
+
 ## Classes
 
 ### dehydrated
@@ -790,4 +803,66 @@ Data type: `String`
 Data type: `Optional[String]`
 
 
+
+## Data types
+
+### Dehydrated::Algorithm
+
+The Dehydrated::Algorithm data type.
+
+Alias of `Pattern[/^(rsa|prime256v1|secp384r1)$/]`
+
+### Dehydrated::CRT
+
+The Dehydrated::CRT data type.
+
+Alias of `Pattern[/(?m:.*-+BEGIN CERTIFICATE-+.*-+END CERTIFICATE-+.*)/]`
+
+### Dehydrated::CSR
+
+The Dehydrated::CSR data type.
+
+Alias of `Pattern[/(?m:.*-+BEGIN CERTIFICATE REQUEST-+.*-+END CERTIFICATE REQUEST-+.*)/]`
+
+### Dehydrated::Challengetype
+
+The Dehydrated::Challengetype data type.
+
+Alias of `Pattern[/^(http-01|dns-01|tls-alpn-01)$/]`
+
+### Dehydrated::DN
+
+what we can request certificates for.
+
+Alias of `Variant[Stdlib::Fqdn, Dehydrated::WildcardDN]`
+
+### Dehydrated::Email
+
+The Dehydrated::Email data type.
+
+Alias of `Pattern[/^(?i:[A-Z0-9_%+"-]+[A-Z0-9._%+"-]+@[A-Z0-9.-]+\.[A-Z]{2,})$/]`
+
+### Dehydrated::GitSSHUrl
+
+The Dehydrated::GitSSHUrl data type.
+
+Alias of `Pattern[/(?i:^(ssh:\/\/([^\/@]+@)?[^\/]+\/.*|([^@:]+@)?[^:]+:.*))/]`
+
+### Dehydrated::GitUrl
+
+a type that hopefully matches all possible git urls.
+
+Alias of `Variant[Dehydrated::GitSSHUrl, Stdlib::HTTPUrl, Stdlib::Absolutepath]`
+
+### Dehydrated::Hook
+
+The Dehydrated::Hook data type.
+
+Alias of `Pattern[/^[^\\\/]+$/]`
+
+### Dehydrated::WildcardDN
+
+based on Stdlib::Fqdn
+
+Alias of `Pattern[/^\*\.(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/]`
 
