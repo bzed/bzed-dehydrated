@@ -22,7 +22,7 @@ class dehydrated::setup {
     if (defined('$::dehydrated::group')) {
       if ($::dehydrated::params::puppet_group != $::dehydrated::group) {
         group { $::dehydrated::group :
-          ensure => 'present'
+          ensure => 'present',
         }
         $group_require = Group[$::dehydrated::group]
       }

@@ -106,7 +106,7 @@ class dehydrated::setup::dehydrated_host {
   cron { 'dehydrated_host_script':
     command => $cron_command,
     user    => $::dehydrated::dehydrated_user,
-    minute  => [3,18,33,48,]
+    minute  => [3,18,33,48,],
   }
 
   vcsrepo { $::dehydrated::dehydrated_git_dir :
