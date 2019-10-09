@@ -256,7 +256,7 @@ def handle_request(fqdn, dn, config)
       return ['Domain validation hook failed', stdout, stderr, status] if status > 0
     end
 
-    unless dehydrated_hook_script.empty?
+    unless dehydrated_hook_script.nil? || dehydrated_hook_script.empty?
       unless File.exist?(dehydrated_hook_script) && File.executable?(dehydrated_hook_script)
         return ['Configured Dehydrated hook does not exist or is not executable',
                 dehydrated_hook_script,
@@ -418,7 +418,7 @@ write_status_file(
 #{"base_dir":"/etc/dehydrated","crt_dir":"/etc/dehydrated/certs","csr_dir":"/etc/dehydrated/csr","dehydrated_base_dir":"/opt/dehydrated","dehydrated_host":"fuzz.foobar.com","dehydrated_puppetmaster":"puppet.foobar.com","dehydrated_requests_dir":"/opt/dehydrated/requests","dehydrated_requests_config":"/opt/dehydrated/requests.json","key_dir":"/etc/dehydrated/private"}
 
 
-# dehydrated@fuzz:~/dehydrated$ ./dehydrated  --config /opt/dehydrated/requests/fuzz.foobar.com/tt.foobar.com/tt.foobar.com.config --accept-terms --register 
+# dehydrated@fuzz:~/dehydrated$ ./dehydrated  --config /opt/dehydrated/requests/fuzz.foobar.com/tt.foobar.com/tt.foobar.com.config --accept-terms --register
 # # INFO: Using main config file /opt/dehydrated/requests/fuzz.foobar.com/tt.foobar.com/tt.foobar.com.config
 # + Generating account key...
 # + Registering account key with ACME server...
@@ -441,7 +441,7 @@ write_status_file(
 #   "initialIp": "2a02:16a8:dc4:a01::211",
 #   "createdAt": "2018-10-02T16:39:08Z",
 #   "status": "valid"
-# }dehydrated@fuzz:~/dehydrated$ 
+# }dehydrated@fuzz:~/dehydrated$
 # dehydrated@fuzz:~/dehydrated$ vim /opt/dehydrated/requests/fuzz.foobar.com/tt.foobar.com/tt.foobar.com.config
 # dehydrated@fuzz:~/dehydrated$ ./dehydrated  --config /opt/dehydrated/requests/fuzz.foobar.com/tt.foobar.com/tt.foobar.com.config --account
 # # INFO: Using main config file /opt/dehydrated/requests/fuzz.foobar.com/tt.foobar.com/tt.foobar.com.config
@@ -463,5 +463,5 @@ write_status_file(
 #   "initialIp": "2a02:16a8:dc4:a01::211",
 #   "createdAt": "2018-10-02T16:39:08Z",
 #   "status": "valid"
-# }dehydrated@fuzz:~/dehydrated$ 
-# 
+# }dehydrated@fuzz:~/dehydrated$
+#
