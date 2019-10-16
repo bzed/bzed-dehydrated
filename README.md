@@ -15,7 +15,7 @@ Centralized CSR signing using Let’s Encrypt™ - keeping your keys safe on the
 3. [Usage - Configuration options and additional functionality](#usage)
     * [Monitoring and debugging](#monitoring--debugging)
 4. [Migrating from bzed-letsencrypt](#migrating-from-bzed-letsencrypt)
-5. [Limitations - OS compatibility, etc.](#limitations)
+5. [Limitations - OS compatibility, Deployment time, etc.](#limitations)
 6. [Development - Guide for contributing to the module](#development)
 
 ## Description
@@ -108,7 +108,8 @@ So for a basic setup, the following steps should give you a running setup.
          
  5.  Wait.... it will take a few puppet runs until your certificate will appear.
      The certificates will be requestd by a cronjob, not directly from puppet.
-     Otherwise puppet runs will take way too much time.
+     Otherwise puppet runs will take way too much time. For detailed description of the workflow see [Deployment workflow
+](#deployment-workflow)
 
 ### Using hiera
 To use hiera, make sure you include your dehdrated class somewhere. As default configuration for all
@@ -176,6 +177,20 @@ If you ar enot using Debian you can retrieve the source code here: [check_status
 Don't forget that Let’s Encrypt limits apply!
 Also: this code might not work for your use-case out of the box, please test it properly against
 the Let’s Encrypt testing CA instead of running into the limit for failed authorizations and blaiming me for it ;)
+
+### Deployment workflow
+
+The cerfificates take some time to appear on the target host. This is due to the way this modules works. The Following Steps are taken to create all cerficate files. The time depends on your puppet and cron schedule.
+
+|Step|Server|System|Description|Relevant Source|
+|----|:-----|:-----|:----------|:--------------|
+|1|target|puppet|Create Key and CSR|[dehydrated::certificate](manifests/certificate.pp#L115) [dehydrated::certificate::csr](manifests/certificate/csr.pp#L52-L81)|
+|2|target|puppet|get CSR from `$fact['dehydrated_domains']` and export it as a `dehydrated::certificate::request`.|[dehydrated](manifests/init.pp#L217-L222)|
+|3|*dehydrated\_host*|puppet|Collect all `dehydrated::certificate::request` and save them for the cronjob.|[dehydrated](manifests/init.pp#L235) [dehydrated::certificate::request](manifests/certificate/request.pp) |
+|4|*dehydrated\_host*|cron|finds the files from previous step and requests the certificates.|[dehydrated_job_runner](files/dehydrated_job_runner.rb)|
+|5|*dehydrated\_host*|puppet|Find the certificates and export them as `dehydrated::certificate::transfer`|[dehydrated](manifests/init.pp#L243-L247) [dehydrated::certificate:collect](manifests/certificate/collect.pp#L76-L111)|
+|6|target|puppet|Collect all `dehydrated::certificate::transfer` and save them to the files.|[dehydrated](manifests/init.pp#L225-L228) [dehydrated::certificate::transfer](manifests/certificate/transfer.pp)|
+|7.|target|puppet|identify deployed certificates by `$fact['dehydrated_domains::`*dn*`::'ready_for_merge]` and create joined files like `*_fullchain.pem`.|[dehydrated::certificate](manifests/certificate.pp#L123-L131) [dehydrated::certificate::deploy](manifests/certificate/deploy.pp)|
 
 ## Development
 
