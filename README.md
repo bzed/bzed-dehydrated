@@ -56,7 +56,7 @@ a (designated) puppet master is the better option.
 
 ### Setup Requirements 
 
-You need to ensure that exported ressources are working and pluginsync
+You need to ensure that exported resources are working and pluginsync
 is enabled.
 
 
