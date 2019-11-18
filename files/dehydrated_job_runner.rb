@@ -289,6 +289,10 @@ def handle_request(fqdn, dn, config)
       stdout, stderr, status = update_ocsp(ocsp_file, crt_file, ca_file)
       return ['OCSP update failed', stdout, stderr, status] if status > 0
     end
+    if File.exist?(ocsp_file) && File.mtime(ocsp_file) < File.mtime(crt_file)
+      stdout, stderr, status = update_ocsp(ocsp_file, crt_file, ca_file)
+      return ['OCSP update failed', stdout, stderr, status] if status > 0
+    end
   end
   old_env.each do |key, value|
     ENV[key] = value
