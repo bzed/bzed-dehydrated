@@ -271,6 +271,10 @@ def handle_request(fqdn, dn, config)
     if status > 0 || !cert_still_valid(crt_file)
       return ['CSR signing failed', stdout, stderr, status] if status > 0
     end
+    # remove ocsp file after getting a new certificate
+    if status == 0 && File.exist?(ocsp_file)
+      File.delete(ocsp_file)
+    end
   end
 
   if cert_still_valid(crt_file) && !cert_still_valid(ca_file)
@@ -285,7 +289,10 @@ def handle_request(fqdn, dn, config)
   File.write(dn_config_file, JSON.generate(new_dn_config))
 
   if cert_still_valid(crt_file) && cert_still_valid(ca_file)
-    unless File.exist?(ocsp_file) && (File.mtime(ocsp_file) + 24 * 60 * 60) > Time.now
+    ocsp_uptodate = File.exist?(ocsp_file) &&
+      (File.mtime(ocsp_file) + 24 * 60 * 60) > Time.now &&
+      File.mtime(ocsp_file) > File.mtime(crt_file)
+    unless ocsp_uptodate
       stdout, stderr, status = update_ocsp(ocsp_file, crt_file, ca_file)
       return ['OCSP update failed', stdout, stderr, status] if status > 0
     end
