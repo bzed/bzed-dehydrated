@@ -23,7 +23,7 @@ Centralized CSR signing using Let’s Encrypt™ - keeping your keys safe on the
 bzed-dehydrated creates private keys and CSRs, transfers
 the CSR to a central host (for example your puppetmaster)
 where it is signed using the well known dehydrated
-https://github.com/lukas2511/dehydrated
+https://github.com/dehydrated-io/dehydrated
 
 Signed certificates are shipped back to the requesting host.
 
@@ -64,10 +64,10 @@ is enabled.
 
 Basic things you need:
  -  a host with internet access, preferable a puppet master. This will be known as *dehydrated\_host* now.
- -  a working hook script for dehydrated, for exampes and documentation see [lukas2511/dehydrated]( https://github.com/lukas2511/dehydrated/tree/master/docs)
- -  bzed-dehydrated installed as _dehydrated_ module in your Puppet environment.
-    You will also need recent versions of puppetlabs-stdlib, puppetlabs-concat, puppetlabs-vcsrepo.
-    For puppet >= 6.0 you'll also need puppetlabs-cron\_core.
+ -  a working hook script for dehydrated, for exampes and documentation see [dehydrated-io/dehydrated](https://github.com/dehydrated-io/dehydrated/tree/master/docs)
+ -  bzed-dehydrated installed as `dehydrated` module in your Puppet environment.
+    You will also need recent versions of `puppetlabs-stdlib`, `puppetlabs-concat`, `puppetlabs-vcsrepo`.
+    For puppet >= 6.0 you'll also need `puppetlabs-cron\_core`.
  -  I'd assume at least puppet version 4.8. Not tested or developed for older version.
  -  Working exportable ressources. Make sure your puppetdb is working well, this module
     heavily depends on it.
