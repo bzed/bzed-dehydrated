@@ -290,8 +290,8 @@ def handle_request(fqdn, dn, config)
 
   if cert_still_valid(crt_file) && cert_still_valid(ca_file)
     ocsp_uptodate = File.exist?(ocsp_file) &&
-      (File.mtime(ocsp_file) + 24 * 60 * 60) > Time.now &&
-       File.mtime(ocsp_file) > File.mtime(crt_file)
+                    (File.mtime(ocsp_file) + 24 * 60 * 60) > Time.now &&
+                    File.mtime(ocsp_file) > File.mtime(crt_file)
     unless ocsp_uptodate
       stdout, stderr, status = update_ocsp(ocsp_file, crt_file, ca_file)
       return ['OCSP update failed', stdout, stderr, status] if status > 0
