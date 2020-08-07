@@ -92,7 +92,15 @@ class dehydrated::setup::dehydrated_host {
     '/usr/bin/timeout -k 10 7200',
   ], ' ')
 
-  $escaped_path = shell_escape($facts['path'])
+  $_path = split($facts['path'], ':')
+  if ($::dehydrated::params::puppet_vardir =~ /puppetlabs/) {
+    $_puppetlabs_path = [ regsubst($::dehydrated::params::puppet_vardir, '[^/]*$', 'bin') ]
+  } else {
+    $_puppetlabs_path = []
+  }
+  $dehydrated_path = join(flatten([$_puppetlabs_path, $_path]), ':')
+
+  $escaped_path = shell_escape($dehydrated_path)
   $cron_escaped_path = regsubst($escaped_path, '%', '\%', 'G')
 
   $cron_command = join([
