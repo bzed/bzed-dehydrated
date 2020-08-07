@@ -20,7 +20,7 @@
 # @param base_dir
 #   The base directory where keys/csr/certs are stored.
 #   Defaults to:
-#   - on $::os['family']=='Debian': /etc/dehydrated 
+#   - on $::os['family']=='Debian': /etc/dehydrated
 #   - on other Linux/Unix systems: /etc/pki/dehydrated
 #   - on windows: C:\LE_certs.
 # @param crt_dir
@@ -161,7 +161,7 @@ class dehydrated
   Array $dehydrated_host_packages = $::dehydrated::params::dehydrated_host_packages,
   Hash $dehydrated_environment = $::dehydrated::params::dehydrated_environment,
   Optional[Dehydrated::Hook] $dehydrated_domain_validation_hook = $::dehydrated::params::dehydrated_domain_validation_hook,
-  Dehydrated::Hook $dehydrated_hook = "${challengetype}.sh",
+  Optional[Dehydrated::Hook] $dehydrated_hook = "${challengetype}.sh",
   Optional[Dehydrated::Email] $dehydrated_contact_email = $::dehydrated::params::dehydrated_contact_email,
 
   Boolean $manage_user = $::dehydrated::params::manage_user,

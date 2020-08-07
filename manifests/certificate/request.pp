@@ -141,8 +141,8 @@ define dehydrated::certificate::request(
         'letsencrypt_ca_url'                       => $letsencrypt_ca_url,
         'letsencrypt_ca_hash'                      => $letsencrypt_ca_hash,
         'dehydrated_config'                        => $dehydrated_config,
-      }
-    }
+      },
+    },
   }
 
   $json_fragment = to_json($request_config)

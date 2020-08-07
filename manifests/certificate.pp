@@ -78,7 +78,7 @@ define dehydrated::certificate(
   Integer[768] $dh_param_size = $::dehydrated::dh_param_size,
   Stdlib::Fqdn $dehydrated_host = $::dehydrated::dehydrated_host,
   Hash $dehydrated_environment = $::dehydrated::dehydrated_environment,
-  Dehydrated::Hook $dehydrated_hook = $::dehydrated::dehydrated_hook,
+  Optional[Dehydrated::Hook] $dehydrated_hook = $::dehydrated::dehydrated_hook,
   String $letsencrypt_ca = $::dehydrated::letsencrypt_ca,
   Optional[Dehydrated::Hook] $dehydrated_domain_validation_hook = $::dehydrated::dehydrated_domain_validation_hook,
   Optional[String] $key_password = undef,
@@ -102,14 +102,14 @@ define dehydrated::certificate(
       'dehydrated_hook'                   => $dehydrated_hook,
       'dehydrated_domain_validation_hook' => $dehydrated_domain_validation_hook,
       'letsencrypt_ca'                    => $letsencrypt_ca,
-    }
+    },
   }
 
   $json_fragment = to_json($domain_config)
   ::concat::fragment { "${facts['fqdn']}-${dn}" :
     target  => $::dehydrated::params::domainfile,
     content => $json_fragment,
-    order   => '50'
+    order   => '50',
   }
 
   ::dehydrated::certificate::csr { $base_filename :
