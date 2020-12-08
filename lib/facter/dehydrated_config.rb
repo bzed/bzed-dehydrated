@@ -33,8 +33,8 @@ Facter.add(:dehydrated_domains) do
   setcode do
     puppet_vardir = Facter.value(:puppet_vardir)
     domainsfile = File.join(puppet_vardir, 'bzed-dehydrated', 'domains.json')
-    configfile = File.join(puppet_vardir, 'bzed-dehydrated', 'config.json')
-    if File.exist?(configfile) && File.exist?(domainsfile)
+    config = Facter.value(:dehydrated_config)
+    if config && File.exist?(domainsfile)
       ret = JSON.parse(File.read(domainsfile))
       ret.each do |dn, dnconfig|
         base_filename = dnconfig['base_filename']
