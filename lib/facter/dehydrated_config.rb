@@ -7,11 +7,11 @@ Facter.add(:dehydrated_config) do
     puppet_vardir = Facter.value(:puppet_vardir)
     configfile = File.join(puppet_vardir, 'bzed-dehydrated', 'config.json')
 
-    config = if File.exist?(configfile)
-           JSON.parse(File.read(configfile))
-         else
-           nil
-         end
+    if File.exist?(configfile)
+      JSON.parse(File.read(configfile))
+    else
+      nil
+    end
   end
 end
 
