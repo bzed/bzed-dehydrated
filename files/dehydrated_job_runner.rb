@@ -46,6 +46,7 @@ def _get_authority_url(crt, url_description)
   URI url_description[%r{URI:(.*)}, 1]
 end
 
+
 def update_ca_chain(crt_file, ca_file)
   raw_crt = File.read(crt_file)
   crt = OpenSSL::X509::Certificate.new(raw_crt)
@@ -77,6 +78,7 @@ def update_ca_chain(crt_file, ca_file)
   if status.zero?
     ca_crt = OpenSSL::X509::Certificate.new(ca_crt_raw)
     File.write(ca_file, ca_crt.to_pem)
+    File.write(ca_file + ".url", ca_issuer_uri.to_s)
   end
   [stdout, stderr, status]
 end
@@ -179,6 +181,21 @@ def cert_still_valid(crt_file)
   end
 end
 
+def ca_chain_valid(crt_file, ca_file)
+  ca_url_file = ca_file + ".url"
+  raw_crt = File.read(crt_file)
+  crt = OpenSSL::X509::Certificate.new(raw_crt)
+  ca_issuer_uri = _get_authority_url(crt, 'CA Issuers').to_s
+
+  if File.exists?(ca_url_file)
+    old_ca_issuer_uri = File.read(ca_url_file)
+    !cert_still_valid(ca_file) || (ca_issuer_uri == old_ca_issuer_uri)
+  else
+    false
+  end
+end
+
+
 def handle_request(fqdn, dn, config)
   # set environment from config
   env = config['dehydrated_environment']
@@ -277,7 +294,7 @@ def handle_request(fqdn, dn, config)
     end
   end
 
-  if cert_still_valid(crt_file) && !cert_still_valid(ca_file)
+  if cert_still_valid(crt_file) && !ca_chain_valid(crt_file, ca_file)
     stdout, stderr, status = update_ca_chain(crt_file, ca_file)
     if status > 0 || !cert_still_valid(ca_file)
       return ['CA certificate update failed', stdout, stderr, status]
