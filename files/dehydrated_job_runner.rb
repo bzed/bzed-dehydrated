@@ -155,16 +155,29 @@ def update_account(dehydrated_config)
   run_dehydrated(dehydrated_config, '--account')
 end
 
-def sign_csr(dehydrated_config, csr_file, crt_file)
+def sign_csr(dehydrated_config, csr_file, crt_file, ca_file)
+  # tidy url files, not used anymore
+  ca_url_file = ca_file + ".url"
+  File.delete(ca_url_file) if File.exist?(ca_url_file)
+
   stdout, stderr, status = run_dehydrated(dehydrated_config, "--signcsr '#{csr_file}'")
   if status.zero?
-    begin
-      crt = OpenSSL::X509::Certificate.new(stdout)
-      File.write(crt_file, crt.to_pem)
-      stdout = crt
-    rescue OpenSSL::X509::CertificateError
-      stdout = "# -- is this a certificate?? -- \n #{stdout}"
+    certs = stdout.split("\n\n")
+    if certs.size < 2
+      stdout = "# -- CA certificate missing? -- \n #{stdout}"
       status = 255
+    else
+      crt = certs[0].sub("# CERT #\n", "")
+      ca_crt = certs[1..-1].join("\n\n")
+      begin
+        crt = OpenSSL::X509::Certificate.new(crt)
+        File.write(crt_file, crt.to_pem)
+        crt = OpenSSL::X509::Certificate.new(ca_crt)
+        File.write(ca_file, ca_crt)
+      rescue OpenSSL::X509::CertificateError
+        stdout = "# -- is this a certificate?? -- \n #{stdout}"
+        status = 255
+      end
     end
   end
   [stdout, stderr, status]
@@ -180,21 +193,6 @@ def cert_still_valid(crt_file)
     false
   end
 end
-
-def ca_chain_valid(crt_file, ca_file)
-  ca_url_file = ca_file + ".url"
-  raw_crt = File.read(crt_file)
-  crt = OpenSSL::X509::Certificate.new(raw_crt)
-  ca_issuer_uri = _get_authority_url(crt, 'CA Issuers').to_s
-
-  if File.exists?(ca_url_file)
-    old_ca_issuer_uri = File.read(ca_url_file)
-    !cert_still_valid(ca_file) || (ca_issuer_uri == old_ca_issuer_uri)
-  else
-    false
-  end
-end
-
 
 def handle_request(fqdn, dn, config)
   # set environment from config
@@ -284,7 +282,7 @@ def handle_request(fqdn, dn, config)
       # in the dehydrated config file already.
     end
 
-    stdout, stderr, status = sign_csr(dehydrated_config, csr_file, crt_file)
+    stdout, stderr, status = sign_csr(dehydrated_config, csr_file, crt_file, ca_file)
     if status > 0 || !cert_still_valid(crt_file)
       return ['CSR signing failed', stdout, stderr, status] if status > 0
     end
@@ -294,18 +292,11 @@ def handle_request(fqdn, dn, config)
     end
   end
 
-  if cert_still_valid(crt_file) && !ca_chain_valid(crt_file, ca_file)
-    stdout, stderr, status = update_ca_chain(crt_file, ca_file)
-    if status > 0 || !cert_still_valid(ca_file)
-      return ['CA certificate update failed', stdout, stderr, status]
-    end
-  end
-
   # track currently used config
   # we do this before the OCSP stuff as we have a valid cert already.
   File.write(dn_config_file, JSON.generate(new_dn_config))
 
-  if cert_still_valid(crt_file) && cert_still_valid(ca_file)
+  if cert_still_valid(crt_file)
     ocsp_uptodate = File.exist?(ocsp_file) &&
                     (File.mtime(ocsp_file) + 24 * 60 * 60) > Time.now &&
                     File.mtime(ocsp_file) > File.mtime(crt_file)

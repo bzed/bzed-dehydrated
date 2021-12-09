@@ -91,9 +91,12 @@ define dehydrated::certificate(
   require ::dehydrated::setup
   require ::dehydrated::params
 
+  # ensure $dn is also in subject_alternative_names
+  $_subject_alternative_names = unique(flatten([$dn, $subject_alternative_names]))
+
   $domain_config = {
     $dn => {
-      'subject_alternative_names'         => $subject_alternative_names,
+      'subject_alternative_names'         => $_subject_alternative_names,
       'base_filename'                     => $base_filename,
       'dh_param_size'                     => $dh_param_size,
       'challengetype'                     => $challengetype,
