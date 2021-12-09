@@ -182,18 +182,17 @@ def cert_still_valid(crt_file)
 end
 
 def ca_chain_valid(crt_file, ca_file)
+  # tidy url files, not used anymore
   ca_url_file = ca_file + ".url"
-  raw_crt = File.read(crt_file)
-  crt = OpenSSL::X509::Certificate.new(raw_crt)
-  ca_issuer_uri = _get_authority_url(crt, 'CA Issuers').to_s
+  File.delete(ca_url_file) if File.exist?(ca_url_file)
+  return false if !File.exist(ca_file)
+  return false if File.mtime(ca_file) <= File.mtime(crt_file)
 
-  if File.exists?(ca_url_file)
-    old_ca_issuer_uri = File.read(ca_url_file)
-    !cert_still_valid(ca_file) || (ca_issuer_uri == old_ca_issuer_uri)
-  else
-    false
-  end
+  crt = OpenSSL::X509::Certificate.new(File.read(crt_file))
+  ca_crt = OpenSSL::X509::Certificate.new(File.read(ca_file))
+  return crt.issuer == ca_crt.subject
 end
+
 
 
 def handle_request(fqdn, dn, config)
