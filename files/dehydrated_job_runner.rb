@@ -156,6 +156,10 @@ def update_account(dehydrated_config)
 end
 
 def sign_csr(dehydrated_config, csr_file, crt_file, ca_file)
+  # tidy url files, not used anymore
+  ca_url_file = ca_file + ".url"
+  File.delete(ca_url_file) if File.exist?(ca_url_file)
+
   stdout, stderr, status = run_dehydrated(dehydrated_config, "--signcsr '#{csr_file}'")
   if status.zero?
     certs = stdout.split("\n\n")
