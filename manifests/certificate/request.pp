@@ -57,6 +57,9 @@ define dehydrated::certificate::request(
 
   $challengetype = $config['challengetype']
 
+  # added later, handle missing config
+  $preferred_chain = $config.dig('preferred_chain')
+
   $dehydrated_requests_dir = $::dehydrated::dehydrated_requests_dir
 
   $request_fqdn_dir = join(

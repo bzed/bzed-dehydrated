@@ -172,6 +172,7 @@ class dehydrated
   Array[Variant[Dehydrated::DN, Tuple[Dehydrated::DN, Array[Dehydrated::DN]]]] $certificates = [],
 
   Boolean $build_pfx_files = $::dehydrated::params::build_pfx_files,
+  Optional[String] $preferred_chain = $::dehydrated::params::preferred_chain,
 ) inherits ::dehydrated::params {
 
   require ::dehydrated::setup

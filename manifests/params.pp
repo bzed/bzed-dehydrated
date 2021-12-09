@@ -130,5 +130,6 @@ class dehydrated::params {
 
   $dehydrated_contact_email = undef
 
+  $preferred_chain = undef
 }
 
