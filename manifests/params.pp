@@ -112,7 +112,7 @@ class dehydrated::params {
 
   # dehydrated setting
   $dehydrated_git_url = 'https://github.com/dehydrated-io/dehydrated.git'
-  $dehydrated_git_tag = 'v0.7.0'
+  $dehydrated_git_tag = '29b67962ac07d5d2b24f69c863a9ef31e8ac53ee' #v0.7.0 with a fix for old openssl versions
 
   $dehydrated_base_dir = '/opt/dehydrated'
 
