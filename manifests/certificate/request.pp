@@ -58,7 +58,12 @@ define dehydrated::certificate::request(
   $challengetype = $config['challengetype']
 
   # added later, handle missing config
-  $preferred_chain = $config.dig('preferred_chain')
+  $_preferred_chain = $config.dig('preferred_chain')
+  if !empty($_preferred_chain) {
+    $preferred_chain = $_preferred_chain
+  } else {
+    $preferred_chain = undef
+  }
 
   $dehydrated_requests_dir = $::dehydrated::dehydrated_requests_dir
 
