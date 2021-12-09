@@ -25,6 +25,13 @@ CONTACT_EMAIL="<%= @dehydrated_contact_email -%>"
 # Lockfile location, to prevent concurrent access (default: $BASEDIR/lock)
 LOCKFILE="${BASEDIR}/lock"
 
+# Use alternative certificate chain identified by issuer CN
+<% if @preferred_chain -%>
+PREFERRED_CHAIN="<%= @preferred_chain -%>"
+<% else -%>
+#PREFERRED_CHAIN=
+<% end -%>
+
 # Program or function called in certain situations
 #
 # After generating the challenge-response, or after failed challenge (in this case altname is empty)
