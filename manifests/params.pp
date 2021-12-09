@@ -4,7 +4,7 @@
 #
 # @example
 #   include dehydrated::params
-
+#
 class dehydrated::params {
 
   # OS settings

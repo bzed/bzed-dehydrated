@@ -46,7 +46,6 @@ def _get_authority_url(crt, url_description)
   URI url_description[%r{URI:(.*)}, 1]
 end
 
-
 def update_ca_chain(crt_file, ca_file)
   raw_crt = File.read(crt_file)
   crt = OpenSSL::X509::Certificate.new(raw_crt)
@@ -78,7 +77,7 @@ def update_ca_chain(crt_file, ca_file)
   if status.zero?
     ca_crt = OpenSSL::X509::Certificate.new(ca_crt_raw)
     File.write(ca_file, ca_crt.to_pem)
-    File.write(ca_file + ".url", ca_issuer_uri.to_s)
+    File.write(ca_file + '.url', ca_issuer_uri.to_s)
   end
   [stdout, stderr, status]
 end
@@ -157,7 +156,7 @@ end
 
 def sign_csr(dehydrated_config, csr_file, crt_file, ca_file)
   # tidy url files, not used anymore
-  ca_url_file = ca_file + ".url"
+  ca_url_file = ca_file + '.url'
   File.delete(ca_url_file) if File.exist?(ca_url_file)
 
   stdout, stderr, status = run_dehydrated(dehydrated_config, "--signcsr '#{csr_file}'")
@@ -167,12 +166,12 @@ def sign_csr(dehydrated_config, csr_file, crt_file, ca_file)
       stdout = "# -- CA certificate missing? -- \n #{stdout}"
       status = 255
     else
-      crt = certs[0].sub("# CERT #\n", "")
+      crt = certs[0].sub("# CERT #\n", '')
       ca_crt = certs[1..-1].join("\n\n")
       begin
         crt = OpenSSL::X509::Certificate.new(crt)
         File.write(crt_file, crt.to_pem)
-        crt = OpenSSL::X509::Certificate.new(ca_crt)
+        OpenSSL::X509::Certificate.new(ca_crt)
         File.write(ca_file, ca_crt)
       rescue OpenSSL::X509::CertificateError
         stdout = "# -- is this a certificate?? -- \n #{stdout}"

@@ -82,7 +82,7 @@ define dehydrated::certificate(
   String $letsencrypt_ca = $::dehydrated::letsencrypt_ca,
   Optional[Dehydrated::Hook] $dehydrated_domain_validation_hook = $::dehydrated::dehydrated_domain_validation_hook,
   Optional[String] $key_password = undef,
-  Optional[String] $preferred_chain = $::dehydrated::preferred_chain
+  Optional[String] $preferred_chain = $::dehydrated::preferred_chain,
 ) {
 
   if ! defined(Class['dehydrated']) {
