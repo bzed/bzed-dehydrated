@@ -159,12 +159,12 @@ def sign_csr(dehydrated_config, csr_file, crt_file, ca_file)
   stdout, stderr, status = run_dehydrated(dehydrated_config, "--signcsr '#{csr_file}'")
   if status.zero?
     certs = stdout.split("\n\n")
-    if a.size < 2
+    if certs.size < 2
       stdout = "# -- CA certificate missing? -- \n #{stdout}"
       status = 255
     else
       crt = certs[0].sub("# CERT #\n", "")
-      ca_crt = certs[1..].join("\n\n")
+      ca_crt = certs[1..-1].join("\n\n")
       begin
         crt = OpenSSL::X509::Certificate.new(crt)
         File.write(crt_file, crt.to_pem)
