@@ -260,7 +260,7 @@ def handle_request(fqdn, dn, config)
     end
   end
 
-  if !cert_still_valid(crt_file) || force_update
+  if !cert_still_valid(crt_file) || force_update || !cert_still_valid(ca_file)
     if dehydrated_domain_validation_hook_script && !dehydrated_domain_validation_hook_script.empty?
       stdout, stderr, status = run_domain_validation_hook(
         dehydrated_domain_validation_hook_script,
