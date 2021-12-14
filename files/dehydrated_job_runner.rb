@@ -167,7 +167,7 @@ def sign_csr(dehydrated_config, csr_file, crt_file, ca_file)
       status = 255
     else
       crt = certs[0].sub("# CERT #\n", '')
-      ca_crt = certs[1..-1].join("\n\n")
+      ca_crt = certs[1..-1].join("\n\n") + "\n"
       begin
         crt = OpenSSL::X509::Certificate.new(crt)
         File.write(crt_file, crt.to_pem)
@@ -260,7 +260,7 @@ def handle_request(fqdn, dn, config)
     end
   end
 
-  if !cert_still_valid(crt_file) || force_update
+  if !cert_still_valid(crt_file) || force_update || !cert_still_valid(ca_file)
     if dehydrated_domain_validation_hook_script && !dehydrated_domain_validation_hook_script.empty?
       stdout, stderr, status = run_domain_validation_hook(
         dehydrated_domain_validation_hook_script,
