@@ -13,13 +13,12 @@
 #
 # @api private
 #
-define dehydrated::certificate::request(
+define dehydrated::certificate::request (
   Stdlib::Fqdn $request_fqdn,
   Dehydrated::DN $dn,
   Hash $config,
 ) {
-
-  require ::dehydrated::params
+  require dehydrated::params
 
   if ! defined(Class['dehydrated']) {
     fail('You must include the dehydrated base class first.')
@@ -36,9 +35,8 @@ define dehydrated::certificate::request(
   if (!$dehydrated_hook or $dehydrated_hook == '') {
     $dehydrated_hook_script = undef
   } else {
-    $dehydrated_hook_script = join(
-      [$::dehydrated::dehydrated_hooks_dir, $dehydrated_hook],
-      $::dehydrated::params::path_seperator,
+    $dehydrated_hook_script = join( [$dehydrated::dehydrated_hooks_dir, $dehydrated_hook],
+      $dehydrated::params::path_seperator,
     )
   }
 
@@ -46,9 +44,8 @@ define dehydrated::certificate::request(
   if (!$dehydrated_domain_validation_hook or $dehydrated_domain_validation_hook == '') {
     $dehydrated_domain_validation_hook_script = undef
   } else {
-    $dehydrated_domain_validation_hook_script = join(
-      [$::dehydrated::dehydrated_hooks_dir, $dehydrated_domain_validation_hook],
-      $::dehydrated::params::path_seperator,
+    $dehydrated_domain_validation_hook_script = join( [$dehydrated::dehydrated_hooks_dir, $dehydrated_domain_validation_hook],
+      $dehydrated::params::path_seperator,
     )
   }
 
@@ -65,41 +62,34 @@ define dehydrated::certificate::request(
     $preferred_chain = undef
   }
 
-  $dehydrated_requests_dir = $::dehydrated::dehydrated_requests_dir
+  $dehydrated_requests_dir = $dehydrated::dehydrated_requests_dir
 
-  $request_fqdn_dir = join(
-    [$dehydrated_requests_dir, $request_fqdn],
-    $::dehydrated::params::path_seperator
+  $request_fqdn_dir = join( [$dehydrated_requests_dir, $request_fqdn],
+    $dehydrated::params::path_seperator
   )
-  $request_base_dir = join(
-    [$request_fqdn_dir, $base_filename],
-    $::dehydrated::params::path_seperator
+  $request_base_dir = join( [$request_fqdn_dir, $base_filename],
+    $dehydrated::params::path_seperator
   )
-  $request_account_dir = join(
-    [$request_fqdn_dir, 'accounts'],
-    $::dehydrated::params::path_seperator
+  $request_account_dir = join( [$request_fqdn_dir, 'accounts'],
+    $dehydrated::params::path_seperator
   )
 
-  $csr_file = join(
-    [$request_base_dir, "${base_filename}.csr"],
-    $::dehydrated::params::path_seperator
+  $csr_file = join( [$request_base_dir, "${base_filename}.csr"],
+    $dehydrated::params::path_seperator
   )
-  $dehydrated_config = join(
-    [$request_base_dir, "${base_filename}.config"],
-    $::dehydrated::params::path_seperator
+  $dehydrated_config = join( [$request_base_dir, "${base_filename}.config"],
+    $dehydrated::params::path_seperator
   )
 
-  $letsencrypt_ca_url = $::dehydrated::letsencrypt_cas[$letsencrypt_ca]['url']
-  $letsencrypt_ca_hash = $::dehydrated::letsencrypt_cas[$letsencrypt_ca]['hash']
+  $letsencrypt_ca_url = $dehydrated::letsencrypt_cas[$letsencrypt_ca]['url']
+  $letsencrypt_ca_hash = $dehydrated::letsencrypt_cas[$letsencrypt_ca]['hash']
 
-  $dehydrated_wellknown_dir = $::dehydrated::dehydrated_wellknown_dir
-  $dehydrated_alpncert_dir = $::dehydrated::dehydrated_alpncert_dir
-
-
+  $dehydrated_wellknown_dir = $dehydrated::dehydrated_wellknown_dir
+  $dehydrated_alpncert_dir = $dehydrated::dehydrated_alpncert_dir
 
   File {
-    owner => $::dehydrated::dehydrated_user,
-    group => $::dehydrated::dehydrated_group,
+    owner => $dehydrated::dehydrated_user,
+    group => $dehydrated::dehydrated_group,
   }
 
   ensure_resource(
@@ -107,8 +97,8 @@ define dehydrated::certificate::request(
     $request_fqdn_dir,
     {
       'ensure' => 'directory',
-      'owner'  => $::dehydrated::dehydrated_user,
-      'group'  => $::dehydrated::dehydrated_group,
+      'owner'  => $dehydrated::dehydrated_user,
+      'group'  => $dehydrated::dehydrated_group,
       'mode'   => '0755',
     }
   )
@@ -118,8 +108,8 @@ define dehydrated::certificate::request(
     $request_base_dir,
     {
       'ensure' => 'directory',
-      'owner'  => $::dehydrated::dehydrated_user,
-      'group'  => $::dehydrated::dehydrated_group,
+      'owner'  => $dehydrated::dehydrated_user,
+      'group'  => $dehydrated::dehydrated_group,
       'mode'   => '0755',
     }
   )
@@ -135,7 +125,7 @@ define dehydrated::certificate::request(
   }
 
   $request_config = {
-    $request_fqdn =>  {
+    $request_fqdn => {
       $dn           => {
         'subject_alternative_names'                => $subject_alternative_names,
         'base_filename'                            => $base_filename,
@@ -154,10 +144,9 @@ define dehydrated::certificate::request(
   }
 
   $json_fragment = to_json($request_config)
-  ::concat::fragment { "${::dehydrated::dehydrated_requests_config}-${name}" :
-    target  => $::dehydrated::dehydrated_requests_config,
+  ::concat::fragment { "${facts['dehydrated::dehydrated_requests_config']}-${name}" :
+    target  => $dehydrated::dehydrated_requests_config,
     content => $json_fragment,
     order   => '50',
   }
-
 }

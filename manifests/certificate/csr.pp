@@ -11,7 +11,7 @@
 #
 # @api private
 #
-define dehydrated::certificate::csr(
+define dehydrated::certificate::csr (
   Dehydrated::DN $dn,
   Array[Dehydrated::DN] $subject_alternative_names,
   String $base_filename = $name,
@@ -30,23 +30,21 @@ define dehydrated::certificate::csr(
   Optional[Integer[768]] $size = undef,
   Pattern[/^(MD[245]|SHA(|-?(1|224|256|384|512)))$/] $digest = 'SHA512',
 ) {
-
   if ! defined(Class['dehydrated']) {
     fail('You must include the dehydrated base class first.')
   }
 
-  require ::dehydrated::setup
+  require dehydrated::setup
 
-  $base_dir = $::dehydrated::base_dir
-  $csr_dir  = $::dehydrated::csr_dir
-  $key_dir  = $::dehydrated::key_dir
-  $crt_dir  = $::dehydrated::crt_dir
+  $base_dir = $dehydrated::base_dir
+  $csr_dir  = $dehydrated::csr_dir
+  $key_dir  = $dehydrated::key_dir
+  $crt_dir  = $dehydrated::crt_dir
 
   $crt = "${crt_dir}/${base_filename}.crt"
   $key = "${key_dir}/${base_filename}.key"
   $csr = "${csr_dir}/${base_filename}.csr"
   $dh  = "${crt_dir}/${base_filename}.dh"
-
 
   if ($ensure == 'present') {
     dehydrated_key { $key :
@@ -83,17 +81,15 @@ define dehydrated::certificate::csr(
 
   file { $key :
     ensure => $ensure,
-    owner  => $::dehydrated::user,
-    group  => $::dehydrated::group,
+    owner  => $dehydrated::user,
+    group  => $dehydrated::group,
     mode   => '0640',
   }
   file { $csr :
     ensure  => $ensure,
-    owner   => $::dehydrated::user,
-    group   => $::dehydrated::group,
+    owner   => $dehydrated::user,
+    group   => $dehydrated::group,
     mode    => '0644',
     require => Dehydrated_csr[$csr],
   }
-
-
 }

@@ -7,25 +7,24 @@
 #
 # @api private
 #
-define dehydrated::certificate::deploy(
+define dehydrated::certificate::deploy (
   Dehydrated::DN $dn = $name,
   Optional[String] $key_password = undef,
 ) {
-
   if ! defined(Class['dehydrated']) {
     fail('You must include the dehydrated base class first.')
   }
 
-  require ::dehydrated::setup
+  require dehydrated::setup
 
   $dehydrated_domains = $facts['dehydrated_domains']
   $_config = $dehydrated_domains[$dn]
   $base_filename = $_config['base_filename']
 
-  $base_dir = $::dehydrated::base_dir
-  $csr_dir  = $::dehydrated::csr_dir
-  $key_dir  = $::dehydrated::key_dir
-  $crt_dir  = $::dehydrated::crt_dir
+  $base_dir = $dehydrated::base_dir
+  $csr_dir  = $dehydrated::csr_dir
+  $key_dir  = $dehydrated::key_dir
+  $crt_dir  = $dehydrated::crt_dir
 
   $cnf = "${base_dir}/${base_filename}.cnf"
   $crt = "${crt_dir}/${base_filename}.crt"
@@ -39,8 +38,8 @@ define dehydrated::certificate::deploy(
   $crt_full_chain_with_key = "${key_dir}/${base_filename}_fullchain_with_key.pem"
 
   Concat {
-    owner => $::dehydrated::user,
-    group => $::dehydrated::group,
+    owner => $dehydrated::user,
+    group => $dehydrated::group,
   }
 
   concat { $crt_full_chain :
@@ -80,7 +79,7 @@ define dehydrated::certificate::deploy(
     order  => '50',
   }
 
-  if ($::dehydrated::build_pfx_files) {
+  if ($dehydrated::build_pfx_files) {
     $dehydrated_pfx_ensure = 'present'
   } else {
     $dehydrated_pfx_ensure = 'absent'
@@ -94,5 +93,4 @@ define dehydrated::certificate::deploy(
     certificate  => $crt,
     private_key  => $key,
   }
-
 }

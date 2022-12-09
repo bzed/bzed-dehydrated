@@ -6,7 +6,6 @@
 #   include dehydrated::params
 #
 class dehydrated::params {
-
   # OS settings
   case $facts['kernel'] {
     'windows' : {
@@ -59,7 +58,7 @@ class dehydrated::params {
       }
       $dehydrated_group = $group
       $path_seperator = '/'
-      case $::os['family'] {
+      case $facts['os']['family'] {
         'Debian' : {
           # only in unstable :(
           #$pki_packages = ['pki-base']
@@ -77,7 +76,7 @@ class dehydrated::params {
       $dehydrated_host_packages = ['jq']
       $build_pfx_files = false
     }
-    default : { fail('Your OS is not supported!')}
+    default : { fail('Your OS is not supported!') }
   }
 
   $configdir = join([$puppet_vardir, 'bzed-dehydrated'], $path_seperator)
@@ -116,13 +115,7 @@ class dehydrated::params {
 
   $dehydrated_base_dir = '/opt/dehydrated'
 
-  if defined('$::puppetmaster') {
-    $dehydrated_puppetmaster = $::puppetmaster
-  } elsif defined('$::servername') {
-    $dehydrated_puppetmaster = $::servername
-  } else {
-    $dehydrated_puppetmaster = undef
-  }
+  $dehydrated_puppetmaster = server_facts['servername']
   $dehydrated_host = $dehydrated_puppetmaster
 
   $dehydrated_environment = {}
@@ -132,4 +125,3 @@ class dehydrated::params {
 
   $preferred_chain = undef
 }
-
