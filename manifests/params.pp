@@ -115,7 +115,7 @@ class dehydrated::params {
 
   $dehydrated_base_dir = '/opt/dehydrated'
 
-  $dehydrated_puppetmaster = server_facts['servername']
+  $dehydrated_puppetmaster = $server_facts['servername']
   $dehydrated_host = $dehydrated_puppetmaster
 
   $dehydrated_environment = {}
