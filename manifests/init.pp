@@ -230,7 +230,7 @@ class dehydrated (
 
     Dehydrated::Certificate::Request<<| tag == "dehydrated-request-for-${dehydrated_host}" |>>
 
-    if has_key($facts, 'dehydrated_certificates') {
+    if 'dehydrated_certificates' in $facts {
       $dehydrated_certificates = $facts['dehydrated_certificates']
       $dehydrated_certificates.each |Stdlib::Fqdn $_request_fqdn, Hash $_certificate_configs| {
         $_certificate_configs.each |Dehydrated::DN $_request_dn, $_request_config| {

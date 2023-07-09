@@ -40,25 +40,25 @@ define dehydrated::certificate::collect (
     # we are on a non-puppetmaster host
     # use facter to retrieve files.
     if (
-      has_key($facts, 'dehydrated_certificates') and
-      has_key($facts['dehydrated_certificates'], $request_fqdn) and
-      has_key($facts['dehydrated_certificates'][$request_fqdn], $request_dn)
+      'dehydrated_certificates' in $facts and
+      $request_fqdn in $facts['dehydrated_certificates'] and
+      $request_dn in $facts['dehydrated_certificates'][$request_fqdn]
     ) {
       $config = $facts['dehydrated_certificates'][$request_fqdn][$request_dn]
-      if has_key($config, 'crt') {
+      if 'crt' in $config {
         $crt = $config['crt']
       } else {
         $crt = undef
       }
       if (
-        has_key($config, 'ocsp') and
+        'ocsp' in $config and
         $config['ocsp'] =~ Stdlib::Base64
       ) {
         $ocsp = String(Binary($config['ocsp']))
       } else {
         $ocsp = undef
       }
-      if has_key($config, 'ca') {
+      if 'ca' in $config {
         $ca = $config['ca']
       } else {
         $ca = undef
