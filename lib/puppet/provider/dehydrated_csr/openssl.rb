@@ -127,7 +127,13 @@ Puppet::Type.type(:dehydrated_csr).provide(:openssl) do
     attributes.each do |attribute|
       request.add_attribute(attribute)
     end
-    request.public_key = private_key.public_key
+    # Special Handling for ECC
+    if private_key.class == OpenSSL::PKey::EC
+      request.public_key = private_key
+    else
+      request.public_key = private_key.public_key
+    end
+
     openssl_digest = OpenSSL::Digest.new(digest)
     request.sign(private_key, openssl_digest)
     request.to_pem
