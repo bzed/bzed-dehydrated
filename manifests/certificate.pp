@@ -69,28 +69,27 @@
 #   can configure the default for your setup.
 # @param key_password
 #   If your key should be protected by a password, specify it here.
-define dehydrated::certificate(
+define dehydrated::certificate (
   Dehydrated::DN $dn = $name,
   String $base_filename = regsubst($dn, '^\*', '_wildcard_'),
   Array[Dehydrated::DN] $subject_alternative_names = [],
-  Dehydrated::Challengetype $challengetype = $::dehydrated::challengetype,
-  Dehydrated::Algorithm $algorithm = $::dehydrated::algorithm,
-  Integer[768] $dh_param_size = $::dehydrated::dh_param_size,
-  Stdlib::Fqdn $dehydrated_host = $::dehydrated::dehydrated_host,
-  Hash $dehydrated_environment = $::dehydrated::dehydrated_environment,
-  Optional[Dehydrated::Hook] $dehydrated_hook = $::dehydrated::dehydrated_hook,
-  String $letsencrypt_ca = $::dehydrated::letsencrypt_ca,
-  Optional[Dehydrated::Hook] $dehydrated_domain_validation_hook = $::dehydrated::dehydrated_domain_validation_hook,
+  Dehydrated::Challengetype $challengetype = $dehydrated::challengetype,
+  Dehydrated::Algorithm $algorithm = $dehydrated::algorithm,
+  Integer[768] $dh_param_size = $dehydrated::dh_param_size,
+  Stdlib::Fqdn $dehydrated_host = $dehydrated::dehydrated_host,
+  Hash $dehydrated_environment = $dehydrated::dehydrated_environment,
+  Optional[Dehydrated::Hook] $dehydrated_hook = $dehydrated::dehydrated_hook,
+  String $letsencrypt_ca = $dehydrated::letsencrypt_ca,
+  Optional[Dehydrated::Hook] $dehydrated_domain_validation_hook = $dehydrated::dehydrated_domain_validation_hook,
   Optional[String] $key_password = undef,
-  Optional[String] $preferred_chain = $::dehydrated::preferred_chain,
+  Optional[String] $preferred_chain = $dehydrated::preferred_chain,
 ) {
-
   if ! defined(Class['dehydrated']) {
     fail('You must include the dehydrated base class first.')
   }
 
-  require ::dehydrated::setup
-  require ::dehydrated::params
+  require dehydrated::setup
+  require dehydrated::params
 
   # ensure $dn is also in subject_alternative_names
   $_subject_alternative_names = unique(flatten([$dn, $subject_alternative_names]))
@@ -111,8 +110,8 @@ define dehydrated::certificate(
   }
 
   $json_fragment = to_json($domain_config)
-  ::concat::fragment { "${facts['fqdn']}-${dn}-${base_filename}" :
-    target  => $::dehydrated::params::domainfile,
+  ::concat::fragment { "${facts['networking']['fqdn']}-${dn}" :
+    target  => $dehydrated::params::domainfile,
     content => $json_fragment,
     order   => '50',
   }
@@ -124,7 +123,6 @@ define dehydrated::certificate(
     algorithm                 => $algorithm,
   }
 
-
   $ready_for_merge = pick(
     $facts.dig('dehydrated_domains', $dn, 'ready_for_merge'),
     false
@@ -134,5 +132,4 @@ define dehydrated::certificate(
       key_password => $key_password,
     }
   }
-
 }

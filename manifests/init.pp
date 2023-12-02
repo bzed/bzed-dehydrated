@@ -129,28 +129,27 @@
 #   Create PKCS12 container with key, certificate and ca certificates.
 #   Defaults to true on windows, to false on all other OS.
 #
-class dehydrated
-(
-  Stdlib::Absolutepath $base_dir = $::dehydrated::params::base_dir,
-  Stdlib::Absolutepath $crt_dir = join([$base_dir, 'certs'], $::dehydrated::params::path_seperator),
-  Stdlib::Absolutepath $csr_dir = join([$base_dir, 'csr'], $::dehydrated::params::path_seperator),
-  Stdlib::Absolutepath $key_dir = join([$base_dir, 'private'], $::dehydrated::params::path_seperator),
-  String $user = $::dehydrated::params::user,
-  String $group = $::dehydrated::params::group,
-  Optional[String] $dehydrated_user = $::dehydrated::params::dehydrated_user,
-  Optional[String] $dehydrated_group = $::dehydrated::params::dehydrated_group,
+class dehydrated (
+  Stdlib::Absolutepath $base_dir = $dehydrated::params::base_dir,
+  Stdlib::Absolutepath $crt_dir = join([$base_dir, 'certs'], $dehydrated::params::path_seperator),
+  Stdlib::Absolutepath $csr_dir = join([$base_dir, 'csr'], $dehydrated::params::path_seperator),
+  Stdlib::Absolutepath $key_dir = join([$base_dir, 'private'], $dehydrated::params::path_seperator),
+  String $user = $dehydrated::params::user,
+  String $group = $dehydrated::params::group,
+  Optional[String] $dehydrated_user = $dehydrated::params::dehydrated_user,
+  Optional[String] $dehydrated_group = $dehydrated::params::dehydrated_group,
 
-  String $letsencrypt_ca = $::dehydrated::params::letsencrypt_ca,
-  Hash $letsencrypt_cas = $::dehydrated::params::letsencrypt_cas,
-  Integer[768] $dh_param_size = $::dehydrated::params::dh_param_size,
-  Dehydrated::Challengetype $challengetype = $::dehydrated::params::challengetype,
-  Dehydrated::Algorithm $algorithm = $::dehydrated::params::algorithm,
+  String $letsencrypt_ca = $dehydrated::params::letsencrypt_ca,
+  Hash $letsencrypt_cas = $dehydrated::params::letsencrypt_cas,
+  Integer[768] $dh_param_size = $dehydrated::params::dh_param_size,
+  Dehydrated::Challengetype $challengetype = $dehydrated::params::challengetype,
+  Dehydrated::Algorithm $algorithm = $dehydrated::params::algorithm,
 
-  Stdlib::Absolutepath $dehydrated_base_dir = $::dehydrated::params::dehydrated_base_dir,
+  Stdlib::Absolutepath $dehydrated_base_dir = $dehydrated::params::dehydrated_base_dir,
   Stdlib::Absolutepath $dehydrated_git_dir = "${dehydrated_base_dir}/dehydrated",
-  String $dehydrated_git_tag = $::dehydrated::params::dehydrated_git_tag,
-  Dehydrated::GitUrl $dehydrated_git_url = $::dehydrated::params::dehydrated_git_url,
-  Stdlib::Fqdn $dehydrated_host = $::dehydrated::params::dehydrated_host,
+  String $dehydrated_git_tag = $dehydrated::params::dehydrated_git_tag,
+  Dehydrated::GitUrl $dehydrated_git_url = $dehydrated::params::dehydrated_git_url,
+  Stdlib::Fqdn $dehydrated_host = $dehydrated::params::dehydrated_host,
   Stdlib::Absolutepath $dehydrated_requests_dir = "${dehydrated_base_dir}/requests",
   Stdlib::Absolutepath $dehydrated_hooks_dir = "${dehydrated_base_dir}/hooks",
   Stdlib::Absolutepath $dehydrated_requests_config = "${dehydrated_base_dir}/requests.json",
@@ -158,24 +157,23 @@ class dehydrated
   Stdlib::Absolutepath $dehydrated_alpncert_dir = "${dehydrated_base_dir}/alpn-certs",
   Stdlib::Absolutepath $dehydrated_status_file = "${dehydrated_base_dir}/status.json",
   Stdlib::Absolutepath $dehydrated_monitoring_status_file = "${dehydrated_base_dir}/monitoring.status",
-  Array $dehydrated_host_packages = $::dehydrated::params::dehydrated_host_packages,
-  Hash $dehydrated_environment = $::dehydrated::params::dehydrated_environment,
-  Optional[Dehydrated::Hook] $dehydrated_domain_validation_hook = $::dehydrated::params::dehydrated_domain_validation_hook,
+  Array $dehydrated_host_packages = $dehydrated::params::dehydrated_host_packages,
+  Hash $dehydrated_environment = $dehydrated::params::dehydrated_environment,
+  Optional[Dehydrated::Hook] $dehydrated_domain_validation_hook = $dehydrated::params::dehydrated_domain_validation_hook,
   Optional[Dehydrated::Hook] $dehydrated_hook = "${challengetype}.sh",
-  Optional[Dehydrated::Email] $dehydrated_contact_email = $::dehydrated::params::dehydrated_contact_email,
+  Optional[Dehydrated::Email] $dehydrated_contact_email = $dehydrated::params::dehydrated_contact_email,
 
-  Boolean $manage_user = $::dehydrated::params::manage_user,
-  Boolean $manage_packages = $::dehydrated::params::manage_packages,
+  Boolean $manage_user = $dehydrated::params::manage_user,
+  Boolean $manage_packages = $dehydrated::params::manage_packages,
 
-  Array $pki_packages = $::dehydrated::params::pki_packages,
-  Array $packages = $::dehydrated::params::packages,
+  Array $pki_packages = $dehydrated::params::pki_packages,
+  Array $packages = $dehydrated::params::packages,
   Array[Variant[Dehydrated::DN, Tuple[Dehydrated::DN, Array[Dehydrated::DN]]]] $certificates = [],
 
-  Boolean $build_pfx_files = $::dehydrated::params::build_pfx_files,
-  Optional[String] $preferred_chain = $::dehydrated::params::preferred_chain,
-) inherits ::dehydrated::params {
-
-  require ::dehydrated::setup
+  Boolean $build_pfx_files = $dehydrated::params::build_pfx_files,
+  Optional[String] $preferred_chain = $dehydrated::params::preferred_chain,
+) inherits dehydrated::params {
+  require dehydrated::setup
 
   $certificates.each | $certificate | {
     if ($certificate =~ Tuple[Dehydrated::DN, Array[Dehydrated::DN]]) {
@@ -200,15 +198,13 @@ class dehydrated
     $_subject_alternative_names = $_config['subject_alternative_names']
     $_dehydrated_host = $_config['dehydrated_host']
 
-
     ::dehydrated::certificate::dh { $_base_filename :
       dn            => $_dn,
       dh_param_size => $_dh_param_size,
     }
 
     $request_name = join(
-      concat(
-        [$facts['fqdn'], $_dn],
+      concat( [$facts['networking']['fqdn'], $_dn],
         $_subject_alternative_names
       ),
     '-')
@@ -216,7 +212,7 @@ class dehydrated
     $_request_config = merge($_fqdn_based_config, $_config)
     if $_csr =~ Dehydrated::CSR {
       @@dehydrated::certificate::request { $request_name :
-        request_fqdn => $facts['fqdn'],
+        request_fqdn => $facts['networking']['fqdn'],
         config       => $_request_config,
         dn           => $_dn,
         tag          => "dehydrated-request-for-${_dehydrated_host}",
@@ -224,24 +220,23 @@ class dehydrated
     }
 
     Dehydrated::Certificate::Transfer<<|
-      tag == "request_fqdn:${facts['fqdn']}" and
-      tag == "request_base_filename:${_base_filename}"
+    tag == "request_fqdn:${facts['networking']['fqdn']}" and
+    tag == "request_base_filename:${_base_filename}"
     |>>
-
   }
 
-  if ($dehydrated_host == $facts['fqdn']) {
-    require ::dehydrated::setup::dehydrated_host
+  if ($dehydrated_host == $facts['networking']['fqdn']) {
+    require dehydrated::setup::dehydrated_host
 
     Dehydrated::Certificate::Request<<| tag == "dehydrated-request-for-${dehydrated_host}" |>>
 
-    if has_key($facts, 'dehydrated_certificates') {
+    if 'dehydrated_certificates' in $facts {
       $dehydrated_certificates = $facts['dehydrated_certificates']
       $dehydrated_certificates.each |Stdlib::Fqdn $_request_fqdn, Hash $_certificate_configs| {
         $_certificate_configs.each |Dehydrated::DN $_request_dn, $_request_config| {
           $_request_base_dir = $_request_config['request_base_dir']
           $_request_base_filename = $_request_config['base_filename']
-          ::dehydrated::certificate::collect{ "${_request_fqdn}-${_request_dn}" :
+          ::dehydrated::certificate::collect { "${_request_fqdn}-${_request_dn}" :
             request_dn            => $_request_dn,
             request_fqdn          => $_request_fqdn,
             request_base_dir      => $_request_base_dir,
@@ -251,6 +246,4 @@ class dehydrated
       }
     }
   }
-
-
 }

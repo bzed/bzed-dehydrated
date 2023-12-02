@@ -10,7 +10,7 @@
 #
 # @api private
 #
-define dehydrated::certificate::dh(
+define dehydrated::certificate::dh (
   Dehydrated::DN $dn,
   Integer[786] $dh_param_size,
   String $base_filename = $name,
@@ -21,9 +21,9 @@ define dehydrated::certificate::dh(
     fail('You must include the dehydrated base class first.')
   }
 
-  require ::dehydrated::setup
+  require dehydrated::setup
 
-  $crt_dir  = $::dehydrated::crt_dir
+  $crt_dir  = $dehydrated::crt_dir
   $dh  = "${crt_dir}/${base_filename}.dh"
 
   dehydrated_dhparam { $dh :
@@ -33,10 +33,9 @@ define dehydrated::certificate::dh(
 
   file { $dh:
     ensure  => $ensure,
-    owner   => $::dehydrated::user,
-    group   => $::dehydrated::group,
+    owner   => $dehydrated::user,
+    group   => $dehydrated::group,
     mode    => '0644',
     require => Dehydrated_dhparam[$dh],
   }
-
 }
