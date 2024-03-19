@@ -18,7 +18,7 @@ class dehydrated::setup {
       fail('User management not configured for windows')
     }
 
-    if (defined('$::dehydrated::group')) {
+    if (defined('$dehydrated::group')) {
       if ($dehydrated::params::puppet_group != $dehydrated::group) {
         group { $dehydrated::group :
           ensure => 'present',

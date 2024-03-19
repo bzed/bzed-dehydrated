@@ -43,7 +43,7 @@
 # @param letsencrypt_ca
 #   Let’s Encrypt CA to use. Defaults to v2-production. See the letsencrypt_cas parameter for a way
 #   to specify your own Let’s Encrypt / ACME compatible CA. This configures the default CA to use, but
-#   You can actually define different CAs for each certificate, see the ::dehydrated::certificate
+#   You can actually define different CAs for each certificate, see the dehydrated::certificate
 #   define for details.
 # @param letsencrypt_cas
 #   Hash with the definitions of the official testing and production Let’s Encrypt CAs this
@@ -52,53 +52,53 @@
 #   Default size of the DH params we should generate. Defaults to 2048.
 # @param challengetype
 #   Default challengetype to use. Defaults to 'dns-01'. You can specify a different
-#   challengetype for each certificate, see ::dehydrated::certificate.
+#   challengetype for each certificate, see dehydrated::certificate.
 # @param algorithm
 #   Default algorithm / elliptic-curve you want to use. Supported: rsa, secp384r1, prime256v1.
 #   Defaults to rsa. You can specify a different algorithm for each certificate,
-#   see ::dehydrated::certificate.
+#   see dehydrated::certificate.
 # @param dehydrated_base_dir
-#   Only used if $facts['fqdn'] == $::dehydrated::dehydrated_host. Path where the dehydrated
+#   Only used if $facts['fqdn'] == $dehydrated::dehydrated_host. Path where the dehydrated
 #   script and configurations/csrs are being stored. Defaults to '/opt/dehydrated'.
 # @param dehydrated_git_dir
-#   Only used if $facts['fqdn'] == $::dehydrated::dehydrated_host.
+#   Only used if $facts['fqdn'] == $dehydrated::dehydrated_host.
 #   Path where the dehydrated script is being checkout out into using git.
 #   Defaults to ${dehydrated_base_dir}/dehydrated.
 # @param dehydrated_git_tag
-#   Only used if $facts['fqdn'] == $::dehydrated::dehydrated_host.
+#   Only used if $facts['fqdn'] == $dehydrated::dehydrated_host.
 #   Version of the dehydrated script we want to use.
 #   Change it on your own risk.
 # @param dehydrated_git_url
-#   Only used if $facts['fqdn'] == $::dehydrated::dehydrated_host.
+#   Only used if $facts['fqdn'] == $dehydrated::dehydrated_host.
 #   Git url to clone dehydrated from. If you have an internal mirror/version, you can override
 #   the default github url here.
 # @param dehydrated_host
 #   Default setting for the host you want to request the certificates on.
 #   Required on that host, on all others it is used as default for certificates requested
-#   via ::dehydrated::certificate. You can specify a different dehydrated_host on each
+#   via dehydrated::certificate. You can specify a different dehydrated_host on each
 #   certificate if you want to.
-#   If $facts['fqdn'] == $::dehydrated::dehydrated_host, dehydrated will be installed
+#   If $facts['fqdn'] == $dehydrated::dehydrated_host, dehydrated will be installed
 #   and the certificate request cronjob will be setup.
 # @param dehydrated_requests_dir
-#   Only used if $facts['fqdn'] == $::dehydrated::dehydrated_host.
+#   Only used if $facts['fqdn'] == $dehydrated::dehydrated_host.
 #   Path where requests that need to be handled are being stored.
 # @param dehydrated_hooks_dir
-#   Only used if $facts['fqdn'] == $::dehydrated::dehydrated_host.
+#   Only used if $facts['fqdn'] == $dehydrated::dehydrated_host.
 # @param dehydrated_requests_config
-#   Only used if $facts['fqdn'] == $::dehydrated::dehydrated_host.
+#   Only used if $facts['fqdn'] == $dehydrated::dehydrated_host.
 # @param dehydrated_wellknown_dir
-#   Only used if $facts['fqdn'] == $::dehydrated::dehydrated_host.
+#   Only used if $facts['fqdn'] == $dehydrated::dehydrated_host.
 # @param dehydrated_alpncert_dir
-#   Only used if $facts['fqdn'] == $::dehydrated::dehydrated_host.
+#   Only used if $facts['fqdn'] == $dehydrated::dehydrated_host.
 # @param dehydrated_host_packages
-#   Only used if $facts['fqdn'] == $::dehydrated::dehydrated_host.
+#   Only used if $facts['fqdn'] == $dehydrated::dehydrated_host.
 # @param dehydrated_environment
-#   Only used if $facts['fqdn'] == $::dehydrated::dehydrated_host.
+#   Only used if $facts['fqdn'] == $dehydrated::dehydrated_host.
 # @param dehydrated_domain_validation_hook
-#   Only used if $facts['fqdn'] == $::dehydrated::dehydrated_host.
+#   Only used if $facts['fqdn'] == $dehydrated::dehydrated_host.
 # @param dehydrated_hook
 #   Name of the hook script dehydrated will use to validate the authorization request. The hook script
-#   must live in the $dehydrated_hooks_dir on $::dehydrated::dehydrated_host.
+#   must live in the $dehydrated_hooks_dir on $dehydrated::dehydrated_host.
 # @param dehydrated_contact_email
 #   Contact email address for created accounts. We'll create one account for each
 #   puppet host.
@@ -117,7 +117,7 @@
 #   The list of packages we actually need to install to make this module work properly.
 #   You are free to modify this list if you need to.
 # @param certificates
-#   Allows to request certificates instead of using ::dehydrated::certificate.
+#   Allows to request certificates instead of using dehydrated::certificate.
 #   The puppet definition of this rather complex parameter is
 #       Array[Variant[Dehydrated::DN, Tuple[Dehydrated::DN, Array[Dehydrated::DN]]]]
 #   So basically, you need to specify an Array. Contents are either a
@@ -177,11 +177,11 @@ class dehydrated (
 
   $certificates.each | $certificate | {
     if ($certificate =~ Tuple[Dehydrated::DN, Array[Dehydrated::DN]]) {
-      ::dehydrated::certificate { $certificate[0] :
+      dehydrated::certificate { $certificate[0] :
         subject_alternative_names => $certificate[1],
       }
     } else {
-      ::dehydrated::certificate { $certificate : }
+      dehydrated::certificate { $certificate : }
     }
   }
 
@@ -198,7 +198,7 @@ class dehydrated (
     $_subject_alternative_names = $_config['subject_alternative_names']
     $_dehydrated_host = $_config['dehydrated_host']
 
-    ::dehydrated::certificate::dh { $_base_filename :
+    dehydrated::certificate::dh { $_base_filename :
       dn            => $_dn,
       dh_param_size => $_dh_param_size,
     }
@@ -236,7 +236,7 @@ class dehydrated (
         $_certificate_configs.each |Dehydrated::DN $_request_dn, $_request_config| {
           $_request_base_dir = $_request_config['request_base_dir']
           $_request_base_filename = $_request_config['base_filename']
-          ::dehydrated::certificate::collect { "${_request_fqdn}-${_request_dn}" :
+          dehydrated::certificate::collect { "${_request_fqdn}-${_request_dn}" :
             request_dn            => $_request_dn,
             request_fqdn          => $_request_fqdn,
             request_base_dir      => $_request_base_dir,

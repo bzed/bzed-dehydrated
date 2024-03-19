@@ -1,5 +1,5 @@
 # Setup dehydrated and necessary files and folders
-# on $::dehydrated::dehydrated_host. Don't use it in
+# on $dehydrated::dehydrated_host. Don't use it in
 # your code.
 #
 # @summary setup dehydrated and users/groups for it
