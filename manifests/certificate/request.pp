@@ -54,7 +54,11 @@ define dehydrated::certificate::request (
 
   $request_fqdn_dir = [$dehydrated_requests_dir, $request_fqdn].join($dehydrated::params::path_seperator)
   $request_base_dir = [$request_fqdn_dir, $base_filename].join($dehydrated::params::path_seperator)
-  $request_account_dir = [$request_fqdn_dir, 'accounts'].join($dehydrated::params::path_seperator)
+  $request_account_dir = if $dehydrated::accounts_per_agent {
+    [$request_fqdn_dir, 'accounts'].join($dehydrated::params::path_seperator)
+  } else {
+    [$dehydrated::dehydrated_base_dir, 'accounts'].join($dehydrated::params::path_seperator)
+  }
   $csr_file = [$request_base_dir, "${base_filename}.csr"].join($dehydrated::params::path_seperator)
   $dehydrated_config = [$request_base_dir, "${base_filename}.config"].join($dehydrated::params::path_seperator)
 

@@ -102,6 +102,8 @@
 # @param dehydrated_contact_email
 #   Contact email address for created accounts. We'll create one account for each
 #   puppet host.
+# @param accounts_per_agent
+#   Create one ACME account per puppet client (true; the default), or one account globally.
 # @param dehydrated_status_file
 #   File the dehydrated job runner will dump its status into. Pretty printed JSON.
 # @param dehydrated_monitoring_status_file
@@ -162,6 +164,7 @@ class dehydrated (
   Optional[Dehydrated::Hook] $dehydrated_domain_validation_hook = $dehydrated::params::dehydrated_domain_validation_hook,
   Optional[Dehydrated::Hook] $dehydrated_hook = "${challengetype}.sh",
   Optional[Dehydrated::Email] $dehydrated_contact_email = $dehydrated::params::dehydrated_contact_email,
+  Boolean $accounts_per_agent = true,
 
   Boolean $manage_user = $dehydrated::params::manage_user,
   Boolean $manage_packages = $dehydrated::params::manage_packages,
