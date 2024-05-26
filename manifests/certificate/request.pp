@@ -132,6 +132,7 @@ define dehydrated::certificate::request (
         'crt_serial'                               => $crt_serial,
         'request_fqdn_dir'                         => $request_fqdn_dir,
         'request_base_dir'                         => $request_base_dir,
+        'request_account_dir'                      => $request_account_dir,
         'dehydrated_environment'                   => $dehydrated_environment,
         'dehydrated_hook_script'                   => $dehydrated_hook_script,
         'dehydrated_domain_validation_hook_script' => $dehydrated_domain_validation_hook_script,
