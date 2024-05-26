@@ -31,7 +31,11 @@ end
 
 def get_key_fingerprints(keyfile)
   privkey = OpenSSL::PKey.read(File.read(keyfile))
-  pubkey_der = privkey.public_to_der()
+  begin
+    pubkey_der = privkey.public_to_der()
+  rescue NoMethodError
+    pubkey_der = privkey.public_key.to_der()
+  end
 
   digests = {
     :sha256 => OpenSSL::Digest::SHA256.new(pubkey_der).to_s,

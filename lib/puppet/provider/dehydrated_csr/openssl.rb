@@ -123,7 +123,12 @@ Puppet::Type.type(:dehydrated_csr).provide(:openssl) do
 
   def self.create_x509_csr(subject, attributes, private_key, digest)
     if private_key.instance_of? OpenSSL::PKey::EC
-      pubkey = OpenSSL::PKey::EC.new private_key.public_to_der
+      begin
+        pubkey_der = private_key.public_to_der
+      rescue NoMethodError
+        pubkey_der = private_key.public_key.to_der()
+      end
+      pubkey = OpenSSL::PKey::EC.new pubkey_der
     else
       pubkey = private_key.public_key
     end
