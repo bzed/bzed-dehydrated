@@ -29,6 +29,17 @@ def get_cert_serial(crt)
   end
 end
 
+def get_key_fingerprints(keyfile)
+  privkey = OpenSSL::PKey.read(File.read(keyfile))
+  pubkey_der = privkey.public_to_der()
+
+  digests = {
+    :sha256 => OpenSSL::Digest::SHA256.new(pubkey_der).to_s,
+  }
+
+  digests
+end
+
 Facter.add(:dehydrated_domains) do
   setcode do
     puppet_vardir = Facter.value(:puppet_vardir)
@@ -44,6 +55,7 @@ Facter.add(:dehydrated_domains) do
 
         csr_dir = config['csr_dir']
         crt_dir = config['crt_dir']
+        key_dir = config['key_dir']
 
         # CSR
         csr = File.join(csr_dir, "#{base_filename}.csr")
@@ -52,6 +64,11 @@ Facter.add(:dehydrated_domains) do
                          else
                            ''
                          end
+        # fingerprints
+        key = File.join(key_dir, "#{base_filename}.key")
+        if File.exists?(key)
+          ret[dn]['fingerprints'] = get_key_fingerprints(key)
+        end
 
         # CRT serial
         crt = File.join(crt_dir, "#{base_filename}.crt")
