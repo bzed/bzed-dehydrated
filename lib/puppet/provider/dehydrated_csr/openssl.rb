@@ -122,12 +122,20 @@ Puppet::Type.type(:dehydrated_csr).provide(:openssl) do
   end
 
   def self.create_x509_csr(subject, attributes, private_key, digest)
+    if private_key.instance_of? OpenSSL::PKey::EC
+      pubkey = OpenSSL::PKey::EC.new private_key.public_to_der
+    else
+      pubkey = private_key.public_key
+    end
+    raise Puppet::Error, "Pubkey has no public parts" unless pubkey.public?
+    raise Puppet::Error, "Pubkey still has private parts" if pubkey.private?
+
     request = OpenSSL::X509::Request.new
     request.subject = subject
     attributes.each do |attribute|
       request.add_attribute(attribute)
     end
-    request.public_key = private_key.public_key
+    request.public_key = pubkey
     openssl_digest = OpenSSL::Digest.new(digest)
     request.sign(private_key, openssl_digest)
     request.to_pem
