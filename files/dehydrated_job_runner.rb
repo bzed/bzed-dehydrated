@@ -241,7 +241,10 @@ def handle_request(fqdn, dn, config)
                   )
 
   # register / update account
-  account_json = File.join(request_fqdn_dir, 'accounts', letsencrypt_ca_hash, 'registration_info.json')
+  # prior to 2024-04, the config did not contain the request_account_dir.  Fall back to the
+  # previous method if we don't have request_account_dir in the config (yet?).
+  accounts_dir = config['request_account_dir'] || File.join(request_fqdn_dir, 'accounts')
+  account_json = File.join(accounts_dir, letsencrypt_ca_hash, 'registration_info.json')
   if !File.exist?(account_json)
     stdout, stderr, status = register_account(dehydrated_config)
     return ['Account registration failed', stdout, stderr, status] if status > 0
