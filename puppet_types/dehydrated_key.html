@@ -6,15 +6,15 @@
 <title>
   Resource Type: dehydrated_key
   
-    &mdash; Documentation by YARD 0.9.16
+    &mdash; Documentation by YARD 0.9.36
   
 </title>
 
-  <link rel="stylesheet" href="../css/style.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../css/style.css" type="text/css" />
 
-  <link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../css/common.css" type="text/css" />
 
-<script type="text/javascript" charset="utf-8">
+<script type="text/javascript">
   pathId = "puppet_types::dehydrated_key";
   relpath = '../';
 </script>
@@ -82,15 +82,16 @@
 <h2>Overview</h2>
 <div class="docstring">
   <div class="discussion">
-    
-<p>Create a private key for dehydrated.</p>
+    <p>Create a private key for dehydrated.</p>
 
   </div>
 </div>
 
 
+
 <div class="tags">
   
+
 
 </div>
 <div class="tags">
@@ -105,8 +106,7 @@
       
       <div class="docstring">
         <div class="discussion">
-          
-<p>The basic property that the resource should be in.</p>
+          <p>The basic property that the resource should be in.</p>
 
         </div>
       </div>
@@ -147,8 +147,7 @@
       
       <div class="docstring">
         <div class="discussion">
-          
-<p>Algorithm to use for Key generation, supported: prime256v1, secp384r1, rsa</p>
+          <p>Algorithm to use for Key generation, supported: prime256v1, secp384r1, rsa</p>
 
         </div>
       </div>
@@ -184,8 +183,7 @@
       
       <div class="docstring">
         <div class="discussion">
-          
-<p>The optional password for the key</p>
+          <p>The optional password for the key</p>
 
         </div>
       </div>
@@ -199,8 +197,21 @@
       
       <div class="docstring">
         <div class="discussion">
-          
-<p>Key location, must be absolute.</p>
+          <p>Key location, must be absolute.</p>
+
+        </div>
+      </div>
+      
+      
+    </li>
+    
+    <li>
+      <span class="name">provider</span>
+      
+      
+      <div class="docstring">
+        <div class="discussion">
+          <p>The specific backend to use for this <code>dehydrated_key</code> resource. You will seldom need to specify this --- Puppet will usually discover the appropriate provider for your platform.</p>
 
         </div>
       </div>
@@ -216,8 +227,7 @@
       
       <div class="docstring">
         <div class="discussion">
-          
-<p>The key size, used for RSA only.</p>
+          <p>The key size, used for RSA only.</p>
 
         </div>
       </div>

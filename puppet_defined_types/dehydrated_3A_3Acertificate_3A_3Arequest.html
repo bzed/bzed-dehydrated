@@ -6,15 +6,15 @@
 <title>
   Defined Type: dehydrated::certificate::request
   
-    &mdash; Documentation by YARD 0.9.16
+    &mdash; Documentation by YARD 0.9.36
   
 </title>
 
-  <link rel="stylesheet" href="../css/style.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../css/style.css" type="text/css" />
 
-  <link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../css/common.css" type="text/css" />
 
-<script type="text/javascript" charset="utf-8">
+<script type="text/javascript">
   pathId = "puppet_defined_types::dehydrated::certificate::request";
   relpath = '../';
 </script>
@@ -75,12 +75,13 @@
 <h2>Overview</h2>
 <div class="docstring">
   <div class="discussion">
-    
-<p>Does all the necessary things to be able to request a certificate from
-letsencrypt using the csr created and shipped to the dehydrated_host.</p>
+    <p>Does all the necessary things to be able to request a certificate
+from letsencrypt using the csr created and shipped to the
+dehydrated_host.</p>
 
   </div>
 </div>
+
 
 
 <div class="tags">
@@ -133,6 +134,7 @@ letsencrypt using the csr created and shipped to the dehydrated_host.</p>
     </li>
   
 </ul>
+
 
 
 </div><div class="method_details_list">
@@ -260,39 +262,17 @@ letsencrypt using the csr created and shipped to the dehydrated_host.</p>
 131
 132
 133
-134
-135
-136
-137
-138
-139
-140
-141
-142
-143
-144
-145
-146
-147
-148
-149
-150
-151
-152
-153
-154
-155</pre>
+134</pre>
       </td>
       <td>
         <pre class="code"><span class="info file"># File 'manifests/certificate/request.pp', line 16</span>
 
-define dehydrated::certificate::request(
+define dehydrated::certificate::request (
   Stdlib::Fqdn $request_fqdn,
   Dehydrated::DN $dn,
   Hash $config,
 ) {
-
-  require ::dehydrated::params
+  require dehydrated::params
 
   if ! defined(Class[&#39;dehydrated&#39;]) {
     fail(&#39;You must include the dehydrated base class first.&#39;)
@@ -306,23 +286,13 @@ define dehydrated::certificate::request(
   $dehydrated_host = $config[&#39;dehydrated_host&#39;]
   $dehydrated_environment = $config[&#39;dehydrated_environment&#39;]
   $dehydrated_hook = $config[&#39;dehydrated_hook&#39;]
-  if (!$dehydrated_hook or $dehydrated_hook == &#39;&#39;) {
-    $dehydrated_hook_script = undef
-  } else {
-    $dehydrated_hook_script = join(
-      [$::dehydrated::dehydrated_hooks_dir, $dehydrated_hook],
-      $::dehydrated::params::path_seperator,
-    )
+  $dehydrated_hook_script = if $dehydrated_hook and $dehydrated_hook != &#39;&#39; {
+    [$dehydrated::dehydrated_hooks_dir, $dehydrated_hook].join($dehydrated::params::path_seperator)
   }
 
   $dehydrated_domain_validation_hook = $config[&#39;dehydrated_domain_validation_hook&#39;]
-  if (!$dehydrated_domain_validation_hook or $dehydrated_domain_validation_hook == &#39;&#39;) {
-    $dehydrated_domain_validation_hook_script = undef
-  } else {
-    $dehydrated_domain_validation_hook_script = join(
-      [$::dehydrated::dehydrated_hooks_dir, $dehydrated_domain_validation_hook],
-      $::dehydrated::params::path_seperator,
-    )
+  $dehydrated_domain_validation_hook_script = if $dehydrated_domain_validation_hook and $dehydrated_domain_validation_hook != &#39;&#39; {
+    [$dehydrated::dehydrated_hooks_dir, $dehydrated_domain_validation_hook].join($dehydrated::params::path_seperator)
   }
 
   $letsencrypt_ca = $config[&#39;letsencrypt_ca&#39;]
@@ -330,41 +300,31 @@ define dehydrated::certificate::request(
 
   $challengetype = $config[&#39;challengetype&#39;]
 
-  $dehydrated_requests_dir = $::dehydrated::dehydrated_requests_dir
+  # added later, handle missing config
+  $_preferred_chain = $config.dig(&#39;preferred_chain&#39;)
+  $preferred_chain = if !empty($_preferred_chain) { $_preferred_chain }
 
-  $request_fqdn_dir = join(
-    [$dehydrated_requests_dir, $request_fqdn],
-    $::dehydrated::params::path_seperator
-  )
-  $request_base_dir = join(
-    [$request_fqdn_dir, $base_filename],
-    $::dehydrated::params::path_seperator
-  )
-  $request_account_dir = join(
-    [$request_fqdn_dir, &#39;accounts&#39;],
-    $::dehydrated::params::path_seperator
-  )
+  $dehydrated_requests_dir = $dehydrated::dehydrated_requests_dir
 
-  $csr_file = join(
-    [$request_base_dir, &quot;${base_filename}.csr&quot;],
-    $::dehydrated::params::path_seperator
-  )
-  $dehydrated_config = join(
-    [$request_base_dir, &quot;${base_filename}.config&quot;],
-    $::dehydrated::params::path_seperator
-  )
+  $request_fqdn_dir = [$dehydrated_requests_dir, $request_fqdn].join($dehydrated::params::path_seperator)
+  $request_base_dir = [$request_fqdn_dir, $base_filename].join($dehydrated::params::path_seperator)
+  $request_account_dir = if $dehydrated::accounts_per_agent {
+    [$request_fqdn_dir, &#39;accounts&#39;].join($dehydrated::params::path_seperator)
+  } else {
+    [$dehydrated::dehydrated_base_dir, &#39;accounts&#39;].join($dehydrated::params::path_seperator)
+  }
+  $csr_file = [$request_base_dir, &quot;${base_filename}.csr&quot;].join($dehydrated::params::path_seperator)
+  $dehydrated_config = [$request_base_dir, &quot;${base_filename}.config&quot;].join($dehydrated::params::path_seperator)
 
-  $letsencrypt_ca_url = $::dehydrated::letsencrypt_cas[$letsencrypt_ca][&#39;url&#39;]
-  $letsencrypt_ca_hash = $::dehydrated::letsencrypt_cas[$letsencrypt_ca][&#39;hash&#39;]
+  $letsencrypt_ca_url = $dehydrated::letsencrypt_cas[$letsencrypt_ca][&#39;url&#39;]
+  $letsencrypt_ca_hash = $dehydrated::letsencrypt_cas[$letsencrypt_ca][&#39;hash&#39;]
 
-  $dehydrated_wellknown_dir = $::dehydrated::dehydrated_wellknown_dir
-  $dehydrated_alpncert_dir = $::dehydrated::dehydrated_alpncert_dir
-
-
+  $dehydrated_wellknown_dir = $dehydrated::dehydrated_wellknown_dir
+  $dehydrated_alpncert_dir = $dehydrated::dehydrated_alpncert_dir
 
   File {
-    owner =&gt; $::dehydrated::dehydrated_user,
-    group =&gt; $::dehydrated::dehydrated_group,
+    owner =&gt; $dehydrated::dehydrated_user,
+    group =&gt; $dehydrated::dehydrated_group,
   }
 
   ensure_resource(
@@ -372,8 +332,8 @@ define dehydrated::certificate::request(
     $request_fqdn_dir,
     {
       &#39;ensure&#39; =&gt; &#39;directory&#39;,
-      &#39;owner&#39;  =&gt; $::dehydrated::dehydrated_user,
-      &#39;group&#39;  =&gt; $::dehydrated::dehydrated_group,
+      &#39;owner&#39;  =&gt; $dehydrated::dehydrated_user,
+      &#39;group&#39;  =&gt; $dehydrated::dehydrated_group,
       &#39;mode&#39;   =&gt; &#39;0755&#39;,
     }
   )
@@ -383,8 +343,8 @@ define dehydrated::certificate::request(
     $request_base_dir,
     {
       &#39;ensure&#39; =&gt; &#39;directory&#39;,
-      &#39;owner&#39;  =&gt; $::dehydrated::dehydrated_user,
-      &#39;group&#39;  =&gt; $::dehydrated::dehydrated_group,
+      &#39;owner&#39;  =&gt; $dehydrated::dehydrated_user,
+      &#39;group&#39;  =&gt; $dehydrated::dehydrated_group,
       &#39;mode&#39;   =&gt; &#39;0755&#39;,
     }
   )
@@ -400,13 +360,14 @@ define dehydrated::certificate::request(
   }
 
   $request_config = {
-    $request_fqdn =&gt;  {
+    $request_fqdn =&gt; {
       $dn           =&gt; {
         &#39;subject_alternative_names&#39;                =&gt; $subject_alternative_names,
         &#39;base_filename&#39;                            =&gt; $base_filename,
         &#39;crt_serial&#39;                               =&gt; $crt_serial,
         &#39;request_fqdn_dir&#39;                         =&gt; $request_fqdn_dir,
         &#39;request_base_dir&#39;                         =&gt; $request_base_dir,
+        &#39;request_account_dir&#39;                      =&gt; $request_account_dir,
         &#39;dehydrated_environment&#39;                   =&gt; $dehydrated_environment,
         &#39;dehydrated_hook_script&#39;                   =&gt; $dehydrated_hook_script,
         &#39;dehydrated_domain_validation_hook_script&#39; =&gt; $dehydrated_domain_validation_hook_script,
@@ -414,17 +375,16 @@ define dehydrated::certificate::request(
         &#39;letsencrypt_ca_url&#39;                       =&gt; $letsencrypt_ca_url,
         &#39;letsencrypt_ca_hash&#39;                      =&gt; $letsencrypt_ca_hash,
         &#39;dehydrated_config&#39;                        =&gt; $dehydrated_config,
-      }
-    }
+      },
+    },
   }
 
   $json_fragment = to_json($request_config)
-  ::concat::fragment { &quot;${::dehydrated::dehydrated_requests_config}-${name}&quot; :
-    target  =&gt; $::dehydrated::dehydrated_requests_config,
+  ::concat::fragment { &quot;${facts[&#39;dehydrated::dehydrated_requests_config&#39;]}-${name}&quot; :
+    target  =&gt; $dehydrated::dehydrated_requests_config,
     content =&gt; $json_fragment,
     order   =&gt; &#39;50&#39;,
   }
-
 }</pre>
       </td>
     </tr>

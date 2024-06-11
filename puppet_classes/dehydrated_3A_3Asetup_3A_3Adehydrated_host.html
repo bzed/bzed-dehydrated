@@ -6,15 +6,15 @@
 <title>
   Puppet Class: dehydrated::setup::dehydrated_host
   
-    &mdash; Documentation by YARD 0.9.16
+    &mdash; Documentation by YARD 0.9.36
   
 </title>
 
-  <link rel="stylesheet" href="../css/style.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../css/style.css" type="text/css" />
 
-  <link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../css/common.css" type="text/css" />
 
-<script type="text/javascript" charset="utf-8">
+<script type="text/javascript">
   pathId = "puppet_classes::dehydrated::setup::dehydrated_host";
   relpath = '../';
 </script>
@@ -71,16 +71,24 @@
   </dl>
 </div>
 
+  <h2>Summary</h2>
+  setup dehydrated and users/groups for it
+
 <h2>Overview</h2>
 <div class="docstring">
   <div class="discussion">
-    
+    <p>Setup dehydrated and necessary files and folders
+on $dehydrated::dehydrated_host. Don&#39;t use it in
+your code.</p>
+
   </div>
 </div>
 
 
+
 <div class="tags">
   
+
 
 </div><div class="method_details_list">
   <table class="source_code">
@@ -219,7 +227,11 @@
 136
 137
 138
-139</pre>
+139
+140
+141
+142
+143</pre>
       </td>
       <td>
         <pre class="code"><span class="info file"># File 'manifests/setup/dehydrated_host.pp', line 9</span>
@@ -233,61 +245,59 @@ class dehydrated::setup::dehydrated_host {
     fail(&#39;Running dehydrated on windows is not supported (yet - patches welcome).&#39;)
   }
 
-  if ($::dehydrated::manage_user) {
-    if ($::dehydrated::dehydrated_group != $::dehydrated::group) {
-      group { $::dehydrated::dehydrated_group :
+  if ($dehydrated::manage_user) {
+    if ($dehydrated::dehydrated_group != $dehydrated::group) {
+      group { $dehydrated::dehydrated_group :
         ensure =&gt; present,
       }
     }
 
-    if ($::dehydrated::dehydrated_user != $::dehydrated::user) {
-      user { $::dehydrated::dehydrated_user :
+    if ($dehydrated::dehydrated_user != $dehydrated::user) {
+      user { $dehydrated::dehydrated_user :
         ensure     =&gt; present,
-        gid        =&gt; $::dehydrated::dehydrated_group,
-        home       =&gt; $::dehydrated::dehydrated_base_dir,
+        gid        =&gt; $dehydrated::dehydrated_group,
+        home       =&gt; $dehydrated::dehydrated_base_dir,
         shell      =&gt; &#39;/bin/bash&#39;,
         managehome =&gt; false,
         password   =&gt; &#39;!!&#39;,
-        require    =&gt; Group[$::dehydrated::dehydrated_group],
+        require    =&gt; Group[$dehydrated::dehydrated_group],
       }
-      $_require = User[$::dehydrated::dehydrated_user]
+      $_require = User[$dehydrated::dehydrated_user]
     } else {
-      $_require = Group[$::dehydrated::dehydrated_group]
+      $_require = Group[$dehydrated::dehydrated_group]
     }
   } else {
     $_require = undef
   }
 
   File {
-    owner   =&gt; $::dehydrated::dehydrated_user,
-    group   =&gt; $::dehydrated::dehydrated_group,
+    owner   =&gt; $dehydrated::dehydrated_user,
+    group   =&gt; $dehydrated::dehydrated_group,
     mode    =&gt; &#39;0750&#39;,
     require =&gt; $_require,
   }
 
   file { [
-    $::dehydrated::dehydrated_base_dir,
-    $::dehydrated::dehydrated_wellknown_dir,
-    $::dehydrated::dehydrated_alpncert_dir,
-    $::dehydrated::dehydrated_requests_dir,
-    ] :
+      $dehydrated::dehydrated_base_dir,
+      $dehydrated::dehydrated_wellknown_dir,
+      $dehydrated::dehydrated_alpncert_dir,
+      $dehydrated::dehydrated_requests_dir,
+    ]:
       ensure =&gt; directory,
       mode   =&gt; &#39;0751&#39;,
   }
   file { [
-    $::dehydrated::dehydrated_hooks_dir,
-    ] :
+      $dehydrated::dehydrated_hooks_dir,
+    ]:
       ensure =&gt; directory,
       mode   =&gt; &#39;0750&#39;,
   }
 
-  $dehydrated_host_script = join(
-    [$::dehydrated::dehydrated_base_dir, &#39;dehydrated_job_runner.rb&#39;],
-    $::dehydrated::params::path_seperator
+  $dehydrated_host_script = join( [$dehydrated::dehydrated_base_dir, &#39;dehydrated_job_runner.rb&#39;],
+    $dehydrated::params::path_seperator
   )
-  $dehydrated_host_script_config = join(
-    [$::dehydrated::dehydrated_base_dir, &#39;config.json&#39;],
-    $::dehydrated::params::path_seperator
+  $dehydrated_host_script_config = join( [$dehydrated::dehydrated_base_dir, &#39;config.json&#39;],
+    $dehydrated::params::path_seperator
   )
 
   file { $dehydrated_host_script :
@@ -298,62 +308,68 @@ class dehydrated::setup::dehydrated_host {
   file { $dehydrated_host_script_config :
     ensure  =&gt; file,
     mode    =&gt; &#39;0640&#39;,
-    source  =&gt; $::dehydrated::params::configfile,
-    require =&gt; File[$::dehydrated::params::configfile],
+    source  =&gt; $dehydrated::params::configfile,
+    require =&gt; File[$dehydrated::params::configfile],
   }
 
   $dehydrated_host_script_lock = &quot;${dehydrated_host_script}.lock&quot;
 
   $dehydrated_host_script_lock_command = join([
-    &#39;/usr/bin/flock -x -n -E 0&#39;,
-    $dehydrated_host_script_lock,
-    &#39;/usr/bin/timeout -k 10 7200&#39;,
+      &#39;/usr/bin/flock -x -n -E 0&#39;,
+      $dehydrated_host_script_lock,
+      &#39;/usr/bin/timeout -k 10 7200&#39;,
   ], &#39; &#39;)
 
-  $escaped_path = shell_escape($facts[&#39;path&#39;])
+  $_path = split($facts[&#39;path&#39;], &#39;:&#39;)
+  if ($dehydrated::params::puppet_vardir =~ /puppetlabs/) {
+    $_puppetlabs_path = [regsubst($dehydrated::params::puppet_vardir, &#39;[^/]*$&#39;, &#39;bin&#39;)]
+  } else {
+    $_puppetlabs_path = []
+  }
+  $dehydrated_path = join(flatten([$_puppetlabs_path, $_path]), &#39;:&#39;)
+
+  $escaped_path = shell_escape($dehydrated_path)
   $cron_escaped_path = regsubst($escaped_path, &#39;%&#39;, &#39;\%&#39;, &#39;G&#39;)
 
   $cron_command = join([
-    &#39;/usr/bin/env&#39;,
-    &quot;PATH=${cron_escaped_path}&quot;,
-    $dehydrated_host_script_lock_command,
-    $dehydrated_host_script,
-    $dehydrated_host_script_config,
+      &#39;/usr/bin/env&#39;,
+      &quot;PATH=${cron_escaped_path}&quot;,
+      $dehydrated_host_script_lock_command,
+      $dehydrated_host_script,
+      $dehydrated_host_script_config,
   ], &#39; &#39;)
 
   cron { &#39;dehydrated_host_script&#39;:
     command =&gt; $cron_command,
-    user    =&gt; $::dehydrated::dehydrated_user,
-    minute  =&gt; [3,18,33,48,]
+    user    =&gt; $dehydrated::dehydrated_user,
+    minute  =&gt; [3,18,33,48,],
   }
 
-  vcsrepo { $::dehydrated::dehydrated_git_dir :
+  vcsrepo { $dehydrated::dehydrated_git_dir :
     ensure   =&gt; latest,
-    revision =&gt; $::dehydrated::dehydrated_git_tag,
+    revision =&gt; $dehydrated::dehydrated_git_tag,
     provider =&gt; git,
-    source   =&gt; $::dehydrated::dehydrated_git_url,
-    user     =&gt; $::dehydrated::dehydrated_user,
+    source   =&gt; $dehydrated::dehydrated_git_url,
+    user     =&gt; $dehydrated::dehydrated_user,
     require  =&gt; [
-      File[$::dehydrated::dehydrated_base_dir],
+      File[$dehydrated::dehydrated_base_dir],
       Package[&#39;git&#39;]
     ],
   }
 
-  if ($::dehydrated::manage_packages) {
-    ensure_packages($::dehydrated::dehydrated_host_packages)
+  if ($dehydrated::manage_packages) {
+    ensure_packages($dehydrated::dehydrated_host_packages)
   }
 
-  concat { $::dehydrated::dehydrated_requests_config :
+  concat { $dehydrated::dehydrated_requests_config :
     ensure  =&gt; present,
     format  =&gt; &#39;json-pretty&#39;,
     require =&gt; [
-      File[$::dehydrated::dehydrated_base_dir],
-      File[$::dehydrated::dehydrated_requests_dir],
-      File[$::dehydrated::dehydrated_wellknown_dir],
+      File[$dehydrated::dehydrated_base_dir],
+      File[$dehydrated::dehydrated_requests_dir],
+      File[$dehydrated::dehydrated_wellknown_dir],
     ],
   }
-
-
 }</pre>
       </td>
     </tr>

@@ -6,15 +6,15 @@
 <title>
   Puppet Class: dehydrated::setup
   
-    &mdash; Documentation by YARD 0.9.16
+    &mdash; Documentation by YARD 0.9.36
   
 </title>
 
-  <link rel="stylesheet" href="../css/style.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../css/style.css" type="text/css" />
 
-  <link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../css/common.css" type="text/css" />
 
-<script type="text/javascript" charset="utf-8">
+<script type="text/javascript">
   pathId = "puppet_classes::dehydrated::setup";
   relpath = '../';
 </script>
@@ -77,16 +77,18 @@
 <h2>Overview</h2>
 <div class="docstring">
   <div class="discussion">
-    
-<p>This class creates all the necessary files and folders do handle key/csr
-creation and crt storage. It shoudld never be included in your puppet code.</p>
+    <p>This class creates all the necessary files and folders
+do handle key/csr creation and crt storage.
+It shoudld never be included in your puppet code.</p>
 
   </div>
 </div>
 
 
+
 <div class="tags">
   
+
 
 </div><div class="method_details_list">
   <table class="source_code">
@@ -197,33 +199,29 @@ creation and crt storage. It shoudld never be included in your puppet code.</p>
 108
 109
 110
-111
-112
-113
-114</pre>
+111</pre>
       </td>
       <td>
         <pre class="code"><span class="info file"># File 'manifests/setup.pp', line 9</span>
 
 class dehydrated::setup {
-
-  require ::dehydrated::params
+  require dehydrated::params
 
   if ! defined(Class[&#39;dehydrated&#39;]) {
     fail(&#39;You must include the dehydrated base class first; also this class is not supposed to be included on its own.&#39;)
   }
 
-  if ($::dehydrated::manage_user) {
+  if ($dehydrated::manage_user) {
     if ($facts[&#39;kernel&#39;] == &#39;windows&#39;) {
       fail(&#39;User management not configured for windows&#39;)
     }
 
-    if (defined(&#39;$::dehydrated::group&#39;)) {
-      if ($::dehydrated::params::puppet_group != $::dehydrated::group) {
-        group { $::dehydrated::group :
-          ensure =&gt; &#39;present&#39;
+    if (defined(&#39;$dehydrated::group&#39;)) {
+      if ($dehydrated::params::puppet_group != $dehydrated::group) {
+        group { $dehydrated::group :
+          ensure =&gt; &#39;present&#39;,
         }
-        $group_require = Group[$::dehydrated::group]
+        $group_require = Group[$dehydrated::group]
       }
     }
   }
@@ -231,28 +229,26 @@ class dehydrated::setup {
     $group_require = undef
   }
 
-
-
-  if ($::dehydrated::manage_packages) {
-    ensure_packages($::dehydrated::packages)
-    if (!empty($::dehydrated::pki_packages)) {
-      ensure_packages($::dehydrated::pki_packages)
+  if ($dehydrated::manage_packages) {
+    ensure_packages($dehydrated::packages)
+    if (!empty($dehydrated::pki_packages)) {
+      ensure_packages($dehydrated::pki_packages)
     }
   }
 
   $config = {
-    &#39;base_dir&#39;                          =&gt; $::dehydrated::base_dir,
-    &#39;crt_dir&#39;                           =&gt; $::dehydrated::crt_dir,
-    &#39;csr_dir&#39;                           =&gt; $::dehydrated::csr_dir,
-    &#39;dehydrated_base_dir&#39;               =&gt; $::dehydrated::dehydrated_base_dir,
-    &#39;dehydrated_git_dir&#39;                =&gt; $::dehydrated::dehydrated_git_dir,
-    &#39;dehydrated_host&#39;                   =&gt; $::dehydrated::dehydrated_host,
-    &#39;dehydrated_puppetmaster&#39;           =&gt; $::dehydrated::params::dehydrated_puppetmaster,
-    &#39;dehydrated_requests_dir&#39;           =&gt; $::dehydrated::dehydrated_requests_dir,
-    &#39;dehydrated_requests_config&#39;        =&gt; $::dehydrated::dehydrated_requests_config,
-    &#39;dehydrated_status_file&#39;            =&gt; $::dehydrated::dehydrated_status_file,
-    &#39;dehydrated_monitoring_status_file&#39; =&gt; $::dehydrated::dehydrated_monitoring_status_file,
-    &#39;key_dir&#39;                           =&gt; $::dehydrated::key_dir,
+    &#39;base_dir&#39;                          =&gt; $dehydrated::base_dir,
+    &#39;crt_dir&#39;                           =&gt; $dehydrated::crt_dir,
+    &#39;csr_dir&#39;                           =&gt; $dehydrated::csr_dir,
+    &#39;dehydrated_base_dir&#39;               =&gt; $dehydrated::dehydrated_base_dir,
+    &#39;dehydrated_git_dir&#39;                =&gt; $dehydrated::dehydrated_git_dir,
+    &#39;dehydrated_host&#39;                   =&gt; $dehydrated::dehydrated_host,
+    &#39;dehydrated_puppetmaster&#39;           =&gt; $dehydrated::params::dehydrated_puppetmaster,
+    &#39;dehydrated_requests_dir&#39;           =&gt; $dehydrated::dehydrated_requests_dir,
+    &#39;dehydrated_requests_config&#39;        =&gt; $dehydrated::dehydrated_requests_config,
+    &#39;dehydrated_status_file&#39;            =&gt; $dehydrated::dehydrated_status_file,
+    &#39;dehydrated_monitoring_status_file&#39; =&gt; $dehydrated::dehydrated_monitoring_status_file,
+    &#39;key_dir&#39;                           =&gt; $dehydrated::key_dir,
   }
 
   $config_json = to_json($config)
@@ -261,25 +257,25 @@ class dehydrated::setup {
   # system accounts can&#39;t own files....
   case $facts[&#39;kernel&#39;] {
     &#39;windows&#39; : {
-      $config_user = $::dehydrated::user
-      $config_group = $::dehydrated::group
+      $config_user = $dehydrated::user
+      $config_group = $dehydrated::group
     }
     &#39;Linux&#39; : {
-      $config_user = $::dehydrated::params::puppet_user
-      $config_group = $::dehydrated::params::puppet_group
+      $config_user = $dehydrated::params::puppet_user
+      $config_group = $dehydrated::params::puppet_group
     }
     default : {
       fail(&#39;Unknown OS&#39;)
     }
   }
-  file { $::dehydrated::params::configdir :
+  file { $dehydrated::params::configdir :
     ensure =&gt; directory,
     owner  =&gt; $config_user,
     group  =&gt; $config_group,
     mode   =&gt; &#39;0750&#39;,
   }
 
-  file { $::dehydrated::params::configfile :
+  file { $dehydrated::params::configfile :
     ensure  =&gt; file,
     owner   =&gt; $config_user,
     group   =&gt; $config_group,
@@ -289,24 +285,24 @@ class dehydrated::setup {
 
   File {
     ensure  =&gt; directory,
-    owner   =&gt; $::dehydrated::user,
-    group   =&gt; $::dehydrated::group,
+    owner   =&gt; $dehydrated::user,
+    group   =&gt; $dehydrated::group,
     mode    =&gt; &#39;0755&#39;,
     require =&gt; $group_require,
   }
 
   file { [
-    $::dehydrated::base_dir,
-    $::dehydrated::crt_dir,
-    $::dehydrated::csr_dir,
-    ] :
+      $dehydrated::base_dir,
+      $dehydrated::crt_dir,
+      $dehydrated::csr_dir,
+    ]:
   }
 
-  file { $::dehydrated::key_dir :
+  file { $dehydrated::key_dir :
     mode =&gt; &#39;0750&#39;,
   }
 
-  concat { $::dehydrated::params::domainfile :
+  concat { $dehydrated::params::domainfile :
     ensure =&gt; present,
     format =&gt; &#39;json-pretty&#39;,
   }

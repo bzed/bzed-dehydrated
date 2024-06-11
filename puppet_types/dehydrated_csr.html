@@ -6,15 +6,15 @@
 <title>
   Resource Type: dehydrated_csr
   
-    &mdash; Documentation by YARD 0.9.16
+    &mdash; Documentation by YARD 0.9.36
   
 </title>
 
-  <link rel="stylesheet" href="../css/style.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../css/style.css" type="text/css" />
 
-  <link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../css/common.css" type="text/css" />
 
-<script type="text/javascript" charset="utf-8">
+<script type="text/javascript">
   pathId = "puppet_types::dehydrated_csr";
   relpath = '../';
 </script>
@@ -82,15 +82,16 @@
 <h2>Overview</h2>
 <div class="docstring">
   <div class="discussion">
-    
-<p>CSRs for dehydrated</p>
+    <p>CSRs for dehydrated</p>
 
   </div>
 </div>
 
 
+
 <div class="tags">
   
+
 
 </div>
 <div class="tags">
@@ -105,8 +106,7 @@
       
       <div class="docstring">
         <div class="discussion">
-          
-<p>The basic property that the resource should be in.</p>
+          <p>The basic property that the resource should be in.</p>
 
         </div>
       </div>
@@ -147,8 +147,7 @@
       
       <div class="docstring">
         <div class="discussion">
-          
-<p>The algorithm to use, supported: rsa, secp384r1, prime256v1</p>
+          <p>The algorithm to use, supported: rsa, secp384r1, prime256v1</p>
 
         </div>
       </div>
@@ -184,8 +183,7 @@
       
       <div class="docstring">
         <div class="discussion">
-          
-<p>The common name for the csr</p>
+          <p>The common name for the csr</p>
 
         </div>
       </div>
@@ -199,8 +197,7 @@
       
       <div class="docstring">
         <div class="discussion">
-          
-<p>country part of the certificate name</p>
+          <p>country part of the certificate name</p>
 
         </div>
       </div>
@@ -216,8 +213,7 @@
       
       <div class="docstring">
         <div class="discussion">
-          
-<p>Digest used while signing the CSR, defaults to SHA512</p>
+          <p>Digest used while signing the CSR, defaults to SHA512</p>
 
         </div>
       </div>
@@ -231,8 +227,7 @@
       
       <div class="docstring">
         <div class="discussion">
-          
-<p>emailAddress part of the certificate name</p>
+          <p>emailAddress part of the certificate name</p>
 
         </div>
       </div>
@@ -248,9 +243,7 @@
       
       <div class="docstring">
         <div class="discussion">
-          
-<p>Whether to replace the certificate if the private key or CommonName/SANs
-mismatches</p>
+          <p>Whether to replace the certificate if the private key or CommonName/SANs mismatches</p>
 
         </div>
       </div>
@@ -281,8 +274,7 @@ mismatches</p>
       
       <div class="docstring">
         <div class="discussion">
-          
-<p>locality part of the certificate name</p>
+          <p>locality part of the certificate name</p>
 
         </div>
       </div>
@@ -296,8 +288,7 @@ mismatches</p>
       
       <div class="docstring">
         <div class="discussion">
-          
-<p>locality part of the certificate name</p>
+          <p>locality part of the certificate name</p>
 
         </div>
       </div>
@@ -311,8 +302,7 @@ mismatches</p>
       
       <div class="docstring">
         <div class="discussion">
-          
-<p>organizational_unit part of the certificate name</p>
+          <p>organizational_unit part of the certificate name</p>
 
         </div>
       </div>
@@ -326,8 +316,7 @@ mismatches</p>
       
       <div class="docstring">
         <div class="discussion">
-          
-<p>The optional password for the private key</p>
+          <p>The optional password for the private key</p>
 
         </div>
       </div>
@@ -350,13 +339,26 @@ mismatches</p>
     </li>
     
     <li>
+      <span class="name">provider</span>
+      
+      
+      <div class="docstring">
+        <div class="discussion">
+          <p>The specific backend to use for this <code>dehydrated_csr</code> resource. You will seldom need to specify this --- Puppet will usually discover the appropriate provider for your platform.</p>
+
+        </div>
+      </div>
+      
+      
+    </li>
+    
+    <li>
       <span class="name">state</span>
       
       
       <div class="docstring">
         <div class="discussion">
-          
-<p>state part of the certificate name</p>
+          <p>state part of the certificate name</p>
 
         </div>
       </div>
@@ -372,8 +374,7 @@ mismatches</p>
       
       <div class="docstring">
         <div class="discussion">
-          
-<p>SANs to request</p>
+          <p>SANs to request</p>
 
         </div>
       </div>

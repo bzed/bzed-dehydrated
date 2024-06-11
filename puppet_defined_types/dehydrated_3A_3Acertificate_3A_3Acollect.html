@@ -6,15 +6,15 @@
 <title>
   Defined Type: dehydrated::certificate::collect
   
-    &mdash; Documentation by YARD 0.9.16
+    &mdash; Documentation by YARD 0.9.36
   
 </title>
 
-  <link rel="stylesheet" href="../css/style.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../css/style.css" type="text/css" />
 
-  <link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../css/common.css" type="text/css" />
 
-<script type="text/javascript" charset="utf-8">
+<script type="text/javascript">
   pathId = "puppet_defined_types::dehydrated::certificate::collect";
   relpath = '../';
 </script>
@@ -75,11 +75,11 @@
 <h2>Overview</h2>
 <div class="docstring">
   <div class="discussion">
-    
-<p>A description of what this defined type does</p>
+    <p>A description of what this defined type does</p>
 
   </div>
 </div>
+
 
 
 <div class="tags">
@@ -144,6 +144,7 @@
     </li>
   
 </ul>
+
 
 
 </div><div class="method_details_list">
@@ -248,32 +249,28 @@
 107
 108
 109
-110
-111
-112
-113</pre>
+110</pre>
       </td>
       <td>
         <pre class="code"><span class="info file"># File 'manifests/certificate/collect.pp', line 15</span>
 
-define dehydrated::certificate::collect(
+define dehydrated::certificate::collect (
   Dehydrated::DN $request_dn,
   Stdlib::Fqdn $request_fqdn,
   Stdlib::Absolutepath $request_base_dir,
   String $request_base_filename,
 ) {
-
-  require ::dehydrated::setup::dehydrated_host
-  require ::dehydrated::params
+  require dehydrated::setup::dehydrated_host
+  require dehydrated::params
 
   if ! defined(Class[&#39;dehydrated&#39;]) {
     fail(&#39;You must include the dehydrated base class first.&#39;)
   }
 
-  if ($::dehydrated::params::dehydrated_puppetmaster == $facts[&#39;fqdn&#39;]) {
+  if ($dehydrated::params::dehydrated_puppetmaster == $facts[&#39;networking&#39;][&#39;fqdn&#39;]) {
     # we are on a puppetmaster.
     # use file() to retrieve files.
-    $dehydrated_requests_dir = $::dehydrated::dehydrated_requests_dir
+    $dehydrated_requests_dir = $dehydrated::dehydrated_requests_dir
     $crt_file = &quot;${request_base_dir}/${request_base_filename}.crt&quot;
     $ca_file = &quot;${request_base_dir}/${request_base_filename}_ca.pem&quot;
     $ocsp_file = &quot;${crt_file}.ocsp&quot;
@@ -281,30 +278,29 @@ define dehydrated::certificate::collect(
     $crt = dehydrated::file($crt_file)
     $ocsp = dehydrated::file($ocsp_file)
     $ca = dehydrated::file($ca_file)
-
   } else {
     # we are on a non-puppetmaster host
     # use facter to retrieve files.
     if (
-      has_key($facts, &#39;dehydrated_certificates&#39;) and
-      has_key($facts[&#39;dehydrated_certificates&#39;], $request_fqdn) and
-      has_key($facts[&#39;dehydrated_certificates&#39;][$request_fqdn], $request_dn)
+      &#39;dehydrated_certificates&#39; in $facts and
+      $request_fqdn in $facts[&#39;dehydrated_certificates&#39;] and
+      $request_dn in $facts[&#39;dehydrated_certificates&#39;][$request_fqdn]
     ) {
       $config = $facts[&#39;dehydrated_certificates&#39;][$request_fqdn][$request_dn]
-      if has_key($config, &#39;crt&#39;) {
+      if &#39;crt&#39; in $config {
         $crt = $config[&#39;crt&#39;]
       } else {
         $crt = undef
       }
       if (
-        has_key($config, &#39;ocsp&#39;) and
+        &#39;ocsp&#39; in $config and
         $config[&#39;ocsp&#39;] =~ Stdlib::Base64
       ) {
         $ocsp = String(Binary($config[&#39;ocsp&#39;]))
       } else {
         $ocsp = undef
       }
-      if has_key($config, &#39;ca&#39;) {
+      if &#39;ca&#39; in $config {
         $ca = $config[&#39;ca&#39;]
       } else {
         $ca = undef
@@ -353,7 +349,6 @@ define dehydrated::certificate::collect(
       ],
     }
   }
-
 }</pre>
       </td>
     </tr>

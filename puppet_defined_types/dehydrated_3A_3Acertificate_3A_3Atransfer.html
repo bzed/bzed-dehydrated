@@ -6,15 +6,15 @@
 <title>
   Defined Type: dehydrated::certificate::transfer
   
-    &mdash; Documentation by YARD 0.9.16
+    &mdash; Documentation by YARD 0.9.36
   
 </title>
 
-  <link rel="stylesheet" href="../css/style.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../css/style.css" type="text/css" />
 
-  <link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../css/common.css" type="text/css" />
 
-<script type="text/javascript" charset="utf-8">
+<script type="text/javascript">
   pathId = "puppet_defined_types::dehydrated::certificate::transfer";
   relpath = '../';
 </script>
@@ -75,11 +75,11 @@
 <h2>Overview</h2>
 <div class="docstring">
   <div class="discussion">
-    
-<p>Used as exported ressource to ransfer crt/ca/ocsp files.</p>
+    <p>Used as exported ressource to ransfer crt/ca/ocsp files.</p>
 
   </div>
 </div>
+
 
 
 <div class="tags">
@@ -146,6 +146,7 @@
 </ul>
 
 
+
 </div><div class="method_details_list">
   <table class="source_code">
     <tr>
@@ -204,33 +205,30 @@
 63
 64
 65
-66
-67
-68</pre>
+66</pre>
       </td>
       <td>
         <pre class="code"><span class="info file"># File 'manifests/certificate/transfer.pp', line 15</span>
 
-define dehydrated::certificate::transfer(
+define dehydrated::certificate::transfer (
   Enum[&#39;crt&#39;, &#39;ca&#39;, &#39;ocsp&#39;] $file_type,
   Dehydrated::DN $request_dn,
   Stdlib::Fqdn $request_fqdn,
   Variant[String, Binary] $file_content,
 ) {
-
   if ! defined(Class[&#39;dehydrated&#39;]) {
     fail(&#39;You must include the dehydrated base class first.&#39;)
   }
-  require ::dehydrated::setup
+  require dehydrated::setup
 
   $dehydrated_domains = $facts[&#39;dehydrated_domains&#39;]
   $_config = $dehydrated_domains[$request_dn]
   $base_filename = $_config[&#39;base_filename&#39;]
 
-  $base_dir = $::dehydrated::base_dir
-  $csr_dir  = $::dehydrated::csr_dir
-  $key_dir  = $::dehydrated::key_dir
-  $crt_dir  = $::dehydrated::crt_dir
+  $base_dir = $dehydrated::base_dir
+  $csr_dir  = $dehydrated::csr_dir
+  $key_dir  = $dehydrated::key_dir
+  $crt_dir  = $dehydrated::crt_dir
 
   $crt = &quot;${crt_dir}/${base_filename}.crt&quot;
   $ca = &quot;${crt_dir}/${base_filename}_ca.pem&quot;
@@ -238,11 +236,10 @@ define dehydrated::certificate::transfer(
 
   File {
     ensure =&gt; file,
-    owner  =&gt; $::dehydrated::user,
-    group  =&gt; $::dehydrated::group,
+    owner  =&gt; $dehydrated::user,
+    group  =&gt; $dehydrated::group,
     mode   =&gt; &#39;0644&#39;,
   }
-
 
   case $file_type {
     &#39;crt&#39; : {

@@ -6,15 +6,15 @@
 <title>
   Resource Type: dehydrated_pfx
   
-    &mdash; Documentation by YARD 0.9.16
+    &mdash; Documentation by YARD 0.9.36
   
 </title>
 
-  <link rel="stylesheet" href="../css/style.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../css/style.css" type="text/css" />
 
-  <link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../css/common.css" type="text/css" />
 
-<script type="text/javascript" charset="utf-8">
+<script type="text/javascript">
   pathId = "puppet_types::dehydrated_pfx";
   relpath = '../';
 </script>
@@ -82,15 +82,16 @@
 <h2>Overview</h2>
 <div class="docstring">
   <div class="discussion">
-    
-<p>pkcs12 / pfx files for dehydrated</p>
+    <p>pkcs12 / pfx files for dehydrated</p>
 
   </div>
 </div>
 
 
+
 <div class="tags">
   
+
 
 </div>
 <div class="tags">
@@ -105,8 +106,7 @@
       
       <div class="docstring">
         <div class="discussion">
-          
-<p>The basic property that the resource should be in.</p>
+          <p>The basic property that the resource should be in.</p>
 
         </div>
       </div>
@@ -145,8 +145,7 @@
       
       <div class="docstring">
         <div class="discussion">
-          
-<p>The path of the ca certificates to put into the pkcs12 container</p>
+          <p>The path of the ca certificates to put into the pkcs12 container</p>
 
         </div>
       </div>
@@ -160,8 +159,7 @@
       
       <div class="docstring">
         <div class="discussion">
-          
-<p>The path of the certificate to put into the pkcs12 container</p>
+          <p>The path of the certificate to put into the pkcs12 container</p>
 
         </div>
       </div>
@@ -175,8 +173,7 @@
       
       <div class="docstring">
         <div class="discussion">
-          
-<p>The optional password for the private key</p>
+          <p>The optional password for the private key</p>
 
         </div>
       </div>
@@ -190,8 +187,7 @@
       
       <div class="docstring">
         <div class="discussion">
-          
-<p>The optional password for the pkcs12 container</p>
+          <p>The optional password for the pkcs12 container</p>
 
         </div>
       </div>
@@ -212,8 +208,7 @@
       
       <div class="docstring">
         <div class="discussion">
-          
-<p>A string describing the key / pkcs12 container</p>
+          <p>A string describing the key / pkcs12 container</p>
 
         </div>
       </div>
@@ -224,6 +219,20 @@
     <li>
       <span class="name">private_key</span>
       
+      
+      
+    </li>
+    
+    <li>
+      <span class="name">provider</span>
+      
+      
+      <div class="docstring">
+        <div class="discussion">
+          <p>The specific backend to use for this <code>dehydrated_pfx</code> resource. You will seldom need to specify this --- Puppet will usually discover the appropriate provider for your platform.</p>
+
+        </div>
+      </div>
       
       
     </li>

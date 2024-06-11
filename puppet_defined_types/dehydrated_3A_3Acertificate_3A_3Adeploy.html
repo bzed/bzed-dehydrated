@@ -6,15 +6,15 @@
 <title>
   Defined Type: dehydrated::certificate::deploy
   
-    &mdash; Documentation by YARD 0.9.16
+    &mdash; Documentation by YARD 0.9.36
   
 </title>
 
-  <link rel="stylesheet" href="../css/style.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../css/style.css" type="text/css" />
 
-  <link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../css/common.css" type="text/css" />
 
-<script type="text/javascript" charset="utf-8">
+<script type="text/javascript">
   pathId = "puppet_defined_types::dehydrated::certificate::deploy";
   relpath = '../';
 </script>
@@ -75,11 +75,11 @@
 <h2>Overview</h2>
 <div class="docstring">
   <div class="discussion">
-    
-<p>Deploy collected certificate and CA files.</p>
+    <p>Deploy collected certificate and CA files.</p>
 
   </div>
 </div>
+
 
 
 <div class="tags">
@@ -121,6 +121,7 @@
     </li>
   
 </ul>
+
 
 
 </div><div class="method_details_list">
@@ -216,32 +217,29 @@
 93
 94
 95
-96
-97
-98</pre>
+96</pre>
       </td>
       <td>
         <pre class="code"><span class="info file"># File 'manifests/certificate/deploy.pp', line 10</span>
 
-define dehydrated::certificate::deploy(
+define dehydrated::certificate::deploy (
   Dehydrated::DN $dn = $name,
   Optional[String] $key_password = undef,
 ) {
-
   if ! defined(Class[&#39;dehydrated&#39;]) {
     fail(&#39;You must include the dehydrated base class first.&#39;)
   }
 
-  require ::dehydrated::setup
+  require dehydrated::setup
 
   $dehydrated_domains = $facts[&#39;dehydrated_domains&#39;]
   $_config = $dehydrated_domains[$dn]
   $base_filename = $_config[&#39;base_filename&#39;]
 
-  $base_dir = $::dehydrated::base_dir
-  $csr_dir  = $::dehydrated::csr_dir
-  $key_dir  = $::dehydrated::key_dir
-  $crt_dir  = $::dehydrated::crt_dir
+  $base_dir = $dehydrated::base_dir
+  $csr_dir  = $dehydrated::csr_dir
+  $key_dir  = $dehydrated::key_dir
+  $crt_dir  = $dehydrated::crt_dir
 
   $cnf = &quot;${base_dir}/${base_filename}.cnf&quot;
   $crt = &quot;${crt_dir}/${base_filename}.crt&quot;
@@ -255,8 +253,8 @@ define dehydrated::certificate::deploy(
   $crt_full_chain_with_key = &quot;${key_dir}/${base_filename}_fullchain_with_key.pem&quot;
 
   Concat {
-    owner =&gt; $::dehydrated::user,
-    group =&gt; $::dehydrated::group,
+    owner =&gt; $dehydrated::user,
+    group =&gt; $dehydrated::group,
   }
 
   concat { $crt_full_chain :
@@ -296,7 +294,7 @@ define dehydrated::certificate::deploy(
     order  =&gt; &#39;50&#39;,
   }
 
-  if ($::dehydrated::build_pfx_files) {
+  if ($dehydrated::build_pfx_files) {
     $dehydrated_pfx_ensure = &#39;present&#39;
   } else {
     $dehydrated_pfx_ensure = &#39;absent&#39;
@@ -310,7 +308,6 @@ define dehydrated::certificate::deploy(
     certificate  =&gt; $crt,
     private_key  =&gt; $key,
   }
-
 }</pre>
       </td>
     </tr>

@@ -6,15 +6,15 @@
 <title>
   Defined Type: dehydrated::certificate::dh
   
-    &mdash; Documentation by YARD 0.9.16
+    &mdash; Documentation by YARD 0.9.36
   
 </title>
 
-  <link rel="stylesheet" href="../css/style.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../css/style.css" type="text/css" />
 
-  <link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../css/common.css" type="text/css" />
 
-<script type="text/javascript" charset="utf-8">
+<script type="text/javascript">
   pathId = "puppet_defined_types::dehydrated::certificate::dh";
   relpath = '../';
 </script>
@@ -75,11 +75,11 @@
 <h2>Overview</h2>
 <div class="docstring">
   <div class="discussion">
-    
-<p>Create dh params files as necessary.</p>
+    <p>Create dh params files as necessary.</p>
 
   </div>
 </div>
+
 
 
 <div class="tags">
@@ -153,12 +153,13 @@
         <span class='type'>(<tt>Integer[3600]</tt>)</span>
       
       
-        <em class="default">(defaults to: <tt>(</tt>)</em>
+        <em class="default">(defaults to: <tt>(30*24*60*60</tt>)</em>
       
       
     </li>
   
 </ul>
+
 
 
 </div><div class="method_details_list">
@@ -196,13 +197,12 @@
 38
 39
 40
-41
-42</pre>
+41</pre>
       </td>
       <td>
         <pre class="code"><span class="info file"># File 'manifests/certificate/dh.pp', line 13</span>
 
-define dehydrated::certificate::dh(
+define dehydrated::certificate::dh (
   Dehydrated::DN $dn,
   Integer[786] $dh_param_size,
   String $base_filename = $name,
@@ -213,9 +213,9 @@ define dehydrated::certificate::dh(
     fail(&#39;You must include the dehydrated base class first.&#39;)
   }
 
-  require ::dehydrated::setup
+  require dehydrated::setup
 
-  $crt_dir  = $::dehydrated::crt_dir
+  $crt_dir  = $dehydrated::crt_dir
   $dh  = &quot;${crt_dir}/${base_filename}.dh&quot;
 
   dehydrated_dhparam { $dh :
@@ -225,12 +225,11 @@ define dehydrated::certificate::dh(
 
   file { $dh:
     ensure  =&gt; $ensure,
-    owner   =&gt; $::dehydrated::user,
-    group   =&gt; $::dehydrated::group,
+    owner   =&gt; $dehydrated::user,
+    group   =&gt; $dehydrated::group,
     mode    =&gt; &#39;0644&#39;,
     require =&gt; Dehydrated_dhparam[$dh],
   }
-
 }</pre>
       </td>
     </tr>

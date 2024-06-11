@@ -6,15 +6,15 @@
 <title>
   Puppet Class: dehydrated::params
   
-    &mdash; Documentation by YARD 0.9.16
+    &mdash; Documentation by YARD 0.9.36
   
 </title>
 
-  <link rel="stylesheet" href="../css/style.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../css/style.css" type="text/css" />
 
-  <link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../css/common.css" type="text/css" />
 
-<script type="text/javascript" charset="utf-8">
+<script type="text/javascript">
   pathId = "puppet_classes::dehydrated::params";
   relpath = '../';
 </script>
@@ -64,6 +64,15 @@
   
   
   <dl>
+    <dt>Inherited by:</dt>
+    <dd>
+      
+      <span class='object_link'><a href="dehydrated.html" title="puppet_classes::dehydrated (puppet_class)">dehydrated</a></span><br/>
+      
+    </dd>
+  </dl>
+  
+  <dl>
     <dt>Defined in:</dt>
     <dd>
       manifests/params.pp
@@ -71,16 +80,30 @@
   </dl>
 </div>
 
+  <h2>Summary</h2>
+  A short summary of the purpose of this class
+
 <h2>Overview</h2>
 <div class="docstring">
   <div class="discussion">
-    
+    <p>A description of what this class does</p>
+
   </div>
 </div>
 
 
+
 <div class="tags">
   
+  <div class="examples">
+    <p class="tag_title">Examples:</p>
+    
+      
+      <pre class="example code"><code><span class='id identifier rubyid_include'>include</span> <span class='id identifier rubyid_dehydrated'>dehydrated</span><span class='op'>::</span><span class='id identifier rubyid_params'>params</span></code></pre>
+    
+  </div>
+
+
 
 </div><div class="method_details_list">
   <table class="source_code">
@@ -208,19 +231,12 @@
 124
 125
 126
-127
-128
-129
-130
-131
-132
-133</pre>
+127</pre>
       </td>
       <td>
         <pre class="code"><span class="info file"># File 'manifests/params.pp', line 8</span>
 
 class dehydrated::params {
-
   # OS settings
   case $facts[&#39;kernel&#39;] {
     &#39;windows&#39; : {
@@ -273,7 +289,7 @@ class dehydrated::params {
       }
       $dehydrated_group = $group
       $path_seperator = &#39;/&#39;
-      case $::os[&#39;family&#39;] {
+      case $facts[&#39;os&#39;][&#39;family&#39;] {
         &#39;Debian&#39; : {
           # only in unstable :(
           #$pki_packages = [&#39;pki-base&#39;]
@@ -291,7 +307,7 @@ class dehydrated::params {
       $dehydrated_host_packages = [&#39;jq&#39;]
       $build_pfx_files = false
     }
-    default : { fail(&#39;Your OS is not supported!&#39;)}
+    default : { fail(&#39;Your OS is not supported!&#39;) }
   }
 
   $configdir = join([$puppet_vardir, &#39;bzed-dehydrated&#39;], $path_seperator)
@@ -325,18 +341,12 @@ class dehydrated::params {
   $algorithm = &#39;rsa&#39;
 
   # dehydrated setting
-  $dehydrated_git_url = &#39;https://github.com/lukas2511/dehydrated.git&#39;
-  $dehydrated_git_tag = &#39;v0.6.2&#39;
+  $dehydrated_git_url = &#39;https://github.com/dehydrated-io/dehydrated.git&#39;
+  $dehydrated_git_tag = &#39;v0.7.1&#39;
 
   $dehydrated_base_dir = &#39;/opt/dehydrated&#39;
 
-  if defined(&#39;$::puppetmaster&#39;) {
-    $dehydrated_puppetmaster = $::puppetmaster
-  } elsif defined(&#39;$::servername&#39;) {
-    $dehydrated_puppetmaster = $::servername
-  } else {
-    $dehydrated_puppetmaster = undef
-  }
+  $dehydrated_puppetmaster = $server_facts[&#39;servername&#39;]
   $dehydrated_host = $dehydrated_puppetmaster
 
   $dehydrated_environment = {}
@@ -344,6 +354,7 @@ class dehydrated::params {
 
   $dehydrated_contact_email = undef
 
+  $preferred_chain = undef
 }</pre>
       </td>
     </tr>

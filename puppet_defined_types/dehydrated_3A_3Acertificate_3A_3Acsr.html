@@ -6,15 +6,15 @@
 <title>
   Defined Type: dehydrated::certificate::csr
   
-    &mdash; Documentation by YARD 0.9.16
+    &mdash; Documentation by YARD 0.9.36
   
 </title>
 
-  <link rel="stylesheet" href="../css/style.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../css/style.css" type="text/css" />
 
-  <link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+  <link rel="stylesheet" href="../css/common.css" type="text/css" />
 
-<script type="text/javascript" charset="utf-8">
+<script type="text/javascript">
   pathId = "puppet_defined_types::dehydrated::certificate::csr";
   relpath = '../';
 </script>
@@ -75,12 +75,12 @@
 <h2>Overview</h2>
 <div class="docstring">
   <div class="discussion">
-    
-<p>Manage certificate keys and create CSRs for the configured domains /
-altnames.</p>
+    <p>Manage certificate keys and create CSRs for the
+configured domains / altnames.</p>
 
   </div>
 </div>
+
 
 
 <div class="tags">
@@ -318,6 +318,7 @@ altnames.</p>
 </ul>
 
 
+
 </div><div class="method_details_list">
   <table class="source_code">
     <tr>
@@ -406,16 +407,12 @@ altnames.</p>
 92
 93
 94
-95
-96
-97
-98
-99</pre>
+95</pre>
       </td>
       <td>
         <pre class="code"><span class="info file"># File 'manifests/certificate/csr.pp', line 14</span>
 
-define dehydrated::certificate::csr(
+define dehydrated::certificate::csr (
   Dehydrated::DN $dn,
   Array[Dehydrated::DN] $subject_alternative_names,
   String $base_filename = $name,
@@ -434,23 +431,21 @@ define dehydrated::certificate::csr(
   Optional[Integer[768]] $size = undef,
   Pattern[/^(MD[245]|SHA(|-?(1|224|256|384|512)))$/] $digest = &#39;SHA512&#39;,
 ) {
-
   if ! defined(Class[&#39;dehydrated&#39;]) {
     fail(&#39;You must include the dehydrated base class first.&#39;)
   }
 
-  require ::dehydrated::setup
+  require dehydrated::setup
 
-  $base_dir = $::dehydrated::base_dir
-  $csr_dir  = $::dehydrated::csr_dir
-  $key_dir  = $::dehydrated::key_dir
-  $crt_dir  = $::dehydrated::crt_dir
+  $base_dir = $dehydrated::base_dir
+  $csr_dir  = $dehydrated::csr_dir
+  $key_dir  = $dehydrated::key_dir
+  $crt_dir  = $dehydrated::crt_dir
 
   $crt = &quot;${crt_dir}/${base_filename}.crt&quot;
   $key = &quot;${key_dir}/${base_filename}.key&quot;
   $csr = &quot;${csr_dir}/${base_filename}.csr&quot;
   $dh  = &quot;${crt_dir}/${base_filename}.dh&quot;
-
 
   if ($ensure == &#39;present&#39;) {
     dehydrated_key { $key :
@@ -487,19 +482,17 @@ define dehydrated::certificate::csr(
 
   file { $key :
     ensure =&gt; $ensure,
-    owner  =&gt; $::dehydrated::user,
-    group  =&gt; $::dehydrated::group,
+    owner  =&gt; $dehydrated::user,
+    group  =&gt; $dehydrated::group,
     mode   =&gt; &#39;0640&#39;,
   }
   file { $csr :
     ensure  =&gt; $ensure,
-    owner   =&gt; $::dehydrated::user,
-    group   =&gt; $::dehydrated::group,
+    owner   =&gt; $dehydrated::user,
+    group   =&gt; $dehydrated::group,
     mode    =&gt; &#39;0644&#39;,
     require =&gt; Dehydrated_csr[$csr],
   }
-
-
 }</pre>
       </td>
     </tr>
