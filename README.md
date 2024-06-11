@@ -1,6 +1,6 @@
 # dehydrated
 
-[![Puppet Forge](http://img.shields.io/puppetforge/v/bzed/dehydrated.svg)](https://forge.puppet.com/bzed/dehydrated) [![Build Status](https://travis-ci.org/bzed/bzed-dehydrated.png?branch=master)](https://travis-ci.org/bzed/bzed-dehydrated)
+[![Puppet Forge](http://img.shields.io/puppetforge/v/bzed/dehydrated.svg)](https://forge.puppet.com/bzed/dehydrated)
 
 Centralized CSR signing using Let’s Encrypt™ - keeping your keys safe on the host they belong to.
 
@@ -54,7 +54,7 @@ need to be renewed are transferred, it is unknown how well this
 approach scales if you plan to request lots of certificates. Using
 a (designated) puppet master is the better option.
 
-### Setup Requirements 
+### Setup Requirements
 
 You need to ensure that exported resources are working and pluginsync
 is enabled.
@@ -87,7 +87,7 @@ So for a basic setup, the following steps should give you a running setup.
      https://github.com/socram8888/dehydrated-hook-cloudflare/blob/master/cf-hook.sh)
      and **on your dehydrated_host** install it into _/opt/dehydrated/hooks/dns-01.sh_
  3.  Add the hook configuration to your config from above:
-         
+
          class { 'dehydrated' :
              dehydrated_host => 'your.dehydrated.host.example.com',
              dehydrated_environment => {
@@ -95,9 +95,9 @@ So for a basic setup, the following steps should give you a running setup.
                  'CF_KEY'   => 'your-long-Cloudflare-api-key',
              }
          }
-         
+
  4.  On the host that needs a new certificate, add this to your puppet code:
-         
+
          class { 'dehydrated' :
              dehydrated_host => 'your.dehydrated.host.example.com',
              challengetype   => 'dns-01',
@@ -105,7 +105,7 @@ So for a basic setup, the following steps should give you a running setup.
          ::dehydrated::certificate { 'my-https-host.example.com' :
              subject_alternative_names => [ 'example.com', 'host2.example.com' ],
          }
-         
+
  5.  Wait.... it will take a few puppet runs until your certificate will appear.
      The certificates will be requestd by a cronjob, not directly from puppet.
      Otherwise puppet runs will take way too much time. For detailed description of the workflow see [Deployment workflow
@@ -145,11 +145,11 @@ With the yaml snippet above you'd request the following certificates:
     Pull requests are welcome :-)
  -  monitoring the cronjob results is possible by using check\_statusfile. On Debian and derivates
     this is available in the _nagios-plugins-contrib_ package. Or find the source here: [check_statusfile](https://github.com/bzed/pkg-nagios-plugins-contrib/blob/master/dsa/checks/dsa-check-statusfile)
-        
+
         # /usr/lib/nagios/plugins/check_statusfile /opt/dehydrated/monitoring.status
         dehydrated certificates: OK: 2, FAILED: 1
         foo.example.com (from bar.example.com): OCSP update failed
-        
+
 
 ## Migrating from _bzed-letsencrypt_
 If you were using the bzed-letsencrypt module before, I'd suggest to use the following settings on the hosts that request certificates:
@@ -198,19 +198,19 @@ Please use the github issue tracker and send pull requests. Make sure that your 
 
 ### For a release:
  -  Update gh\_pages:
-        
+
         bundle exec rake strings:gh_pages:update
-        
+
  -  Update REFERENCE.md:
- 
+
         puppet strings generate --format markdown --out REFERENCE.md
-        
+
  -  Create changelog:
-        
+
         bundle exec rake changelog
 
  -  Release:
- 
+
         pdk build
 
  -  Bump version number: bump/change the version in metadata.json.
@@ -218,9 +218,8 @@ Please use the github issue tracker and send pull requests. Make sure that your 
 ## Support and help
 There is no official commercial support for this puppet module, but I'm happy to help you if you open a bug in the issue tracker.
 Please make sure to add enough information about what you have done so far and how your setup looks like.
-I'm also reachable by [email](mailto:bernd@bzed.de). Use GPG to encrypt confidential data: 
+I'm also reachable by [email](mailto:bernd@bzed.de). Use GPG to encrypt confidential data:
 
     ECA1 E3F2 8E11 2432 D485  DD95 EB36 171A 6FF9 435F
 
 If you are happy, I also have an [amazon wishlist](https://www.amazon.de/registry/wishlist/1TXINPFZU79GL) :)
-
