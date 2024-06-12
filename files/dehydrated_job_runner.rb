@@ -250,11 +250,11 @@ def handle_request(fqdn, dn, config)
     return ['Account registration failed', stdout, stderr, status] if status > 0
   else
     registration_info = JSON.parse(File.read(account_json))
-    unless registration_info['contact'].nil?
+    if registration_info['contact'].nil? || registration_info['contact'].empty?
+      current_contact = ''
+    else
       current_contact = registration_info['contact'][0]
       current_contact.gsub!(%r{^mailto:}, '')
-    else
-      current_contact = ''
     end
     required_contact = config['dehydrated_contact_email']
     if current_contact != required_contact
