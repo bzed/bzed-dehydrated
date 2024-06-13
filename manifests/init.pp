@@ -225,7 +225,7 @@ class dehydrated (
     }
 
     $transfer_query = @("EOF":json)
-      ["from", "resources", # W: [strict_indent] indent should be 4 chars and is 2
+      ["from", "resources",
         [ "extract",
           [
             "title",
