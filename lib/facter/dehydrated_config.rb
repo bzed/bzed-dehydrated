@@ -32,13 +32,13 @@ end
 def get_key_fingerprints(keyfile)
   privkey = OpenSSL::PKey.read(File.read(keyfile))
   begin
-    pubkey_der = privkey.public_to_der()
+    pubkey_der = privkey.public_to_der
   rescue NoMethodError
-    pubkey_der = privkey.public_key.to_der()
+    pubkey_der = privkey.public_key.to_der
   end
 
   digests = {
-    :sha256 => OpenSSL::Digest::SHA256.new(pubkey_der).to_s,
+    sha256: OpenSSL::Digest::SHA256.new(pubkey_der).to_s,
   }
 
   digests
@@ -70,7 +70,7 @@ Facter.add(:dehydrated_domains) do
                          end
         # fingerprints
         key = File.join(key_dir, "#{base_filename}.key")
-        if File.exists?(key)
+        if File.exist?(key)
           ret[dn]['fingerprints'] = get_key_fingerprints(key)
         end
 

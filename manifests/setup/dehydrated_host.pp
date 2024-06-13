@@ -63,10 +63,10 @@ class dehydrated::setup::dehydrated_host {
       mode   => '0750',
   }
 
-  $dehydrated_host_script = join( [$dehydrated::dehydrated_base_dir, 'dehydrated_job_runner.rb'],
+  $dehydrated_host_script = join([$dehydrated::dehydrated_base_dir, 'dehydrated_job_runner.rb'],
     $dehydrated::params::path_seperator
   )
-  $dehydrated_host_script_config = join( [$dehydrated::dehydrated_base_dir, 'config.json'],
+  $dehydrated_host_script_config = join([$dehydrated::dehydrated_base_dir, 'config.json'],
     $dehydrated::params::path_seperator
   )
 

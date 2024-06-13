@@ -126,14 +126,14 @@ Puppet::Type.type(:dehydrated_csr).provide(:openssl) do
       begin
         pubkey_der = private_key.public_to_der
       rescue NoMethodError
-        pubkey_der = private_key.public_key.to_der()
+        pubkey_der = private_key.public_key.to_der
       end
       pubkey = OpenSSL::PKey::EC.new pubkey_der
     else
       pubkey = private_key.public_key
     end
-    raise Puppet::Error, "Pubkey has no public parts" unless pubkey.public?
-    raise Puppet::Error, "Pubkey still has private parts" if pubkey.private?
+    raise Puppet::Error, 'Pubkey has no public parts' unless pubkey.public?
+    raise Puppet::Error, 'Pubkey still has private parts' if pubkey.private?
 
     request = OpenSSL::X509::Request.new
     request.subject = subject
