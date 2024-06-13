@@ -73,38 +73,29 @@ define dehydrated::certificate::collect (
 
   if ($crt and $crt =~ Dehydrated::CRT) {
     @@dehydrated::certificate::transfer { "${name}-transfer-crt" :
-      file_type    => 'crt',
-      request_dn   => $request_dn,
-      request_fqdn => $request_fqdn,
-      file_content => $crt,
-      tag          => [
-        "request_fqdn:${request_fqdn}",
-        "request_base_filename:${request_base_filename}",
-      ],
+      file_type             => 'crt',
+      request_dn            => $request_dn,
+      request_fqdn          => $request_fqdn,
+      file_content          => $crt,
+      request_base_filename => $request_base_filename,
     }
   }
   if ($ca and $ca =~ Dehydrated::CRT) {
     @@dehydrated::certificate::transfer { "${name}-transfer-ca" :
-      file_type    => 'ca',
-      request_dn   => $request_dn,
-      request_fqdn => $request_fqdn,
-      file_content => $ca,
-      tag          => [
-        "request_fqdn:${request_fqdn}",
-        "request_base_filename:${request_base_filename}",
-      ],
+      file_type             => 'ca',
+      request_dn            => $request_dn,
+      request_fqdn          => $request_fqdn,
+      file_content          => $ca,
+      request_base_filename => $request_base_filename,
     }
   }
   if ($ocsp) {
     @@dehydrated::certificate::transfer { "${name}-transfer-ocsp" :
-      file_type    => 'ocsp',
-      request_dn   => $request_dn,
-      request_fqdn => $request_fqdn,
-      file_content => $ocsp,
-      tag          => [
-        "request_fqdn:${request_fqdn}",
-        "request_base_filename:${request_base_filename}",
-      ],
+      file_type             => 'ocsp',
+      request_dn            => $request_dn,
+      request_fqdn          => $request_fqdn,
+      file_content          => $ocsp,
+      request_base_filename => $request_base_filename,
     }
   }
 }

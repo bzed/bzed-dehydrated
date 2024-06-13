@@ -130,6 +130,8 @@
 # @param build_pfx_files
 #   Create PKCS12 container with key, certificate and ca certificates.
 #   Defaults to true on windows, to false on all other OS.
+# @param preferred_chain
+#   Preferred dehydrated CA chain to use
 #
 class dehydrated (
   Stdlib::Absolutepath $base_dir = $dehydrated::params::base_dir,
@@ -162,7 +164,7 @@ class dehydrated (
   Array $dehydrated_host_packages = $dehydrated::params::dehydrated_host_packages,
   Hash $dehydrated_environment = $dehydrated::params::dehydrated_environment,
   Optional[Dehydrated::Hook] $dehydrated_domain_validation_hook = $dehydrated::params::dehydrated_domain_validation_hook,
-  Optional[Dehydrated::Hook] $dehydrated_hook = "${challengetype}.sh",
+  Dehydrated::Hook $dehydrated_hook = "${challengetype}.sh",
   Optional[Dehydrated::Email] $dehydrated_contact_email = $dehydrated::params::dehydrated_contact_email,
   Boolean $accounts_per_agent = true,
 
@@ -207,7 +209,7 @@ class dehydrated (
     }
 
     $request_name = join(
-      concat( [$facts['networking']['fqdn'], $_dn],
+      concat([$facts['networking']['fqdn'], $_dn],
         $_subject_alternative_names
       ),
     '-')
@@ -222,10 +224,50 @@ class dehydrated (
       }
     }
 
-    Dehydrated::Certificate::Transfer<<|
-    tag == "request_fqdn:${facts['networking']['fqdn']}" and
-    tag == "request_base_filename:${_base_filename}"
-    |>>
+    $transfer_query = @("EOF":json)
+      ["from", "resources", # W: [strict_indent] indent should be 4 chars and is 2
+        [ "extract",
+          [
+            "title",
+            "certname"
+            "parameters.file_type",
+            "parameters.request_dn",
+            "parameters.file_content"
+          ],
+          [
+            "and",
+            [ "=", "type", "Dehydrated::Certificate::Transfer" ],
+            [ "=", "parameters.request_fqdn", "${facts['networking']['fqdn']}" ],
+            [ "=", "parameters.request_base_filename", "${_base_filename}" ],
+            [ "=", "exported", true ]
+          ]
+        ]
+      ]
+      | EOF
+
+    $transfer_data = puppetdb_query($transfer_query)
+    $transfer_data.each |$transfer| {
+      if ($transfer['parameters.file_type'] == 'ocsp') {
+        $content = base64('decode', $transfer['parameters.file_content'])
+      } else {
+        $content = $transfer['parameters.file_content']
+      }
+
+      $filenames = {
+        'ca'   => "${crt_dir}/${_base_filename}_ca.pem",
+        'crt'  => "${crt_dir}/${_base_filename}.crt",
+        'ocsp' => "${crt_dir}/${_base_filename}.crt.ocsp",
+      }
+
+      $filename = $filenames[$transfer['parameters.file_type']]
+      file { $filename:
+        ensure  => file,
+        owner   => $user,
+        group   => $group,
+        mode    => '0644',
+        content => $content,
+      }
+    }
   }
 
   if ($dehydrated_host == $facts['networking']['fqdn']) {
