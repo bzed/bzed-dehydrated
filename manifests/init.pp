@@ -229,7 +229,7 @@ class dehydrated (
         [ "extract",
           [
             "title",
-            "certname"
+            "certname",
             "parameters.file_type",
             "parameters.request_dn",
             "parameters.file_content"
