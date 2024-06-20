@@ -5,7 +5,7 @@
 # @summary Prepare everything to request a certifificate for our CSRs.
 #
 # @example
-#   dehydrated::certificate::request { 'namevar': 
+#   dehydrated::certificate::request { 'namevar':
 #       request_fqdn => 'foo.bar.example.com',
 #       dn           => 'domain.bar.example.com',
 #       config       => {},
@@ -17,6 +17,7 @@ define dehydrated::certificate::request (
   Stdlib::Fqdn $request_fqdn,
   Dehydrated::DN $dn,
   Hash $config,
+  Optional[String] $dehydrated_host = undef,
 ) {
   require dehydrated::params
 

@@ -215,10 +215,11 @@ class dehydrated (
     $_request_config = merge($_fqdn_based_config, $_config)
     if $_csr =~ Dehydrated::CSR {
       @@dehydrated::certificate::request { $request_name :
-        request_fqdn => $facts['networking']['fqdn'],
-        config       => $_request_config,
-        dn           => $_dn,
-        tag          => "dehydrated-request-for-${_dehydrated_host}",
+        request_fqdn    => $facts['networking']['fqdn'],
+        config          => $_request_config,
+        dn              => $_dn,
+        dehydrated_host => $_dehydrated_host,
+        tag             => "dehydrated-request-for-${_dehydrated_host}",
       }
     }
 
