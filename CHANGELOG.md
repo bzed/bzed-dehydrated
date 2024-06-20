@@ -1,5 +1,9 @@
 # Change log
 
+## [0.1.11](https://github.com/bzed/bzed-dehydrated/tree/0.1.11) (2024-06-11)
+
+[Full Changelog](https://github.com/bzed/bzed-dehydrated/compare/0.1.10...0.1.11)
+
 ## [0.1.10](https://github.com/bzed/bzed-dehydrated/tree/0.1.10) (2024-06-11)
 
 [Full Changelog](https://github.com/bzed/bzed-dehydrated/compare/0.1.9...0.1.10)
