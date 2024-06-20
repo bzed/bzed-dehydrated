@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
-describe 'dehydrated::certificate::request' do
+describe 'dehydrated::setup::request' do
   let(:title) { 'test.example.com-test.example.com' }
   let(:params) do
     {
@@ -17,11 +19,23 @@ describe 'dehydrated::certificate::request' do
         'dehydrated_environment' => {},
         'letsencrypt_ca' => 'v2-staging',
       },
-      'dehydrated_host' => 'my.puppetserver.example.com',
     }
   end
 
-  context 'check for fail' do
-    it { is_expected.to compile.and_raise_error(%r{Do not instantiate this define}) }
+  on_supported_os.each do |os, os_facts|
+    next if os_facts[:kernel] == 'windows' && !WINDOWS
+
+    context "on #{os}" do
+      let(:facts) { os_facts }
+      let :pre_condition do
+        if os.match?(%r{windows.*})
+          'class { "dehydrated" : dehydrated_host => "some.other.host.example.com" }'
+        else
+          'class { "dehydrated" : dehydrated_host => $facts["fqdn"] }'
+        end
+      end
+
+      it { is_expected.to compile }
+    end
   end
 end

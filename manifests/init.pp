@@ -237,7 +237,7 @@ class dehydrated (
           [
             "and",
             [ "=", "type", "Dehydrated::Certificate::Transfer" ],
-            [ "=", "parameters.request_fqdn", "${facts['networking']['fqdn']}" ],
+            [ "=", "parameters.request_fqdn", "${trusted['certname']}" ],
             [ "=", "parameters.request_base_filename", "${_base_filename}" ],
             [ "=", "exported", true ]
           ]
@@ -270,10 +270,37 @@ class dehydrated (
     }
   }
 
-  if ($dehydrated_host == $facts['networking']['fqdn']) {
+  if ($dehydrated_host == $trusted['certname']) {
     require dehydrated::setup::dehydrated_host
 
-    Dehydrated::Certificate::Request<<| tag == "dehydrated-request-for-${dehydrated_host}" |>>
+    $request_query = @("EOF":json)
+      ["from", "resources",
+        [ "extract",
+          [
+            "title",
+            "certname",
+            "parameters.request_fqdn",
+            "parameters.dn",
+            "parameters.config"
+          ],
+          [
+            "and",
+            [ "=", "type", "Dehydrated::Certificate::Request" ],
+            [ "=", "parameters.dehydrated_host", "${trusted['certname']}" ],
+            [ "=", "exported", true ]
+          ]
+        ]
+      ]
+      | EOF
+
+    $request_data = puppetdb_query($request_query)
+    $request_data.each |$_request| {
+      dehydrated::setup::request { $_request['title']:
+        request_fqdn => $_request['parameters.request_fqdn'],
+        dn           => $_request['parameters.dn'],
+        config       => $_request['parameters.config'],
+      }
+    }
 
     if 'dehydrated_certificates' in $facts {
       $dehydrated_certificates = $facts['dehydrated_certificates']
