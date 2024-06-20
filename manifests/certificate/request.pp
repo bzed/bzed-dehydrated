@@ -30,7 +30,6 @@ define dehydrated::certificate::request (
   $csr = $config['csr']
   $crt_serial = $config['crt_serial']
   $subject_alternative_names = $config['subject_alternative_names']
-  $dehydrated_host = $config['dehydrated_host']
   $dehydrated_environment = $config['dehydrated_environment']
   $dehydrated_hook = $config['dehydrated_hook']
   $dehydrated_hook_script = if $dehydrated_hook and $dehydrated_hook != '' {
