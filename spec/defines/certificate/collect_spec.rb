@@ -15,7 +15,7 @@ describe 'dehydrated::certificate::collect' do
     next if os_facts[:kernel] == 'windows'
 
     let :pre_condition do
-      if os =~ %r{windows.*}
+      if %r{windows.*}.match?(os)
         'class { "dehydrated" : dehydrated_host => "some.other.host.example.com" }'
       else
         'class { "dehydrated" : dehydrated_host => $facts["fqdn"] }'

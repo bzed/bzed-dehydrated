@@ -61,7 +61,7 @@ Puppet::Type.newtype(:dehydrated_csr) do
     desc 'Digest used while signing the CSR, defaults to SHA512'
     defaultto :SHA512
     validate do |value|
-      raise Puppet::Error, "Unknown digest #{value}" if value !~ %r{^(MD[245]|SHA(|-?(1|224|256|384|512)))$}
+      raise Puppet::Error, "Unknown digest #{value}" unless %r{^(MD[245]|SHA(|-?(1|224|256|384|512)))$}.match?(value)
     end
   end
 
@@ -81,7 +81,7 @@ Puppet::Type.newtype(:dehydrated_csr) do
     desc 'country part of the certificate name'
     validate do |value|
       if value && !value.empty?
-        unless value =~ %r{^([A-Z]{2}|(COM|EDU|GOV|INT|MIL|NET|ORG)|ARPA)$}
+        unless %r{^([A-Z]{2}|(COM|EDU|GOV|INT|MIL|NET|ORG)|ARPA)$}.match?(value)
           raise Puppet::Error, 'valid ssl country name (usually two capital letters) required'
         end
       end
@@ -108,8 +108,8 @@ Puppet::Type.newtype(:dehydrated_csr) do
     desc 'emailAddress part of the certificate name'
     validate do |value|
       if value && !value.blank?
-        raise Puppet::Error, 'email_address should be valid!' unless value =~ %r{\A[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@
-(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\z}
+        raise Puppet::Error, 'email_address should be valid!' unless %r{\A[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@
+(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\z}.match?(value)
       end
     end
   end
