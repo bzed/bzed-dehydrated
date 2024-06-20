@@ -16,9 +16,9 @@ Puppet::Type.type(:dehydrated_pfx).provide(:openssl) do
 
   def self.private_key(resource)
     file = File.read(resource[:private_key])
-    if file =~ %r{BEGIN RSA PRIVATE KEY}
+    if file.include?('BEGIN RSA PRIVATE KEY')
       OpenSSL::PKey::RSA.new(file, resource[:key_password])
-    elsif file =~ %r{BEGIN EC PRIVATE KEY}
+    elsif file.include?('BEGIN EC PRIVATE KEY')
       OpenSSL::PKey::EC.new(file, resource[:key_password])
     else
       raise Puppet::Error, 'Unknown private key type'

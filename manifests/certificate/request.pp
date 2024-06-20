@@ -20,7 +20,6 @@ define dehydrated::certificate::request (
   Hash $config,
   Stdlib::Fqdn $dehydrated_host,
 ) {
-
   fail(
     'Do not instantiate this define, its only used to create exported ressources, collected from puppetdb'
   )
