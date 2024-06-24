@@ -5,6 +5,9 @@ describe 'dehydrated' do
     context "on #{os}" do
       next if os_facts[:kernel] == 'windows' && !WINDOWS
 
+      before(:each) do
+        Puppet::Parser::Functions.newfunction(:puppetdb_query, type: :rvalue) { [] } # W: Use the new Ruby 1.9 hash syntax.
+      end
       let(:facts) { os_facts }
       let(:params) do
         {
