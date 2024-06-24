@@ -68,43 +68,6 @@ define dehydrated::setup::request (
   $dehydrated_wellknown_dir = $dehydrated::dehydrated_wellknown_dir
   $dehydrated_alpncert_dir = $dehydrated::dehydrated_alpncert_dir
 
-  File {
-    owner => $dehydrated::dehydrated_user,
-    group => $dehydrated::dehydrated_group,
-  }
-
-  ensure_resource(
-    'file',
-    $request_fqdn_dir,
-    {
-      'ensure' => 'directory',
-      'owner'  => $dehydrated::dehydrated_user,
-      'group'  => $dehydrated::dehydrated_group,
-      'mode'   => '0755',
-    }
-  )
-
-  ensure_resource(
-    'file',
-    $request_base_dir,
-    {
-      'ensure' => 'directory',
-      'owner'  => $dehydrated::dehydrated_user,
-      'group'  => $dehydrated::dehydrated_group,
-      'mode'   => '0755',
-    }
-  )
-
-  file { $csr_file :
-    ensure  => file,
-    content => $csr,
-  }
-
-  file { $dehydrated_config :
-    ensure  => file,
-    content => template('dehydrated/dehydrated/config.erb'),
-  }
-
   $request_config = {
     $request_fqdn => {
       $dn           => {
@@ -121,6 +84,9 @@ define dehydrated::setup::request (
         'letsencrypt_ca_url'                       => $letsencrypt_ca_url,
         'letsencrypt_ca_hash'                      => $letsencrypt_ca_hash,
         'dehydrated_config'                        => $dehydrated_config,
+        'dehydrated_config_content'                => template('dehydrated/dehydrated/config.erb'),
+        'csr_file'                                 => $csr_file,
+        'csr_content'                              => $csr,
       },
     },
   }
