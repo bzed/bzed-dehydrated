@@ -116,6 +116,6 @@ class dehydrated::setup::requests {
       User[$dehydrated::dehydrated_user],
       Group[$dehydrated::dehydrated_group],
     ],
-    content => to_json($requests),
+    content => stdlib::to_json_pretty($requests),
   }
 }
