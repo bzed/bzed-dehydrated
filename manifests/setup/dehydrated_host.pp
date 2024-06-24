@@ -132,14 +132,4 @@ class dehydrated::setup::dehydrated_host {
   if ($dehydrated::manage_packages) {
     ensure_packages($dehydrated::dehydrated_host_packages)
   }
-
-  concat { $dehydrated::dehydrated_requests_config :
-    ensure  => present,
-    format  => 'json-pretty',
-    require => [
-      File[$dehydrated::dehydrated_base_dir],
-      File[$dehydrated::dehydrated_requests_dir],
-      File[$dehydrated::dehydrated_wellknown_dir],
-    ],
-  }
 }
