@@ -8,7 +8,7 @@
 class dehydrated::setup::requests {
   assert_private()
 
-  require dehydrated::params
+  include dehydrated::params
 
   $request_query = @("EOF":json)
     ["from", "resources",
