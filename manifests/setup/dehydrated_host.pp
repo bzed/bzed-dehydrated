@@ -7,6 +7,8 @@
 # @api private
 #
 class dehydrated::setup::dehydrated_host {
+  assert_private()
+
   if ! defined(Class['dehydrated']) {
     fail('You must include the dehydrated base class first; also this class is not supposed to be included on its own.')
   }
