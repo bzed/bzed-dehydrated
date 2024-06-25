@@ -13,7 +13,7 @@ describe 'dehydrated::certificate::dh' do
       let(:facts) { os_facts }
 
       let :pre_condition do
-        if os =~ %r{windows.*}
+        if %r{windows.*}.match?(os)
           'class { "dehydrated" : dehydrated_host => "some.other.host.example.com" }'
         else
           'class { "dehydrated" : dehydrated_host => $facts["fqdn"] }'

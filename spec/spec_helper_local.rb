@@ -14,7 +14,7 @@ end
 WINDOWS = defined?(RSpec::Support) ? RSpec::Support::OS.windows? : !File::ALT_SEPARATOR.nil?
 
 add_custom_fact :puppet_vardir, ->(os, _facts) do
-  if os =~ %r{windows.*}
+  if %r{windows.*}.match?(os)
     'C:/ProgramData/PuppetLabs/puppet/var'
   else
     '/var/lib/puppet'
@@ -22,7 +22,7 @@ add_custom_fact :puppet_vardir, ->(os, _facts) do
 end
 add_custom_fact :identity, ->(os, _facts) do
   privileged = true
-  if os =~ %r{windows.*}
+  if %r{windows.*}.match?(os)
     user = 'MYDOMAIN\\Administrator'
     group = nil
   else

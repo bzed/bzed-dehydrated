@@ -6,6 +6,7 @@ require 'uri'
 require 'openssl'
 require 'net/http'
 require 'shellwords'
+require 'fileutils'
 
 def run_domain_validation_hook(hook, dn, subject_alternative_names = [])
   if hook && File.exist?(hook) && File.executable?(hook)
@@ -319,11 +320,26 @@ def handle_request(fqdn, dn, config)
   ]
 end
 
+def prepare_files(request_config)
+  request_base_dir = request_config['request_base_dir']
+  csr_file = request_config['csr_file']
+  csr_content = request_config['csr_content']
+  dehydrated_config = request_config['dehydrated_config']
+  dehydrated_config_content = request_config['dehydrated_config_content']
+
+  FileUtils.mkdir_p request_base_dir
+  File.write(csr_file, csr_content)
+  File.write(dehydrated_config, dehydrated_config_content)
+end
+
 def run_config(dehydrated_requests_config)
   requests_status = {}
   dehydrated_requests_config.each do |fqdn, dns|
     requests_status[fqdn] = {}
     dns.each do |dn, config|
+      if config.key?('dehydrated_config_content')
+        prepare_files(config)
+      end
       error_message, stdout, stderr, statuscode = handle_request(fqdn, dn, config)
       requests_status[fqdn][dn] = {
         'error_message' => error_message,

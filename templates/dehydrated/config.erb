@@ -1,50 +1,19 @@
-# Path to certificate authority (default: https://acme-v02.api.letsencrypt.org/directory)
 CA="<%= @letsencrypt_ca_url -%>"
-
-# Which challenge should be used? Currently http-01, dns-01 and tls-alpn-01 are supported
 CHALLENGETYPE="<%= @challengetype -%>"
-
-# Base directory for account key, generated certificates and list of domains (default: $SCRIPTDIR -- uses config directory if undefined)
 BASEDIR="<%= @request_base_dir -%>"
-
-# Output directory for generated certificates
 CERTDIR="<%= @request_base_dir -%>"
-
-# Output directory for alpn verification certificates
 ALPNCERTDIR="<%= @dehydrated_alpncert_dir -%>"
-
-# Directory for account keys and registration information
 ACCOUNTDIR="<%= @request_account_dir -%>"
-
-# Output directory for challenge-tokens to be served by webserver or deployed in HOOK (default: /var/www/dehydrated)
 WELLKNOWN="<%= @dehydrated_wellknown_dir -%>"
-
-# E-mail to use during the registration (default: <unset>)
 CONTACT_EMAIL="<%= @dehydrated_contact_email -%>"
-
-# Lockfile location, to prevent concurrent access (default: $BASEDIR/lock)
 LOCKFILE="${BASEDIR}/lock"
-
-# Use alternative certificate chain identified by issuer CN
 <% if @preferred_chain -%>
 PREFERRED_CHAIN="<%= @preferred_chain -%>"
 <% else -%>
 #PREFERRED_CHAIN=
 <% end -%>
-
-# Program or function called in certain situations
-#
-# After generating the challenge-response, or after failed challenge (in this case altname is empty)
-# Given arguments: clean_challenge|deploy_challenge altname token-filename token-content
-#
-# After successfully signing certificate
-# Given arguments: deploy_cert domain path/to/privkey.pem path/to/cert.pem path/to/fullchain.pem
-#
-# BASEDIR and WELLKNOWN variables are exported and can be used in an external program
-# default: <unset>
 <% if @dehydrated_hook_script -%>
 HOOK="<%= @dehydrated_hook_script -%>"
 <% else -%>
 #HOOK=
 <% end -%>
-
