@@ -57,6 +57,9 @@
 #   Default algorithm / elliptic-curve you want to use. Supported: rsa, secp384r1, prime256v1.
 #   Defaults to rsa. You can specify a different algorithm for each certificate,
 #   see dehydrated::certificate.
+# @param key_size
+#   Size of the key if we create a new one.  Only used if algorithm is 'rsa'.
+#   You can specify a different size for each certificate; see dehydrated::certificate.
 # @param dehydrated_base_dir
 #   Only used if $facts['fqdn'] == $dehydrated::dehydrated_host. Path where the dehydrated
 #   script and configurations/csrs are being stored. Defaults to '/opt/dehydrated'.
@@ -148,6 +151,7 @@ class dehydrated (
   Integer[768] $dh_param_size = $dehydrated::params::dh_param_size,
   Dehydrated::Challengetype $challengetype = $dehydrated::params::challengetype,
   Dehydrated::Algorithm $algorithm = $dehydrated::params::algorithm,
+  Integer[768] $key_size = $dehydrated::params::key_size,
 
   Stdlib::Absolutepath $dehydrated_base_dir = $dehydrated::params::dehydrated_base_dir,
   Stdlib::Absolutepath $dehydrated_git_dir = "${dehydrated_base_dir}/dehydrated",

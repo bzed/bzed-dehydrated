@@ -108,6 +108,7 @@ class dehydrated::params {
   $dh_param_size = 2048
   $challengetype = 'dns-01'
   $algorithm = 'rsa'
+  $key_size = 3072 # for rsa only
 
   # dehydrated setting
   $dehydrated_git_url = 'https://github.com/dehydrated-io/dehydrated.git'

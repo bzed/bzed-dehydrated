@@ -36,6 +36,8 @@
 #   Algorithm / elliptic-curve you want to use. Supported: rsa, secp384r1, prime256v1.
 #   Defaults to $dehydrated::algorithm, which defaults to 'rsa'.
 #   You can specify a different algorithm for each certificate here.
+# @param key_size
+#   Size of the key if we create a new one.  Only used if algorithm is 'rsa'.
 # @param dh_param_size
 #   Size of the DH params we should generate. Defaults to $dehydrated::dh_param_size,
 #   which defaults to 2048. You can specify a different DH param size for each certificate here.
@@ -77,6 +79,7 @@ define dehydrated::certificate (
   Array[Dehydrated::DN] $subject_alternative_names = [],
   Dehydrated::Challengetype $challengetype = $dehydrated::challengetype,
   Dehydrated::Algorithm $algorithm = $dehydrated::algorithm,
+  Integer[768] $key_size = $dehydrated::key_size,
   Integer[768] $dh_param_size = $dehydrated::dh_param_size,
   Stdlib::Fqdn $dehydrated_host = $dehydrated::dehydrated_host,
   Hash $dehydrated_environment = $dehydrated::dehydrated_environment,
@@ -123,6 +126,7 @@ define dehydrated::certificate (
     subject_alternative_names => $subject_alternative_names,
     key_password              => $key_password,
     algorithm                 => $algorithm,
+    size                      => $key_size,
   }
 
   $ready_for_merge = pick(
