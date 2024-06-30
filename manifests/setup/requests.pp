@@ -39,6 +39,7 @@ class dehydrated::setup::requests {
     $base_filename = $config['base_filename']
     $dh_param_size = $config['dh_param_size']
     $crt_serial = $config['crt_serial']
+    $fingerprints = $config['fingerprints']
     $subject_alternative_names = $config['subject_alternative_names']
     $dehydrated_host = $config['dehydrated_host']
     $dehydrated_environment = $config['dehydrated_environment']
@@ -84,6 +85,7 @@ class dehydrated::setup::requests {
           'subject_alternative_names'                => $subject_alternative_names,
           'base_filename'                            => $base_filename,
           'crt_serial'                               => $crt_serial,
+          'fingerprints'                             => $fingerprints,
           'request_fqdn_dir'                         => $request_fqdn_dir,
           'request_base_dir'                         => $request_base_dir,
           'request_account_dir'                      => $request_account_dir,
@@ -108,14 +110,15 @@ class dehydrated::setup::requests {
   }
 
   file { $dehydrated::dehydrated_requests_config :
-    ensure  => file,
-    owner   => $dehydrated::dehydrated_user,
-    group   => $dehydrated::dehydrated_group,
-    mode    => '0640',
-    require => [
+    ensure    => file,
+    owner     => $dehydrated::dehydrated_user,
+    group     => $dehydrated::dehydrated_group,
+    mode      => '0640',
+    require   => [
       User[$dehydrated::dehydrated_user],
       Group[$dehydrated::dehydrated_group],
     ],
-    content => stdlib::to_json_pretty($requests),
+    content   => stdlib::to_json_pretty($requests),
+    show_diff => false,
   }
 }
