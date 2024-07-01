@@ -63,20 +63,24 @@ define dehydrated::certificate::deploy (
   }
 
   concat::fragment { "${dn}_crt" :
-    target => $crt_full_chain,
-    source => $crt,
-    order  => '10',
+    target  => $crt_full_chain,
+    source  => $crt,
+    order   => '10',
+    require => File[$crt],
   }
+
   concat::fragment { "${dn}_dh" :
-    target => $crt_full_chain,
-    source => $dh,
-    order  => '30',
+    target  => $crt_full_chain,
+    source  => $dh,
+    order   => '30',
+    require => File[$dh],
   }
 
   concat::fragment { "${dn}_ca" :
-    target => $crt_full_chain,
-    source => $ca,
-    order  => '50',
+    target  => $crt_full_chain,
+    source  => $ca,
+    order   => '50',
+    require => File[$ca],
   }
 
   if ($dehydrated::build_pfx_files) {
@@ -92,5 +96,10 @@ define dehydrated::certificate::deploy (
     ca           => $ca,
     certificate  => $crt,
     private_key  => $key,
+    require      => [
+      File[$crt],
+      File[$ca],
+      File[$key],
+    ],
   }
 }

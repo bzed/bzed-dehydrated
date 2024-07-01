@@ -199,7 +199,7 @@ class dehydrated (
   }
 
   $dehydrated_domains = $facts['dehydrated_domains']
-  $dehydrated_domains.each |Dehydrated::DN $_dn, Hash $_config| {
+  $ready_for_merge = $dehydrated_domains.map |Dehydrated::DN $_dn, Hash $_config| {
     $_base_filename = $_config['base_filename']
     $_dh_param_size = $_config['dh_param_size']
     $_csr = $_config['csr']
@@ -272,7 +272,14 @@ class dehydrated (
         content => $content,
       }
     }
-  }
+
+    # mark as ready for merge in case we have 3 files to transfer.
+    if length($transfer_data) == 3 {
+      $_dn
+    } else {
+      undef
+    }
+  }.delete_undef_values()
 
   if ($dehydrated_host == $trusted['certname']) {
     require dehydrated::setup::dehydrated_host
