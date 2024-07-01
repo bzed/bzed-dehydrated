@@ -162,6 +162,7 @@ def sign_csr(dehydrated_config, csr_file, crt_file, ca_file)
 
   stdout, stderr, status = run_dehydrated(dehydrated_config, "--signcsr '#{csr_file}'")
   if status.zero?
+    stdout = stdout.strip.gsub(%r{(\n-+END CERTIFICATE-+)\s+(-+BEGIN CERTIFICATE-+\n)}, '\1' + "\n\n" + '\2')
     certs = stdout.split("\n\n")
     if certs.size < 2
       stdout = "# -- CA certificate missing? -- \n #{stdout}"
