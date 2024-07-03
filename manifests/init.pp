@@ -240,6 +240,7 @@ class dehydrated (
           ],
           [
             "and",
+            [ "=", "certname", "${_dehydrated_host}"]
             [ "=", "type", "Dehydrated::Certificate::Transfer" ],
             [ "=", "parameters.request_fqdn", "${trusted['certname']}" ],
             [ "=", "parameters.request_base_filename", "${_base_filename}" ],
