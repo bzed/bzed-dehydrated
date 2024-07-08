@@ -37,20 +37,17 @@ define dehydrated::certificate::deploy (
   $crt_full_chain = "${crt_dir}/${base_filename}_fullchain.pem"
   $crt_full_chain_with_key = "${key_dir}/${base_filename}_fullchain_with_key.pem"
 
+  Concat {
+    owner => $dehydrated::user,
+    group => $dehydrated::group,
+  }
+
   concat { $crt_full_chain :
-    owner  => $dehydrated::user,
-    group  => $dehydrated::group,
-    mode   => '0644',
-    notify => Dehydrated::Certificate[$dn],
+    mode => '0644',
   }
   concat { $crt_full_chain_with_key :
-    owner  => $dehydrated::user,
-    group  => $dehydrated::group,
     mode   => '0640',
-    notify => [
-      Dehydrated_pfx[$pfx],
-      Dehydrated::Certificate[$dn],
-    ],
+    notify => Dehydrated_pfx[$pfx],
   }
 
   concat::fragment { "${dn}_key" :
