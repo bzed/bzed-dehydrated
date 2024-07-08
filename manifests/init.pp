@@ -82,6 +82,9 @@
 #   certificate if you want to.
 #   If $facts['fqdn'] == $dehydrated::dehydrated_host, dehydrated will be installed
 #   and the certificate request cronjob will be setup.
+# @param dehydrated_puppetmaster
+#   Allows to override the hostname of the puppetmaster. This might be necessary
+#   in cases where $dehydrated::dehydrated_host is a puppetmaster, but not for itself.
 # @param dehydrated_requests_dir
 #   Only used if $facts['fqdn'] == $dehydrated::dehydrated_host.
 #   Path where requests that need to be handled are being stored.
@@ -158,6 +161,7 @@ class dehydrated (
   String $dehydrated_git_tag = $dehydrated::params::dehydrated_git_tag,
   Dehydrated::GitUrl $dehydrated_git_url = $dehydrated::params::dehydrated_git_url,
   Stdlib::Fqdn $dehydrated_host = $dehydrated::params::dehydrated_host,
+  Stdlib::Fqdn $dehydrated_puppetmaster = $dehydrated::params::dehydrated_puppetmaster,
   Stdlib::Absolutepath $dehydrated_requests_dir = "${dehydrated_base_dir}/requests",
   Stdlib::Absolutepath $dehydrated_hooks_dir = "${dehydrated_base_dir}/hooks",
   Stdlib::Absolutepath $dehydrated_requests_config = "${dehydrated_base_dir}/requests.json",
