@@ -19,17 +19,11 @@ def get_file(filename)
   end
 end
 
-def get_certificate(crt, old_serial)
+def get_certificate(crt)
   if File.exist?(crt)
     raw_cert = File.read(crt)
     begin
-      cert = OpenSSL::X509::Certificate.new raw_cert
-      serial = cert.serial.to_s
-      if serial == old_serial
-        nil
-      else
-        raw_cert
-      end
+      raw_cert
     rescue OpenSSL::X509::CertificateError
       nil
     end
@@ -48,12 +42,11 @@ def handle_requests(config)
       requests.each do |request_fqdn, certificate_requests|
         certificate_requests.each do |dn, certificate_config|
           base_filename = certificate_config['base_filename']
-          crt_serial = certificate_config['crt_serial']
           request_base_dir = certificate_config['request_base_dir']
 
           crt_file = "#{request_base_dir}/#{base_filename}.crt"
-          crt = get_certificate(crt_file, crt_serial)
-          requests[request_fqdn][dn]['crt'] = get_certificate(crt_file, crt_serial)
+          crt = get_certificate(crt_file)
+          requests[request_fqdn][dn]['crt'] = crt
           if crt
             ca_file = "#{request_base_dir}/#{base_filename}_ca.pem"
             requests[request_fqdn][dn]['ca'] = get_file(ca_file)
