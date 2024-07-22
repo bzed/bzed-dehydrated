@@ -61,18 +61,18 @@
 #   Size of the key if we create a new one.  Only used if algorithm is 'rsa'.
 #   You can specify a different size for each certificate; see dehydrated::certificate.
 # @param dehydrated_base_dir
-#   Only used if $facts['fqdn'] == $dehydrated::dehydrated_host. Path where the dehydrated
+#   Only used if $trusted['certname'] == $dehydrated::dehydrated_host. Path where the dehydrated
 #   script and configurations/csrs are being stored. Defaults to '/opt/dehydrated'.
 # @param dehydrated_git_dir
-#   Only used if $facts['fqdn'] == $dehydrated::dehydrated_host.
+#   Only used if $trusted['certname'] == $dehydrated::dehydrated_host.
 #   Path where the dehydrated script is being checkout out into using git.
 #   Defaults to ${dehydrated_base_dir}/dehydrated.
 # @param dehydrated_git_tag
-#   Only used if $facts['fqdn'] == $dehydrated::dehydrated_host.
+#   Only used if $trusted['certname'] == $dehydrated::dehydrated_host.
 #   Version of the dehydrated script we want to use.
 #   Change it on your own risk.
 # @param dehydrated_git_url
-#   Only used if $facts['fqdn'] == $dehydrated::dehydrated_host.
+#   Only used if $trusted['certname'] == $dehydrated::dehydrated_host.
 #   Git url to clone dehydrated from. If you have an internal mirror/version, you can override
 #   the default github url here.
 # @param dehydrated_host
@@ -80,25 +80,25 @@
 #   Required on that host, on all others it is used as default for certificates requested
 #   via dehydrated::certificate. You can specify a different dehydrated_host on each
 #   certificate if you want to.
-#   If $facts['fqdn'] == $dehydrated::dehydrated_host, dehydrated will be installed
+#   If $trusted['certname'] == $dehydrated::dehydrated_host, dehydrated will be installed
 #   and the certificate request cronjob will be setup.
 # @param dehydrated_requests_dir
-#   Only used if $facts['fqdn'] == $dehydrated::dehydrated_host.
+#   Only used if $trusted['certname'] == $dehydrated::dehydrated_host.
 #   Path where requests that need to be handled are being stored.
 # @param dehydrated_hooks_dir
-#   Only used if $facts['fqdn'] == $dehydrated::dehydrated_host.
+#   Only used if $trusted['certname'] == $dehydrated::dehydrated_host.
 # @param dehydrated_requests_config
-#   Only used if $facts['fqdn'] == $dehydrated::dehydrated_host.
+#   Only used if $trusted['certname'] == $dehydrated::dehydrated_host.
 # @param dehydrated_wellknown_dir
-#   Only used if $facts['fqdn'] == $dehydrated::dehydrated_host.
+#   Only used if $trusted['certname'] == $dehydrated::dehydrated_host.
 # @param dehydrated_alpncert_dir
-#   Only used if $facts['fqdn'] == $dehydrated::dehydrated_host.
+#   Only used if $trusted['certname'] == $dehydrated::dehydrated_host.
 # @param dehydrated_host_packages
-#   Only used if $facts['fqdn'] == $dehydrated::dehydrated_host.
+#   Only used if $trusted['certname'] == $dehydrated::dehydrated_host.
 # @param dehydrated_environment
-#   Only used if $facts['fqdn'] == $dehydrated::dehydrated_host.
+#   Only used if $trusted['certname'] == $dehydrated::dehydrated_host.
 # @param dehydrated_domain_validation_hook
-#   Only used if $facts['fqdn'] == $dehydrated::dehydrated_host.
+#   Only used if $trusted['certname'] == $dehydrated::dehydrated_host.
 # @param dehydrated_hook
 #   Name of the hook script dehydrated will use to validate the authorization request. The hook script
 #   must live in the $dehydrated_hooks_dir on $dehydrated::dehydrated_host.
@@ -213,7 +213,7 @@ class dehydrated (
     }
 
     $request_name = join(
-      concat([$facts['networking']['fqdn'], $_dn],
+      concat([$trusted['certname'], $_dn],
         $_subject_alternative_names
       ),
     '-')
@@ -221,7 +221,7 @@ class dehydrated (
     $_request_config = merge($_fqdn_based_config, $_config)
     if $_csr =~ Dehydrated::CSR {
       @@dehydrated::certificate::request { $request_name :
-        request_fqdn    => $facts['networking']['fqdn'],
+        request_fqdn    => $trusted['certname'],
         config          => $_request_config,
         dn              => $_dn,
         dehydrated_host => $_dehydrated_host,

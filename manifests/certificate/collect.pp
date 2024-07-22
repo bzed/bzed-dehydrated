@@ -25,7 +25,7 @@ define dehydrated::certificate::collect (
     fail('You must include the dehydrated base class first.')
   }
 
-  if ($dehydrated::params::dehydrated_puppetmaster == $facts['networking']['fqdn']) {
+  if ($dehydrated::params::dehydrated_puppetmaster == $trusted['certname']) {
     # we are on a puppetmaster.
     # use file() to retrieve files.
     $dehydrated_requests_dir = $dehydrated::dehydrated_requests_dir

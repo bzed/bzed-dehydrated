@@ -42,7 +42,7 @@
 #   Size of the DH params we should generate. Defaults to $dehydrated::dh_param_size,
 #   which defaults to 2048. You can specify a different DH param size for each certificate here.
 # @param dehydrated_host
-#   $::fqdn of the host which is responsible to request the certificates from
+#   $trusted['certname'] of the host which is responsible to request the certificates from
 #   the Let's Encrypt CA. Defaults to $dehydrated::dehydrated_host where you can
 #   configure your default.
 # @param dehydrated_environment
@@ -115,7 +115,7 @@ define dehydrated::certificate (
   }
 
   $json_fragment = to_json($domain_config)
-  ::concat::fragment { "${facts['networking']['fqdn']}-${dn}" :
+  ::concat::fragment { "${trusted['certname']}-${dn}" :
     target  => $dehydrated::params::domainfile,
     content => $json_fragment,
     order   => '50',
