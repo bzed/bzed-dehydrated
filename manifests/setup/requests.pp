@@ -44,6 +44,7 @@ class dehydrated::setup::requests {
     $dehydrated_host = $config['dehydrated_host']
     $dehydrated_environment = $config['dehydrated_environment']
     $dehydrated_hook = $config['dehydrated_hook']
+    $dehydrated_wellknown_dir = $dehydrated::dehydrated_wellknown_dir
     $dehydrated_hook_script = if $dehydrated_hook and $dehydrated_hook != '' {
       [$dehydrated::dehydrated_hooks_dir, $dehydrated_hook].join($dehydrated::params::path_seperator)
     }
