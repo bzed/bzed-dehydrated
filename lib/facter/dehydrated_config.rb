@@ -16,17 +16,25 @@ Facter.add(:dehydrated_config) do
 end
 
 def get_cert_serial(crt)
-  if File.exist?(crt)
-    raw_cert = File.read(crt)
-    begin
-      cert = OpenSSL::X509::Certificate.new raw_cert
-      cert.serial.to_s
-    rescue OpenSSL::X509::CertificateError
-      ''
-    end
-  else
+  raw_cert = File.read(crt)
+  begin
+    cert = OpenSSL::X509::Certificate.new raw_cert
+    cert.serial.to_s
+  rescue OpenSSL::X509::CertificateError
     ''
   end
+end
+
+def get_cert_fingerprints(crt)
+  raw_cert = File.read(crt)
+  cert = OpenSSL::X509::Certificate.new raw_cert
+  der = cert.to_der
+
+  digests = {
+    sha1: OpenSSL::Digest::SHA1.new(der).to_s,
+    sha256: OpenSSL::Digest::SHA256.new(der).to_s,
+  }
+  digests
 end
 
 def get_key_fingerprints(keyfile)
@@ -76,7 +84,10 @@ Facter.add(:dehydrated_domains) do
 
         # CRT serial
         crt = File.join(crt_dir, "#{base_filename}.crt")
-        ret[dn]['crt_serial'] = get_cert_serial(crt)
+        if File.exist?(crt)
+          ret[dn]['crt_serial'] = get_cert_serial(crt)
+          ret[dn]['crt_fingerprints'] = get_cert_fingerprints(crt)
+        end
 
         ca = File.join(crt_dir, "#{base_filename}_ca.pem")
 
