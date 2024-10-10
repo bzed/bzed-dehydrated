@@ -10,6 +10,7 @@
 
 * [`dehydrated`](#dehydrated): Base class to define necessary variables and include setup classes.
 * [`dehydrated::params`](#dehydrated--params): A short summary of the purpose of this class
+* [`dehydrated::setup::requests`](#dehydrated--setup--requests): Deploy requests.json file on dehydrated host
 
 #### Private Classes
 
@@ -96,6 +97,7 @@ The following parameters are available in the `dehydrated` class:
 * [`dh_param_size`](#-dehydrated--dh_param_size)
 * [`challengetype`](#-dehydrated--challengetype)
 * [`algorithm`](#-dehydrated--algorithm)
+* [`key_size`](#-dehydrated--key_size)
 * [`dehydrated_base_dir`](#-dehydrated--dehydrated_base_dir)
 * [`dehydrated_git_dir`](#-dehydrated--dehydrated_git_dir)
 * [`dehydrated_git_tag`](#-dehydrated--dehydrated_git_tag)
@@ -240,11 +242,20 @@ see dehydrated::certificate.
 
 Default value: `$dehydrated::params::algorithm`
 
+##### <a name="-dehydrated--key_size"></a>`key_size`
+
+Data type: `Integer[768]`
+
+Size of the key if we create a new one.  Only used if algorithm is 'rsa'.
+You can specify a different size for each certificate; see dehydrated::certificate.
+
+Default value: `$dehydrated::params::key_size`
+
 ##### <a name="-dehydrated--dehydrated_base_dir"></a>`dehydrated_base_dir`
 
 Data type: `Stdlib::Absolutepath`
 
-Only used if $facts['fqdn'] == $dehydrated::dehydrated_host. Path where the dehydrated
+Only used if $trusted['certname'] == $dehydrated::dehydrated_host. Path where the dehydrated
 script and configurations/csrs are being stored. Defaults to '/opt/dehydrated'.
 
 Default value: `$dehydrated::params::dehydrated_base_dir`
@@ -253,7 +264,7 @@ Default value: `$dehydrated::params::dehydrated_base_dir`
 
 Data type: `Stdlib::Absolutepath`
 
-Only used if $facts['fqdn'] == $dehydrated::dehydrated_host.
+Only used if $trusted['certname'] == $dehydrated::dehydrated_host.
 Path where the dehydrated script is being checkout out into using git.
 Defaults to ${dehydrated_base_dir}/dehydrated.
 
@@ -263,7 +274,7 @@ Default value: `"${dehydrated_base_dir}/dehydrated"`
 
 Data type: `String`
 
-Only used if $facts['fqdn'] == $dehydrated::dehydrated_host.
+Only used if $trusted['certname'] == $dehydrated::dehydrated_host.
 Version of the dehydrated script we want to use.
 Change it on your own risk.
 
@@ -273,7 +284,7 @@ Default value: `$dehydrated::params::dehydrated_git_tag`
 
 Data type: `Dehydrated::GitUrl`
 
-Only used if $facts['fqdn'] == $dehydrated::dehydrated_host.
+Only used if $trusted['certname'] == $dehydrated::dehydrated_host.
 Git url to clone dehydrated from. If you have an internal mirror/version, you can override
 the default github url here.
 
@@ -287,7 +298,7 @@ Default setting for the host you want to request the certificates on.
 Required on that host, on all others it is used as default for certificates requested
 via dehydrated::certificate. You can specify a different dehydrated_host on each
 certificate if you want to.
-If $facts['fqdn'] == $dehydrated::dehydrated_host, dehydrated will be installed
+If $trusted['certname'] == $dehydrated::dehydrated_host, dehydrated will be installed
 and the certificate request cronjob will be setup.
 
 Default value: `$dehydrated::params::dehydrated_host`
@@ -296,7 +307,7 @@ Default value: `$dehydrated::params::dehydrated_host`
 
 Data type: `Stdlib::Absolutepath`
 
-Only used if $facts['fqdn'] == $dehydrated::dehydrated_host.
+Only used if $trusted['certname'] == $dehydrated::dehydrated_host.
 Path where requests that need to be handled are being stored.
 
 Default value: `"${dehydrated_base_dir}/requests"`
@@ -305,7 +316,7 @@ Default value: `"${dehydrated_base_dir}/requests"`
 
 Data type: `Stdlib::Absolutepath`
 
-Only used if $facts['fqdn'] == $dehydrated::dehydrated_host.
+Only used if $trusted['certname'] == $dehydrated::dehydrated_host.
 
 Default value: `"${dehydrated_base_dir}/hooks"`
 
@@ -313,7 +324,7 @@ Default value: `"${dehydrated_base_dir}/hooks"`
 
 Data type: `Stdlib::Absolutepath`
 
-Only used if $facts['fqdn'] == $dehydrated::dehydrated_host.
+Only used if $trusted['certname'] == $dehydrated::dehydrated_host.
 
 Default value: `"${dehydrated_base_dir}/requests.json"`
 
@@ -321,7 +332,7 @@ Default value: `"${dehydrated_base_dir}/requests.json"`
 
 Data type: `Stdlib::Absolutepath`
 
-Only used if $facts['fqdn'] == $dehydrated::dehydrated_host.
+Only used if $trusted['certname'] == $dehydrated::dehydrated_host.
 
 Default value: `"${dehydrated_base_dir}/acme-challenges"`
 
@@ -329,7 +340,7 @@ Default value: `"${dehydrated_base_dir}/acme-challenges"`
 
 Data type: `Stdlib::Absolutepath`
 
-Only used if $facts['fqdn'] == $dehydrated::dehydrated_host.
+Only used if $trusted['certname'] == $dehydrated::dehydrated_host.
 
 Default value: `"${dehydrated_base_dir}/alpn-certs"`
 
@@ -337,7 +348,7 @@ Default value: `"${dehydrated_base_dir}/alpn-certs"`
 
 Data type: `Array`
 
-Only used if $facts['fqdn'] == $dehydrated::dehydrated_host.
+Only used if $trusted['certname'] == $dehydrated::dehydrated_host.
 
 Default value: `$dehydrated::params::dehydrated_host_packages`
 
@@ -345,7 +356,7 @@ Default value: `$dehydrated::params::dehydrated_host_packages`
 
 Data type: `Hash`
 
-Only used if $facts['fqdn'] == $dehydrated::dehydrated_host.
+Only used if $trusted['certname'] == $dehydrated::dehydrated_host.
 
 Default value: `$dehydrated::params::dehydrated_environment`
 
@@ -353,13 +364,13 @@ Default value: `$dehydrated::params::dehydrated_environment`
 
 Data type: `Optional[Dehydrated::Hook]`
 
-Only used if $facts['fqdn'] == $dehydrated::dehydrated_host.
+Only used if $trusted['certname'] == $dehydrated::dehydrated_host.
 
 Default value: `$dehydrated::params::dehydrated_domain_validation_hook`
 
 ##### <a name="-dehydrated--dehydrated_hook"></a>`dehydrated_hook`
 
-Data type: `Optional[Dehydrated::Hook]`
+Data type: `Dehydrated::Hook`
 
 Name of the hook script dehydrated will use to validate the authorization request. The hook script
 must live in the $dehydrated_hooks_dir on $dehydrated::dehydrated_host.
@@ -461,7 +472,7 @@ Default value: `$dehydrated::params::build_pfx_files`
 
 Data type: `Optional[String]`
 
-
+Preferred dehydrated CA chain to use
 
 Default value: `$dehydrated::params::preferred_chain`
 
@@ -475,6 +486,19 @@ A description of what this class does
 
 ```puppet
 include dehydrated::params
+```
+
+### <a name="dehydrated--setup--requests"></a>`dehydrated::setup::requests`
+
+We collect all request information from puppetdb, clean, enrich and merge it
+to create requests.json on the dehydrated host
+
+#### Examples
+
+##### 
+
+```puppet
+include dehydrated::setup::requests
 ```
 
 ## Defined types
@@ -510,6 +534,7 @@ The following parameters are available in the `dehydrated::certificate` defined 
 * [`subject_alternative_names`](#-dehydrated--certificate--subject_alternative_names)
 * [`challengetype`](#-dehydrated--certificate--challengetype)
 * [`algorithm`](#-dehydrated--certificate--algorithm)
+* [`key_size`](#-dehydrated--certificate--key_size)
 * [`dh_param_size`](#-dehydrated--certificate--dh_param_size)
 * [`dehydrated_host`](#-dehydrated--certificate--dehydrated_host)
 * [`dehydrated_environment`](#-dehydrated--certificate--dehydrated_environment)
@@ -567,6 +592,14 @@ You can specify a different algorithm for each certificate here.
 
 Default value: `$dehydrated::algorithm`
 
+##### <a name="-dehydrated--certificate--key_size"></a>`key_size`
+
+Data type: `Integer[768]`
+
+Size of the key if we create a new one.  Only used if algorithm is 'rsa'.
+
+Default value: `$dehydrated::key_size`
+
 ##### <a name="-dehydrated--certificate--dh_param_size"></a>`dh_param_size`
 
 Data type: `Integer[768]`
@@ -580,7 +613,7 @@ Default value: `$dehydrated::dh_param_size`
 
 Data type: `Stdlib::Fqdn`
 
-$::fqdn of the host which is responsible to request the certificates from
+$trusted['certname'] of the host which is responsible to request the certificates from
 the Let's Encrypt CA. Defaults to $dehydrated::dehydrated_host where you can
 configure your default.
 
@@ -646,7 +679,7 @@ Default value: `undef`
 
 Data type: `Optional[String]`
 
-
+Preferred letsencrypt CA chain you want to use
 
 Default value: `$dehydrated::preferred_chain`
 
@@ -848,7 +881,7 @@ usually discover the appropriate provider for your platform.
 
 The key size, used for RSA only.
 
-Default value: `2048`
+Default value: `3072`
 
 ### <a name="dehydrated_pfx"></a>`dehydrated_pfx`
 
