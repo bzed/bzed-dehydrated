@@ -194,7 +194,7 @@ The cerfificates take some time to appear on the target host. This is due to the
 
 ## Development
 
-Please use the github issue tracker and send pull requests. Make sure that your pull requests keep travis happy!
+Please use the github issue tracker and send pull requests. Make sure that your pull requests keep pdk validate/test unit happy!
 
 ### For a release:
  -  Update gh\_pages:
@@ -204,10 +204,6 @@ Please use the github issue tracker and send pull requests. Make sure that your 
  -  Update REFERENCE.md:
 
         puppet strings generate --format markdown --out REFERENCE.md
-
- -  Create changelog:
-
-        bundle exec rake changelog
 
  -  Release:
 
