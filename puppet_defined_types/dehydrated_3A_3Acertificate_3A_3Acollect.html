@@ -240,16 +240,7 @@
 98
 99
 100
-101
-102
-103
-104
-105
-106
-107
-108
-109
-110</pre>
+101</pre>
       </td>
       <td>
         <pre class="code"><span class="info file"># File 'manifests/certificate/collect.pp', line 15</span>
@@ -267,7 +258,7 @@ define dehydrated::certificate::collect (
     fail(&#39;You must include the dehydrated base class first.&#39;)
   }
 
-  if ($dehydrated::params::dehydrated_puppetmaster == $facts[&#39;networking&#39;][&#39;fqdn&#39;]) {
+  if ($dehydrated::params::dehydrated_puppetmaster == $trusted[&#39;certname&#39;]) {
     # we are on a puppetmaster.
     # use file() to retrieve files.
     $dehydrated_requests_dir = $dehydrated::dehydrated_requests_dir
@@ -315,38 +306,29 @@ define dehydrated::certificate::collect (
 
   if ($crt and $crt =~ Dehydrated::CRT) {
     @@dehydrated::certificate::transfer { &quot;${name}-transfer-crt&quot; :
-      file_type    =&gt; &#39;crt&#39;,
-      request_dn   =&gt; $request_dn,
-      request_fqdn =&gt; $request_fqdn,
-      file_content =&gt; $crt,
-      tag          =&gt; [
-        &quot;request_fqdn:${request_fqdn}&quot;,
-        &quot;request_base_filename:${request_base_filename}&quot;,
-      ],
+      file_type             =&gt; &#39;crt&#39;,
+      request_dn            =&gt; $request_dn,
+      request_fqdn          =&gt; $request_fqdn,
+      file_content          =&gt; $crt,
+      request_base_filename =&gt; $request_base_filename,
     }
   }
   if ($ca and $ca =~ Dehydrated::CRT) {
     @@dehydrated::certificate::transfer { &quot;${name}-transfer-ca&quot; :
-      file_type    =&gt; &#39;ca&#39;,
-      request_dn   =&gt; $request_dn,
-      request_fqdn =&gt; $request_fqdn,
-      file_content =&gt; $ca,
-      tag          =&gt; [
-        &quot;request_fqdn:${request_fqdn}&quot;,
-        &quot;request_base_filename:${request_base_filename}&quot;,
-      ],
+      file_type             =&gt; &#39;ca&#39;,
+      request_dn            =&gt; $request_dn,
+      request_fqdn          =&gt; $request_fqdn,
+      file_content          =&gt; $ca,
+      request_base_filename =&gt; $request_base_filename,
     }
   }
   if ($ocsp) {
     @@dehydrated::certificate::transfer { &quot;${name}-transfer-ocsp&quot; :
-      file_type    =&gt; &#39;ocsp&#39;,
-      request_dn   =&gt; $request_dn,
-      request_fqdn =&gt; $request_fqdn,
-      file_content =&gt; $ocsp,
-      tag          =&gt; [
-        &quot;request_fqdn:${request_fqdn}&quot;,
-        &quot;request_base_filename:${request_base_filename}&quot;,
-      ],
+      file_type             =&gt; &#39;ocsp&#39;,
+      request_dn            =&gt; $request_dn,
+      request_fqdn          =&gt; $request_fqdn,
+      file_content          =&gt; $ocsp,
+      request_base_filename =&gt; $request_base_filename,
     }
   }
 }</pre>

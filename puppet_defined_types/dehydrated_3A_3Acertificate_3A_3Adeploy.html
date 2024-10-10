@@ -217,7 +217,16 @@
 93
 94
 95
-96</pre>
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105</pre>
       </td>
       <td>
         <pre class="code"><span class="info file"># File 'manifests/certificate/deploy.pp', line 10</span>
@@ -278,20 +287,24 @@ define dehydrated::certificate::deploy (
   }
 
   concat::fragment { &quot;${dn}_crt&quot; :
-    target =&gt; $crt_full_chain,
-    source =&gt; $crt,
-    order  =&gt; &#39;10&#39;,
+    target  =&gt; $crt_full_chain,
+    source  =&gt; $crt,
+    order   =&gt; &#39;10&#39;,
+    require =&gt; File[$crt],
   }
+
   concat::fragment { &quot;${dn}_dh&quot; :
-    target =&gt; $crt_full_chain,
-    source =&gt; $dh,
-    order  =&gt; &#39;30&#39;,
+    target  =&gt; $crt_full_chain,
+    source  =&gt; $dh,
+    order   =&gt; &#39;30&#39;,
+    require =&gt; File[$dh],
   }
 
   concat::fragment { &quot;${dn}_ca&quot; :
-    target =&gt; $crt_full_chain,
-    source =&gt; $ca,
-    order  =&gt; &#39;50&#39;,
+    target  =&gt; $crt_full_chain,
+    source  =&gt; $ca,
+    order   =&gt; &#39;50&#39;,
+    require =&gt; File[$ca],
   }
 
   if ($dehydrated::build_pfx_files) {
@@ -307,6 +320,11 @@ define dehydrated::certificate::deploy (
     ca           =&gt; $ca,
     certificate  =&gt; $crt,
     private_key  =&gt; $key,
+    require      =&gt; [
+      File[$crt],
+      File[$ca],
+      File[$key],
+    ],
   }
 }</pre>
       </td>

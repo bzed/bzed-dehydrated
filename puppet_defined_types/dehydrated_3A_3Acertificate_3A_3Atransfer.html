@@ -134,6 +134,17 @@
   
     <li>
       
+        <span class='name'>request_base_filename</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
         <span class='name'>file_content</span>
       
       
@@ -164,48 +175,7 @@
 22
 23
 24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47
-48
-49
-50
-51
-52
-53
-54
-55
-56
-57
-58
-59
-60
-61
-62
-63
-64
-65
-66</pre>
+25</pre>
       </td>
       <td>
         <pre class="code"><span class="info file"># File 'manifests/certificate/transfer.pp', line 15</span>
@@ -214,53 +184,12 @@ define dehydrated::certificate::transfer (
   Enum[&#39;crt&#39;, &#39;ca&#39;, &#39;ocsp&#39;] $file_type,
   Dehydrated::DN $request_dn,
   Stdlib::Fqdn $request_fqdn,
+  String $request_base_filename,
   Variant[String, Binary] $file_content,
 ) {
-  if ! defined(Class[&#39;dehydrated&#39;]) {
-    fail(&#39;You must include the dehydrated base class first.&#39;)
-  }
-  require dehydrated::setup
-
-  $dehydrated_domains = $facts[&#39;dehydrated_domains&#39;]
-  $_config = $dehydrated_domains[$request_dn]
-  $base_filename = $_config[&#39;base_filename&#39;]
-
-  $base_dir = $dehydrated::base_dir
-  $csr_dir  = $dehydrated::csr_dir
-  $key_dir  = $dehydrated::key_dir
-  $crt_dir  = $dehydrated::crt_dir
-
-  $crt = &quot;${crt_dir}/${base_filename}.crt&quot;
-  $ca = &quot;${crt_dir}/${base_filename}_ca.pem&quot;
-  $ocsp = &quot;${crt}.ocsp&quot;
-
-  File {
-    ensure =&gt; file,
-    owner  =&gt; $dehydrated::user,
-    group  =&gt; $dehydrated::group,
-    mode   =&gt; &#39;0644&#39;,
-  }
-
-  case $file_type {
-    &#39;crt&#39; : {
-      file { $crt :
-        content =&gt; $file_content,
-      }
-    }
-    &#39;ca&#39; : {
-      file { $ca :
-        content =&gt; $file_content,
-      }
-    }
-    &#39;ocsp&#39; : {
-      file { $ocsp :
-        content =&gt; base64(&#39;decode&#39;, $file_content),
-      }
-    }
-    default : {
-      fail(&#39;unknown file type! this should never happen!&#39;)
-    }
-  }
+  fail(
+    &#39;Do not instantiate this define, its only used to create exported ressources, collected from puppetdb&#39;
+  )
 }</pre>
       </td>
     </tr>

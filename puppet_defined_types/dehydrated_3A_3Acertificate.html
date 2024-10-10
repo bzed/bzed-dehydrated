@@ -199,6 +199,23 @@ You can specify a different algorithm for each certificate here.</p>
   
     <li>
       
+        <span class='name'>key_size</span>
+      
+      
+        <span class='type'>(<tt>Integer[768]</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>$dehydrated::key_size</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Size of the key if we create a new one.  Only used if algorithm is &#39;rsa&#39;.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
         <span class='name'>dh_param_size</span>
       
       
@@ -227,7 +244,7 @@ which defaults to 2048. You can specify a different DH param size for each certi
       
       
         &mdash;
-        <div class='inline'><p>$::fqdn of the host which is responsible to request the certificates from
+        <div class='inline'><p>$trusted[&#39;certname&#39;] of the host which is responsible to request the certificates from
 the Let&#39;s Encrypt CA. Defaults to $dehydrated::dehydrated_host where you can
 configure your default.</p>
 </div>
@@ -346,6 +363,10 @@ can configure the default for your setup.</p>
         <em class="default">(defaults to: <tt>$dehydrated::preferred_chain</tt>)</em>
       
       
+        &mdash;
+        <div class='inline'><p>Preferred letsencrypt CA chain you want to use</p>
+</div>
+      
     </li>
   
 </ul>
@@ -359,10 +380,6 @@ can configure the default for your setup.</p>
         <pre class="lines">
 
 
-72
-73
-74
-75
 76
 77
 78
@@ -422,10 +439,14 @@ can configure the default for your setup.</p>
 132
 133
 134
-135</pre>
+135
+136
+137
+138
+139</pre>
       </td>
       <td>
-        <pre class="code"><span class="info file"># File 'manifests/certificate.pp', line 72</span>
+        <pre class="code"><span class="info file"># File 'manifests/certificate.pp', line 76</span>
 
 define dehydrated::certificate (
   Dehydrated::DN $dn = $name,
@@ -433,6 +454,7 @@ define dehydrated::certificate (
   Array[Dehydrated::DN] $subject_alternative_names = [],
   Dehydrated::Challengetype $challengetype = $dehydrated::challengetype,
   Dehydrated::Algorithm $algorithm = $dehydrated::algorithm,
+  Integer[768] $key_size = $dehydrated::key_size,
   Integer[768] $dh_param_size = $dehydrated::dh_param_size,
   Stdlib::Fqdn $dehydrated_host = $dehydrated::dehydrated_host,
   Hash $dehydrated_environment = $dehydrated::dehydrated_environment,
@@ -468,7 +490,7 @@ define dehydrated::certificate (
   }
 
   $json_fragment = to_json($domain_config)
-  ::concat::fragment { &quot;${facts[&#39;networking&#39;][&#39;fqdn&#39;]}-${dn}&quot; :
+  ::concat::fragment { &quot;${trusted[&#39;certname&#39;]}-${dn}&quot; :
     target  =&gt; $dehydrated::params::domainfile,
     content =&gt; $json_fragment,
     order   =&gt; &#39;50&#39;,
@@ -479,12 +501,11 @@ define dehydrated::certificate (
     subject_alternative_names =&gt; $subject_alternative_names,
     key_password              =&gt; $key_password,
     algorithm                 =&gt; $algorithm,
+    size                      =&gt; $key_size,
   }
 
-  $ready_for_merge = pick(
-    $facts.dig(&#39;dehydrated_domains&#39;, $dn, &#39;ready_for_merge&#39;),
-    false
-  )
+  $ready_for_merge = $dn in $dehydrated::ready_for_merge
+
   if $ready_for_merge {
     dehydrated::certificate::deploy { $dn :
       key_password =&gt; $key_password,

@@ -223,20 +223,14 @@ your code.</p>
 132
 133
 134
-135
-136
-137
-138
-139
-140
-141
-142
-143</pre>
+135</pre>
       </td>
       <td>
         <pre class="code"><span class="info file"># File 'manifests/setup/dehydrated_host.pp', line 9</span>
 
 class dehydrated::setup::dehydrated_host {
+  assert_private()
+
   if ! defined(Class[&#39;dehydrated&#39;]) {
     fail(&#39;You must include the dehydrated base class first; also this class is not supposed to be included on its own.&#39;)
   }
@@ -293,10 +287,10 @@ class dehydrated::setup::dehydrated_host {
       mode   =&gt; &#39;0750&#39;,
   }
 
-  $dehydrated_host_script = join( [$dehydrated::dehydrated_base_dir, &#39;dehydrated_job_runner.rb&#39;],
+  $dehydrated_host_script = join([$dehydrated::dehydrated_base_dir, &#39;dehydrated_job_runner.rb&#39;],
     $dehydrated::params::path_seperator
   )
-  $dehydrated_host_script_config = join( [$dehydrated::dehydrated_base_dir, &#39;config.json&#39;],
+  $dehydrated_host_script_config = join([$dehydrated::dehydrated_base_dir, &#39;config.json&#39;],
     $dehydrated::params::path_seperator
   )
 
@@ -359,16 +353,6 @@ class dehydrated::setup::dehydrated_host {
 
   if ($dehydrated::manage_packages) {
     ensure_packages($dehydrated::dehydrated_host_packages)
-  }
-
-  concat { $dehydrated::dehydrated_requests_config :
-    ensure  =&gt; present,
-    format  =&gt; &#39;json-pretty&#39;,
-    require =&gt; [
-      File[$dehydrated::dehydrated_base_dir],
-      File[$dehydrated::dehydrated_requests_dir],
-      File[$dehydrated::dehydrated_wellknown_dir],
-    ],
   }
 }</pre>
       </td>

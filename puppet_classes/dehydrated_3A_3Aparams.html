@@ -231,7 +231,8 @@
 124
 125
 126
-127</pre>
+127
+128</pre>
       </td>
       <td>
         <pre class="code"><span class="info file"># File 'manifests/params.pp', line 8</span>
@@ -339,6 +340,7 @@ class dehydrated::params {
   $dh_param_size = 2048
   $challengetype = &#39;dns-01&#39;
   $algorithm = &#39;rsa&#39;
+  $key_size = 3072 # for rsa only
 
   # dehydrated setting
   $dehydrated_git_url = &#39;https://github.com/dehydrated-io/dehydrated.git&#39;

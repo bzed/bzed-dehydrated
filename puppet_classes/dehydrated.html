@@ -351,6 +351,24 @@ see dehydrated::certificate.</p>
   
     <li>
       
+        <span class='name'>key_size</span>
+      
+      
+        <span class='type'>(<tt>Integer[768]</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>$dehydrated::params::key_size</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Size of the key if we create a new one.  Only used if algorithm is &#39;rsa&#39;.
+You can specify a different size for each certificate; see dehydrated::certificate.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
         <span class='name'>dehydrated_base_dir</span>
       
       
@@ -361,7 +379,7 @@ see dehydrated::certificate.</p>
       
       
         &mdash;
-        <div class='inline'><p>Only used if $facts[&#39;fqdn&#39;] == $dehydrated::dehydrated_host. Path where the dehydrated
+        <div class='inline'><p>Only used if $trusted[&#39;certname&#39;] == $dehydrated::dehydrated_host. Path where the dehydrated
 script and configurations/csrs are being stored. Defaults to &#39;/opt/dehydrated&#39;.</p>
 </div>
       
@@ -379,7 +397,7 @@ script and configurations/csrs are being stored. Defaults to &#39;/opt/dehydrate
       
       
         &mdash;
-        <div class='inline'><p>Only used if $facts[&#39;fqdn&#39;] == $dehydrated::dehydrated_host.
+        <div class='inline'><p>Only used if $trusted[&#39;certname&#39;] == $dehydrated::dehydrated_host.
 Path where the dehydrated script is being checkout out into using git.
 Defaults to $dehydrated_base_dir/dehydrated.</p>
 </div>
@@ -398,7 +416,7 @@ Defaults to $dehydrated_base_dir/dehydrated.</p>
       
       
         &mdash;
-        <div class='inline'><p>Only used if $facts[&#39;fqdn&#39;] == $dehydrated::dehydrated_host.
+        <div class='inline'><p>Only used if $trusted[&#39;certname&#39;] == $dehydrated::dehydrated_host.
 Version of the dehydrated script we want to use.
 Change it on your own risk.</p>
 </div>
@@ -417,7 +435,7 @@ Change it on your own risk.</p>
       
       
         &mdash;
-        <div class='inline'><p>Only used if $facts[&#39;fqdn&#39;] == $dehydrated::dehydrated_host.
+        <div class='inline'><p>Only used if $trusted[&#39;certname&#39;] == $dehydrated::dehydrated_host.
 Git url to clone dehydrated from. If you have an internal mirror/version, you can override
 the default github url here.</p>
 </div>
@@ -440,7 +458,7 @@ the default github url here.</p>
 Required on that host, on all others it is used as default for certificates requested
 via dehydrated::certificate. You can specify a different dehydrated_host on each
 certificate if you want to.
-If $facts[&#39;fqdn&#39;] == $dehydrated::dehydrated_host, dehydrated will be installed
+If $trusted[&#39;certname&#39;] == $dehydrated::dehydrated_host, dehydrated will be installed
 and the certificate request cronjob will be setup.</p>
 </div>
       
@@ -458,7 +476,7 @@ and the certificate request cronjob will be setup.</p>
       
       
         &mdash;
-        <div class='inline'><p>Only used if $facts[&#39;fqdn&#39;] == $dehydrated::dehydrated_host.
+        <div class='inline'><p>Only used if $trusted[&#39;certname&#39;] == $dehydrated::dehydrated_host.
 Path where requests that need to be handled are being stored.</p>
 </div>
       
@@ -476,7 +494,7 @@ Path where requests that need to be handled are being stored.</p>
       
       
         &mdash;
-        <div class='inline'><p>Only used if $facts[&#39;fqdn&#39;] == $dehydrated::dehydrated_host.</p>
+        <div class='inline'><p>Only used if $trusted[&#39;certname&#39;] == $dehydrated::dehydrated_host.</p>
 </div>
       
     </li>
@@ -493,7 +511,7 @@ Path where requests that need to be handled are being stored.</p>
       
       
         &mdash;
-        <div class='inline'><p>Only used if $facts[&#39;fqdn&#39;] == $dehydrated::dehydrated_host.</p>
+        <div class='inline'><p>Only used if $trusted[&#39;certname&#39;] == $dehydrated::dehydrated_host.</p>
 </div>
       
     </li>
@@ -510,7 +528,7 @@ Path where requests that need to be handled are being stored.</p>
       
       
         &mdash;
-        <div class='inline'><p>Only used if $facts[&#39;fqdn&#39;] == $dehydrated::dehydrated_host.</p>
+        <div class='inline'><p>Only used if $trusted[&#39;certname&#39;] == $dehydrated::dehydrated_host.</p>
 </div>
       
     </li>
@@ -527,7 +545,7 @@ Path where requests that need to be handled are being stored.</p>
       
       
         &mdash;
-        <div class='inline'><p>Only used if $facts[&#39;fqdn&#39;] == $dehydrated::dehydrated_host.</p>
+        <div class='inline'><p>Only used if $trusted[&#39;certname&#39;] == $dehydrated::dehydrated_host.</p>
 </div>
       
     </li>
@@ -544,7 +562,7 @@ Path where requests that need to be handled are being stored.</p>
       
       
         &mdash;
-        <div class='inline'><p>Only used if $facts[&#39;fqdn&#39;] == $dehydrated::dehydrated_host.</p>
+        <div class='inline'><p>Only used if $trusted[&#39;certname&#39;] == $dehydrated::dehydrated_host.</p>
 </div>
       
     </li>
@@ -561,7 +579,7 @@ Path where requests that need to be handled are being stored.</p>
       
       
         &mdash;
-        <div class='inline'><p>Only used if $facts[&#39;fqdn&#39;] == $dehydrated::dehydrated_host.</p>
+        <div class='inline'><p>Only used if $trusted[&#39;certname&#39;] == $dehydrated::dehydrated_host.</p>
 </div>
       
     </li>
@@ -578,7 +596,7 @@ Path where requests that need to be handled are being stored.</p>
       
       
         &mdash;
-        <div class='inline'><p>Only used if $facts[&#39;fqdn&#39;] == $dehydrated::dehydrated_host.</p>
+        <div class='inline'><p>Only used if $trusted[&#39;certname&#39;] == $dehydrated::dehydrated_host.</p>
 </div>
       
     </li>
@@ -588,7 +606,7 @@ Path where requests that need to be handled are being stored.</p>
         <span class='name'>dehydrated_hook</span>
       
       
-        <span class='type'>(<tt>Optional[Dehydrated::Hook]</tt>)</span>
+        <span class='type'>(<tt>Dehydrated::Hook</tt>)</span>
       
       
         <em class="default">(defaults to: <tt>&quot;${challengetype}.sh&quot;</tt>)</em>
@@ -796,6 +814,10 @@ Defaults to true on windows, to false on all other OS.</p>
         <em class="default">(defaults to: <tt>$dehydrated::params::preferred_chain</tt>)</em>
       
       
+        &mdash;
+        <div class='inline'><p>Preferred dehydrated CA chain to use</p>
+</div>
+      
     </li>
   
 </ul>
@@ -809,11 +831,6 @@ Defaults to true on windows, to false on all other OS.</p>
         <pre class="lines">
 
 
-134
-135
-136
-137
-138
 139
 140
 141
@@ -927,10 +944,64 @@ Defaults to true on windows, to false on all other OS.</p>
 249
 250
 251
-252</pre>
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306</pre>
       </td>
       <td>
-        <pre class="code"><span class="info file"># File 'manifests/init.pp', line 134</span>
+        <pre class="code"><span class="info file"># File 'manifests/init.pp', line 139</span>
 
 class dehydrated (
   Stdlib::Absolutepath $base_dir = $dehydrated::params::base_dir,
@@ -947,6 +1018,7 @@ class dehydrated (
   Integer[768] $dh_param_size = $dehydrated::params::dh_param_size,
   Dehydrated::Challengetype $challengetype = $dehydrated::params::challengetype,
   Dehydrated::Algorithm $algorithm = $dehydrated::params::algorithm,
+  Integer[768] $key_size = $dehydrated::params::key_size,
 
   Stdlib::Absolutepath $dehydrated_base_dir = $dehydrated::params::dehydrated_base_dir,
   Stdlib::Absolutepath $dehydrated_git_dir = &quot;${dehydrated_base_dir}/dehydrated&quot;,
@@ -963,7 +1035,7 @@ class dehydrated (
   Array $dehydrated_host_packages = $dehydrated::params::dehydrated_host_packages,
   Hash $dehydrated_environment = $dehydrated::params::dehydrated_environment,
   Optional[Dehydrated::Hook] $dehydrated_domain_validation_hook = $dehydrated::params::dehydrated_domain_validation_hook,
-  Optional[Dehydrated::Hook] $dehydrated_hook = &quot;${challengetype}.sh&quot;,
+  Dehydrated::Hook $dehydrated_hook = &quot;${challengetype}.sh&quot;,
   Optional[Dehydrated::Email] $dehydrated_contact_email = $dehydrated::params::dehydrated_contact_email,
   Boolean $accounts_per_agent = true,
 
@@ -994,7 +1066,7 @@ class dehydrated (
   }
 
   $dehydrated_domains = $facts[&#39;dehydrated_domains&#39;]
-  $dehydrated_domains.each |Dehydrated::DN $_dn, Hash $_config| {
+  $ready_for_merge = $dehydrated_domains.map |Dehydrated::DN $_dn, Hash $_config| {
     $_base_filename = $_config[&#39;base_filename&#39;]
     $_dh_param_size = $_config[&#39;dh_param_size&#39;]
     $_csr = $_config[&#39;csr&#39;]
@@ -1008,7 +1080,7 @@ class dehydrated (
     }
 
     $request_name = join(
-      concat( [$facts[&#39;networking&#39;][&#39;fqdn&#39;], $_dn],
+      concat([$trusted[&#39;certname&#39;], $_dn],
         $_subject_alternative_names
       ),
     &#39;-&#39;)
@@ -1016,23 +1088,71 @@ class dehydrated (
     $_request_config = merge($_fqdn_based_config, $_config)
     if $_csr =~ Dehydrated::CSR {
       @@dehydrated::certificate::request { $request_name :
-        request_fqdn =&gt; $facts[&#39;networking&#39;][&#39;fqdn&#39;],
-        config       =&gt; $_request_config,
-        dn           =&gt; $_dn,
-        tag          =&gt; &quot;dehydrated-request-for-${_dehydrated_host}&quot;,
+        request_fqdn    =&gt; $trusted[&#39;certname&#39;],
+        config          =&gt; $_request_config,
+        dn              =&gt; $_dn,
+        dehydrated_host =&gt; $_dehydrated_host,
       }
     }
 
-    Dehydrated::Certificate::Transfer&lt;&lt;|
-    tag == &quot;request_fqdn:${facts[&#39;networking&#39;][&#39;fqdn&#39;]}&quot; and
-    tag == &quot;request_base_filename:${_base_filename}&quot;
-    |&gt;&gt;
-  }
+    $transfer_query = @(&quot;EOF&quot;:json)
+      [&quot;from&quot;, &quot;resources&quot;,
+        [ &quot;extract&quot;,
+          [
+            &quot;title&quot;,
+            &quot;certname&quot;,
+            &quot;parameters.file_type&quot;,
+            &quot;parameters.request_dn&quot;,
+            &quot;parameters.file_content&quot;
+          ],
+          [
+            &quot;and&quot;,
+            [ &quot;=&quot;, &quot;certname&quot;, &quot;${_dehydrated_host}&quot;],
+            [ &quot;=&quot;, &quot;type&quot;, &quot;Dehydrated::Certificate::Transfer&quot; ],
+            [ &quot;=&quot;, &quot;parameters.request_fqdn&quot;, &quot;${trusted[&#39;certname&#39;]}&quot; ],
+            [ &quot;=&quot;, &quot;parameters.request_base_filename&quot;, &quot;${_base_filename}&quot; ],
+            [ &quot;=&quot;, &quot;exported&quot;, true ]
+          ]
+        ]
+      ]
+      | EOF
 
-  if ($dehydrated_host == $facts[&#39;networking&#39;][&#39;fqdn&#39;]) {
+    $transfer_data = puppetdb_query($transfer_query)
+    $transfer_data.each |$transfer| {
+      if ($transfer[&#39;parameters.file_type&#39;] == &#39;ocsp&#39;) {
+        $content = base64(&#39;decode&#39;, $transfer[&#39;parameters.file_content&#39;])
+      } else {
+        $content = $transfer[&#39;parameters.file_content&#39;]
+      }
+
+      $filenames = {
+        &#39;ca&#39;   =&gt; &quot;${crt_dir}/${_base_filename}_ca.pem&quot;,
+        &#39;crt&#39;  =&gt; &quot;${crt_dir}/${_base_filename}.crt&quot;,
+        &#39;ocsp&#39; =&gt; &quot;${crt_dir}/${_base_filename}.crt.ocsp&quot;,
+      }
+
+      $filename = $filenames[$transfer[&#39;parameters.file_type&#39;]]
+      file { $filename:
+        ensure  =&gt; file,
+        owner   =&gt; $user,
+        group   =&gt; $group,
+        mode    =&gt; &#39;0644&#39;,
+        content =&gt; $content,
+      }
+    }
+
+    # mark as ready for merge in case we have 3 files to transfer.
+    if length($transfer_data) == 3 {
+      $_dn
+    } else {
+      undef
+    }
+  }.delete_undef_values()
+
+  if ($dehydrated_host == $trusted[&#39;certname&#39;]) {
     require dehydrated::setup::dehydrated_host
-
-    Dehydrated::Certificate::Request&lt;&lt;| tag == &quot;dehydrated-request-for-${dehydrated_host}&quot; |&gt;&gt;
+    include dehydrated::setup::requests
+    Class[&#39;dehydrated::setup::dehydrated_host&#39;] -&gt; Class[&#39;dehydrated::setup::requests&#39;]
 
     if &#39;dehydrated_certificates&#39; in $facts {
       $dehydrated_certificates = $facts[&#39;dehydrated_certificates&#39;]
