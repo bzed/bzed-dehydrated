@@ -1,5 +1,12 @@
 # Change log
 
+## [1.0.0](https://github.com/bzed/bzed-dehydrated/tree/0.1.10) (2024-10-10)
+
+The puppet.run conference release.
+**IMPORTANT**: Update to and run 0.1.10 before updating to 1.0.0
+
+[Full Changelog](https://github.com/bzed/bzed-dehydrated/compare/0.1.10...1.0.0)
+
 ## [0.1.10](https://github.com/bzed/bzed-dehydrated/tree/0.1.10) (2024-06-11)
 
 [Full Changelog](https://github.com/bzed/bzed-dehydrated/compare/0.1.9...0.1.10)
