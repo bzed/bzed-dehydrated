@@ -211,7 +211,7 @@ Please use the github issue tracker and send pull requests. Make sure that your 
 
  -  Bump version number: bump/change the version in metadata.json.
 
-## Support and help
+### Support and help
 There is no official commercial support for this puppet module, but I'm happy to help you if you open a bug in the issue tracker.
 Please make sure to add enough information about what you have done so far and how your setup looks like.
 I'm also reachable by [email](mailto:bernd@bzed.de). Use GPG to encrypt confidential data:
