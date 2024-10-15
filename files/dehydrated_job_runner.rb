@@ -218,13 +218,11 @@ def handle_request(fqdn, dn, config)
   subject_alternative_names = config['subject_alternative_names'].sort.uniq
   dehydrated_domain_validation_hook_script = config['dehydrated_domain_validation_hook_script']
   dehydrated_hook_script = config['dehydrated_hook_script']
-  key_fingerprint_sha256 = config.dig('fingerprints', 'sha256')
 
   new_dn_config = {
     'letsencrypt_ca_hash' => letsencrypt_ca_hash,
     'dn' => dn,
     'subject_alternative_names' => subject_alternative_names,
-    'key_fingerprint_sha256' => key_fingerprint_sha256,
   }
   # read old dn config if it exists
   current_dn_config = if File.exist?(dn_config_file)
