@@ -69,7 +69,7 @@ Puppet::Type.type(:dehydrated_pfx).provide(:openssl) do
       )
     rescue OpenSSL::PKCS12::PKCS12Error
       File.delete(resource[:path]) if File.exist?(resource[:path])
-      false
+      return false
     rescue => e
       raise Puppet::Error, "Unknown error while creating pfx file: #{e.class} - #{e.message}"
     end
