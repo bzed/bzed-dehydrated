@@ -195,6 +195,27 @@ def cert_still_valid(crt_file)
   end
 end
 
+def update_csr(csr_content, csr_file, crt_file, ca_file)
+  # only update csr if we have new content
+  needs_update = false
+  if File.exist?(csr_file)
+    old_csr_content = File.read(csr_file)
+    if old_csr_content != csr_content
+      needs_update = true
+    end
+  else
+    needs_update = true
+  end
+  if needs_update
+    File.delete(ca_file) if File.exist?(ca_file)
+    File.delete(crt_file) if File.exist?(crt_file)
+
+    File.write(csr_file, csr_content)
+  end
+
+  needs_update
+end
+
 def handle_request(fqdn, dn, config)
   # set environment from config
   env = config['dehydrated_environment']
@@ -212,19 +233,18 @@ def handle_request(fqdn, dn, config)
   base_filename = config['base_filename']
   dn_config_file = File.join(request_base_dir, "#{base_filename}.json")
   crt_file = File.join(request_base_dir, "#{base_filename}.crt")
+  csr_content = config['csr_content']
   csr_file = File.join(request_base_dir, "#{base_filename}.csr")
   ca_file = File.join(request_base_dir, "#{base_filename}_ca.pem")
   ocsp_file = "#{crt_file}.ocsp"
   subject_alternative_names = config['subject_alternative_names'].sort.uniq
   dehydrated_domain_validation_hook_script = config['dehydrated_domain_validation_hook_script']
   dehydrated_hook_script = config['dehydrated_hook_script']
-  key_fingerprint_sha256 = config.dig('fingerprints', 'sha256')
 
   new_dn_config = {
     'letsencrypt_ca_hash' => letsencrypt_ca_hash,
     'dn' => dn,
     'subject_alternative_names' => subject_alternative_names,
-    'key_fingerprint_sha256' => key_fingerprint_sha256,
   }
   # read old dn config if it exists
   current_dn_config = if File.exist?(dn_config_file)
@@ -232,17 +252,6 @@ def handle_request(fqdn, dn, config)
                       else
                         new_dn_config
                       end
-  # use >= to allow to add new things to the config hash
-  force_update = !(if Gem::Version.new(RUBY_VERSION) > Gem::Version.new('2.3')
-                     new_dn_config >= current_dn_config
-                   else
-                     current_dn_config.reduce(true) do |uptodate, n|
-                       c = n[0]
-                       s = n[1]
-                       uptodate && (new_dn_config[c] == s)
-                     end
-                   end
-                  )
 
   # also force update in case the csr is newer than the crt
   if File.exist?(crt_file)
@@ -270,6 +279,21 @@ def handle_request(fqdn, dn, config)
       return ['Account update failed', stdout, stderr, status] if status > 0
     end
   end
+
+  # use >= to allow to add new things to the config hash
+  force_update = !(if Gem::Version.new(RUBY_VERSION) > Gem::Version.new('2.3')
+                     new_dn_config >= current_dn_config
+                   else
+                     current_dn_config.reduce(true) do |uptodate, n|
+                       c = n[0]
+                       s = n[1]
+                       uptodate && (new_dn_config[c] == s)
+                     end
+                   end
+                  )
+
+  # update csr and force to
+  force_update ||= update_csr(csr_content, csr_file, crt_file, ca_file)
 
   if !cert_still_valid(crt_file) || force_update || !cert_still_valid(ca_file)
     if dehydrated_domain_validation_hook_script && !dehydrated_domain_validation_hook_script.empty?
@@ -329,27 +353,10 @@ end
 
 def prepare_files(request_config)
   request_base_dir = request_config['request_base_dir']
-  csr_file = request_config['csr_file']
-  csr_content = request_config['csr_content']
   dehydrated_config = request_config['dehydrated_config']
   dehydrated_config_content = request_config['dehydrated_config_content']
 
   FileUtils.mkdir_p request_base_dir
-
-  # only update csr if we have new content
-  update_csr = false
-  if File.exist?(csr_file)
-    old_csr_content = File.read(csr_file)
-    if old_csr_content != csr_content
-      update_csr = true
-    end
-  else
-    update_csr = true
-  end
-  if update_csr
-    File.write(csr_file, csr_content)
-  end
-
   File.write(dehydrated_config, dehydrated_config_content)
 end
 

@@ -15,13 +15,11 @@ Puppet::Type.type(:dehydrated_pfx).provide(:openssl) do
   end
 
   def self.private_key(resource)
-    file = File.read(resource[:private_key])
-    if file.include?('BEGIN RSA PRIVATE KEY')
-      OpenSSL::PKey::RSA.new(file, resource[:key_password])
-    elsif file.include?('BEGIN EC PRIVATE KEY')
-      OpenSSL::PKey::EC.new(file, resource[:key_password])
-    else
-      raise Puppet::Error, 'Unknown private key type'
+    key = File.read(resource[:private_key])
+    begin
+      OpenSSL::PKey.read(key, resource[:key_password])
+    rescue OpenSSL::PKey::PKeyError
+      false
     end
   end
 
@@ -34,6 +32,7 @@ Puppet::Type.type(:dehydrated_pfx).provide(:openssl) do
         ca = self.class.certificate(resource[:ca], true)
         cert = self.class.certificate(resource[:certificate], false)
         key = self.class.private_key(resource)
+        return false unless key
         pfx_ca_serials = pfx.ca_certs.map { |pfx_cert| pfx_cert.serial.to_s }.sort
         ca_serials = ca.map { |pfx_cert| pfx_cert.serial.to_s }.sort
         pfx_ca_serials == ca_serials && \
@@ -58,13 +57,22 @@ Puppet::Type.type(:dehydrated_pfx).provide(:openssl) do
     cert = self.class.certificate(resource[:certificate], false)
     key = self.class.private_key(resource)
 
-    pfx = OpenSSL::PKCS12.create(
-      resource[:password],
-      resource[:pkcs12_name],
-      key,
-      cert,
-      ca,
-    )
+    return false unless key
+
+    begin
+      pfx = OpenSSL::PKCS12.create(
+        resource[:password],
+        resource[:pkcs12_name],
+        key,
+        cert,
+        ca,
+      )
+    rescue OpenSSL::PKCS12::PKCS12Error
+      File.delete(resource[:path]) if File.exist?(resource[:path])
+      return false
+    rescue => e
+      raise Puppet::Error, "Unknown error while creating pfx file: #{e.class} - #{e.message}"
+    end
 
     # use binary mode as windows is extra picky.
     File.open(resource[:path], 'wb') { |f| f.write(pfx.to_der) }

@@ -37,21 +37,6 @@ def get_cert_fingerprints(crt)
   digests
 end
 
-def get_key_fingerprints(keyfile)
-  privkey = OpenSSL::PKey.read(File.read(keyfile))
-  begin
-    pubkey_der = privkey.public_to_der
-  rescue NoMethodError
-    pubkey_der = privkey.public_key.to_der
-  end
-
-  digests = {
-    sha256: OpenSSL::Digest::SHA256.new(pubkey_der).to_s,
-  }
-
-  digests
-end
-
 Facter.add(:dehydrated_domains) do
   setcode do
     puppet_vardir = Facter.value(:puppet_vardir)
@@ -78,11 +63,6 @@ Facter.add(:dehydrated_domains) do
                          end
         # fingerprints
         key = File.join(key_dir, "#{base_filename}.key")
-        if File.exist?(key)
-          ret[dn]['fingerprints'] = get_key_fingerprints(key)
-        end
-
-        # CRT serial
         crt = File.join(crt_dir, "#{base_filename}.crt")
         if File.exist?(crt)
           ret[dn]['crt_serial'] = get_cert_serial(crt)
@@ -96,6 +76,7 @@ Facter.add(:dehydrated_domains) do
 
         ret[dn]['ready_for_merge'] = File.exist?(csr) &&
                                      File.exist?(crt) &&
+                                     File.exist?(key) &&
                                      File.exist?(dh) &&
                                      File.exist?(ca)
       end

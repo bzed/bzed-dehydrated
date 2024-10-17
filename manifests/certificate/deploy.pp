@@ -51,9 +51,10 @@ define dehydrated::certificate::deploy (
   }
 
   concat::fragment { "${dn}_key" :
-    target => $crt_full_chain_with_key,
-    source => $key,
-    order  => '01',
+    target  => $crt_full_chain_with_key,
+    source  => $key,
+    order   => '01',
+    require => Dehydrated_key[$key],
   }
   concat::fragment { "${dn}_fullchain" :
     target    => $crt_full_chain_with_key,
@@ -100,6 +101,7 @@ define dehydrated::certificate::deploy (
       File[$crt],
       File[$ca],
       File[$key],
+      Dehydrated_key[$key],
     ],
   }
 }

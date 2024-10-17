@@ -3,6 +3,7 @@
 
 require 'pathname'
 require 'openssl'
+
 Puppet::Type.type(:dehydrated_key).provide(:openssl) do
   desc 'Manages private keys for dehydrated with OpenSSL'
 
@@ -30,7 +31,16 @@ Puppet::Type.type(:dehydrated_key).provide(:openssl) do
   end
 
   def exists?
-    Pathname.new(resource[:path]).exist? && !File.read(resource[:path]).empty?
+    return false unless Pathname.new(resource[:path]).exist?
+    key = File.read(resource[:path])
+    return false if key.empty?
+    return false if key.include?('ENCRYPTED') && !resource[:password]
+    begin
+      key = OpenSSL::PKey.read(key, resource[:password])
+      true if key
+    rescue OpenSSL::PKey::PKeyError # wrong password or buggy key
+      false
+    end
   end
 
   def create

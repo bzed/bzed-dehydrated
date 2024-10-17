@@ -194,7 +194,7 @@ The cerfificates take some time to appear on the target host. This is due to the
 
 ## Development
 
-Please use the github issue tracker and send pull requests. Make sure that your pull requests keep travis happy!
+Please use the github issue tracker and send pull requests. Make sure that your pull requests keep pdk validate/test unit happy!
 
 ### For a release:
  -  Update gh\_pages:
@@ -205,17 +205,13 @@ Please use the github issue tracker and send pull requests. Make sure that your 
 
         puppet strings generate --format markdown --out REFERENCE.md
 
- -  Create changelog:
-
-        bundle exec rake changelog
-
  -  Release:
 
         pdk build
 
  -  Bump version number: bump/change the version in metadata.json.
 
-## Support and help
+### Support and help
 There is no official commercial support for this puppet module, but I'm happy to help you if you open a bug in the issue tracker.
 Please make sure to add enough information about what you have done so far and how your setup looks like.
 I'm also reachable by [email](mailto:bernd@bzed.de). Use GPG to encrypt confidential data:
