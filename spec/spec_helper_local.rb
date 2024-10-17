@@ -7,9 +7,11 @@ require 'spec_helper'
 
 RSpec.configure do |c|
   c.enable_pathname_stubbing = true
-  # c.after(:suite) do
-  #   RSpec::Puppet::Coverage.report!(95)
-  # end
+  Puppet::Parser::Functions.newfunction(:assert_private, type: :rvalue) do |args|
+  end
+  Puppet::Parser::Functions.newfunction(:puppetdb_query, type: :rvalue) do
+    []
+  end
 end
 WINDOWS = defined?(RSpec::Support) ? RSpec::Support::OS.windows? : !File::ALT_SEPARATOR.nil?
 
