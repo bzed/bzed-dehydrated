@@ -17,8 +17,7 @@ Puppet::Type.type(:dehydrated_pfx).provide(:openssl) do
   def self.private_key(resource)
     key = File.read(resource[:private_key])
     begin
-      key = OpenSSL::PKey.read(key, resource[:key_password])
-      true if key
+      OpenSSL::PKey.read(key, resource[:key_password])
     rescue OpenSSL::PKey::PKeyError
       false
     end
