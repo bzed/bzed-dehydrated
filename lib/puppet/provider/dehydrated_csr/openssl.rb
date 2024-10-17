@@ -180,6 +180,7 @@ Puppet::Type.type(:dehydrated_csr).provide(:openssl) do
                                 end
     attributes = [self.class.create_san_attribute(subject_alternative_names)]
     private_key = self.class.private_key(resource)
+    return false unless private_key
     digest = resource[:digest]
     x509_csr = self.class.create_x509_csr(subject, attributes, private_key, digest)
     File.write(resource[:path], x509_csr)

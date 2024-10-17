@@ -31,15 +31,16 @@ Puppet::Type.type(:dehydrated_key).provide(:openssl) do
   end
 
   def exists?
-    return false unless Pathname.new(resource[:path]).exist? && !File.read(resource[:path]).empty?
+    return false unless Pathname.new(resource[:path]).exist?
     key = File.read(resource[:path])
+    return false if key.empty?
     return false if key.include?('ENCRYPTED') && !resource[:password]
     begin
-      OpenSSL::PKey.read(key, resource[:password])
-    rescue OpenSSL::PKey::PKeyError # wrong password
+      key = OpenSSL::PKey.read(key, resource[:password])
+      true if key
+    rescue OpenSSL::PKey::PKeyError # wrong password or buggy key
       false
     end
-    true
   end
 
   def create
