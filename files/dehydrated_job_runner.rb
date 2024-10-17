@@ -335,7 +335,21 @@ def prepare_files(request_config)
   dehydrated_config_content = request_config['dehydrated_config_content']
 
   FileUtils.mkdir_p request_base_dir
-  File.write(csr_file, csr_content)
+
+  # only update csr if we have new content
+  update_csr = false
+  if File.exist?(csr_file)
+    old_csr_content = File.read(csr_file)
+    if old_csr_content != csr_content
+      update_csr = true
+    end
+  else
+    update_csr = true
+  end
+  if update_csr
+    File.write(csr_file, csr_content)
+  end
+
   File.write(dehydrated_config, dehydrated_config_content)
 end
 
