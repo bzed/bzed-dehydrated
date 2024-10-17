@@ -246,7 +246,7 @@ def handle_request(fqdn, dn, config)
 
   # also force update in case the csr is newer than the crt
   if File.exist?(crt_file)
-    force_update ||= File.stat(csr_file).mtime > File.stat(crt_file).mtime
+    #force_update ||= File.stat(csr_file).mtime > File.stat(crt_file).mtime
   end
   # register / update account
   # prior to 2024-04, the config did not contain the request_account_dir.  Fall back to the
