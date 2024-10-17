@@ -276,6 +276,9 @@ def handle_request(fqdn, dn, config)
     end
   end
 
+  # key_fingerprint_sha256 was removed from fact
+  current_dn_config.delete('key_fingerprint_sha256')
+
   # use >= to allow to add new things to the config hash
   force_update = !(if Gem::Version.new(RUBY_VERSION) > Gem::Version.new('2.3')
                      new_dn_config >= current_dn_config
