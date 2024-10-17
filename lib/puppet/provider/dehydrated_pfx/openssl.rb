@@ -28,7 +28,7 @@ Puppet::Type.type(:dehydrated_pfx).provide(:openssl) do
       begin
         # use binary mode as ruby is picky on windows.
         pfx_data = File.open(resource[:path], 'rb') { |f| f.read }
-        pfx = OpenSSL::PKCS12.new(pfx_data)
+        pfx = OpenSSL::PKCS12.new(pfx_data, resource[:key_password])
         ca = self.class.certificate(resource[:ca], true)
         cert = self.class.certificate(resource[:certificate], false)
         key = self.class.private_key(resource)
