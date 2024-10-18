@@ -63,10 +63,14 @@ Facter.add(:dehydrated_domains) do
                          end
         # fingerprints
         key = File.join(key_dir, "#{base_filename}.key")
+        fingerprint = "#{key}.fingerprint"
         crt = File.join(crt_dir, "#{base_filename}.crt")
         if File.exist?(crt)
           ret[dn]['crt_serial'] = get_cert_serial(crt)
           ret[dn]['crt_fingerprints'] = get_cert_fingerprints(crt)
+        end
+        if File.exist?(fingerprint)
+          ret[dn]['fingerprints'] = JSON.parse(File.read(fingerprint))
         end
 
         ca = File.join(crt_dir, "#{base_filename}_ca.pem")
