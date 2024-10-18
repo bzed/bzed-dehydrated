@@ -29,6 +29,6 @@ Puppet::Type.newtype(:dehydrated_fingerprint) do
   end
 
   autorequire(:dehydrated_key) do
-    self[:key]
+    self[:private_key]
   end
 end
