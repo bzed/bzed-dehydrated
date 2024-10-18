@@ -14,5 +14,10 @@ describe 'dehydrated' do
 
       it { is_expected.to compile }
     end
+    before :each do
+      Puppet::Parser::Functions.newfunction(:puppetdb_query, type: :rvalue) do |_args|
+        []
+      end
+    end
   end
 end

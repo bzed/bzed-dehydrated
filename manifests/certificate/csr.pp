@@ -45,6 +45,7 @@ define dehydrated::certificate::csr (
   $key = "${key_dir}/${base_filename}.key"
   $csr = "${csr_dir}/${base_filename}.csr"
   $dh  = "${crt_dir}/${base_filename}.dh"
+  $fingerprint = "${key}.fingerprint"
 
   if ($ensure == 'present') {
     dehydrated_key { $key :
@@ -54,6 +55,12 @@ define dehydrated::certificate::csr (
       size      => $size,
       require   => File[$key_dir],
       before    => File[$key],
+    }
+    dehydrated_fingerprint { $fingerprint :
+      ensure      => $ensure,
+      private_key => $key,
+      password    => $key_password,
+      require     => Dehydrated_key[$key],
     }
     dehydrated_csr { $csr :
       ensure                    => $ensure,
