@@ -3,6 +3,7 @@
 
 require 'pathname'
 require 'openssl'
+require 'json'
 
 Puppet::Type.type(:dehydrated_fingerprint).provide(:openssl) do
   desc 'Manages private key fingerprints for dehydrated with OpenSSL'
@@ -25,7 +26,7 @@ Puppet::Type.type(:dehydrated_fingerprint).provide(:openssl) do
     digests = {
       sha256: OpenSSL::Digest::SHA256.new(pubkey_der).to_s,
     }
-    digests
+    JSON.generate(digests)
   end
 
   def exists?
@@ -33,14 +34,17 @@ Puppet::Type.type(:dehydrated_fingerprint).provide(:openssl) do
     key = File.read(resource[:private_key])
     return false if key.empty?
     return false if key.include?('ENCRYPTED') && !resource[:password]
-    fingerprint = self.class.get_fingerprint(resource[:private_key], resource[:password])
+    fingerprint = self.class.get_fingerprint(key, resource[:password])
     old_fingerprint = File.read(resource[:path])
     fingerprint == old_fingerprint
   end
 
   def create
     File.open(resource[:path], 'w') do |f|
-      f.write(self.class.get_fingerprint(resource[:private_key], resource[:password]))
+      if Pathname.new(resource[:private_key]).exist?
+        fp = self.class.get_fingerprint(resource[:private_key], resource[:password])
+      end
+      f.write(fp || 'null')
     end
   end
 
