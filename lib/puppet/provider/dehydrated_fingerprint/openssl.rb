@@ -42,7 +42,7 @@ Puppet::Type.type(:dehydrated_fingerprint).provide(:openssl) do
   def create
     File.open(resource[:path], 'w') do |f|
       if Pathname.new(resource[:private_key]).exist?
-        fp = self.class.get_fingerprint(resource[:private_key], resource[:password])
+        fp = self.class.get_fingerprint(File.read(resource[:private_key]), resource[:password])
       end
       f.write(fp || 'null')
     end
