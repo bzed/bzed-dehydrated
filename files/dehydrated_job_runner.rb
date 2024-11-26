@@ -71,7 +71,7 @@ def update_ca_chain(crt_file, ca_file)
     else
       status = 1
       stdout = ''
-      stderr = response.to_s
+      stderr = response.class.name
     end
     break
   end
@@ -127,7 +127,7 @@ def update_ocsp(ocsp_file, crt_file, ca_file)
     else
       status = 1
       stdout = ''
-      stderr = response.to_s
+      stderr = response.class.name
     end
     break
   end
