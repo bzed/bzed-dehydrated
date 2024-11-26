@@ -64,7 +64,7 @@ def update_ca_chain(crt_file, ca_file)
     when Net::HTTPRedirection then
       ca_issuer_uri = URI(response['location'])
       limit -= 1
-      status = response.status
+      status = response.code
       stdout = response.body
       stderr = response.message
       next
@@ -120,7 +120,7 @@ def update_ocsp(ocsp_file, crt_file, ca_file)
     when Net::HTTPRedirection then
       ocsp_uri = URI(response['location'])
       limit -= 1
-      status = response.status
+      status = response.code
       stdout = response.body
       stderr = response.message
       next
