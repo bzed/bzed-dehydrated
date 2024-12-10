@@ -14,7 +14,7 @@ Puppet::Type.type(:dehydrated_fingerprint).provide(:openssl) do
 
   def self.get_fingerprint(key, password)
     begin
-      privkey = OpenSSL::PKey.read(key, password)
+      private_key = OpenSSL::PKey.read(key, password)
     rescue OpenSSL::PKey::PKeyError
       return false
     end
@@ -43,9 +43,9 @@ Puppet::Type.type(:dehydrated_fingerprint).provide(:openssl) do
       raise Puppet::Error, 'Your ruby version is too old or your openssl broken, it does not support EC keys properly'
     end
     begin
-      pubkey_der = privkey.public_to_der
+      pubkey_der = private_key.public_to_der
     rescue NoMethodError
-      pubkey_der = privkey.public_key.to_der
+      pubkey_der = private_key.public_key.to_der
     end
     digests = {
       sha256: OpenSSL::Digest::SHA256.new(pubkey_der).to_s,
