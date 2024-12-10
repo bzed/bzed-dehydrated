@@ -18,6 +18,30 @@ Puppet::Type.type(:dehydrated_fingerprint).provide(:openssl) do
     rescue OpenSSL::PKey::PKeyError
       return false
     end
+    if private_key.respond_to?(:public_to_der)
+      pubkey_der = private_key.public_to_der
+    elsif private_key.public_key.respond_to?(:to_der)
+      pubkey_der = private_key.public_key.to_der
+    elsif private_key.instance_of? OpenSSL::PKey::EC
+      begin
+        asn1 = OpenSSL::ASN1::Sequence(
+          [
+            OpenSSL::ASN1::Sequence(
+              [
+                OpenSSL::ASN1::ObjectId('id-ecPublicKey'),
+                OpenSSL::ASN1::ObjectId(private_key.public_key.group.curve_name),
+              ],
+            ),
+            OpenSSL::ASN1::BitString(private_key.public_key.to_octet_string(:uncompressed)),
+          ],
+        )
+        pubkey_der = OpenSSL::PKey::EC.new(asn1.to_der)
+      rescue
+        raise Puppet::Error, 'Failed to create public key in DER format from EC key'
+      end
+    else
+      raise Puppet::Error, 'Your ruby version is too old or your openssl broken, it does not support EC keys properly'
+    end
     begin
       pubkey_der = privkey.public_to_der
     rescue NoMethodError
