@@ -35,17 +35,12 @@ Puppet::Type.type(:dehydrated_fingerprint).provide(:openssl) do
             OpenSSL::ASN1::BitString(private_key.public_key.to_octet_string(:uncompressed)),
           ],
         )
-        pubkey_der = OpenSSL::PKey::EC.new(asn1.to_der)
+        pubkey_der = asn1.to_der
       rescue
         raise Puppet::Error, 'Failed to create public key in DER format from EC key'
       end
     else
       raise Puppet::Error, 'Your ruby version is too old or your openssl broken, it does not support EC keys properly'
-    end
-    begin
-      pubkey_der = private_key.public_to_der
-    rescue NoMethodError
-      pubkey_der = private_key.public_key.to_der
     end
     digests = {
       sha256: OpenSSL::Digest::SHA256.new(pubkey_der).to_s,
