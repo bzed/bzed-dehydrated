@@ -37,7 +37,7 @@ group :development do
   gem "rexml", '>= 3.0.0', '< 3.2.7',            require: false
   gem "github_changelog_generator",              require: false, git: 'https://github.com/skywinder/github-changelog-generator', ref: '20ee04ba1234e9e83eb2ffb5056e23d641c7a018' if Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')
   gem "rspec-puppet",                            require: false
-  gem "puppet-strings",                          require: false
+  gem "puppet-strings", '~> 4.0',                require: false
   gem "rgen",                                    require: false
   gem "hiera-eyaml",                             require: false
   gem "puppet-lint-resource_reference_syntax",   require: false
@@ -45,7 +45,8 @@ group :development do
   gem "puppet-lint-variable_contains_upcase",    require: false
 end
 group :development, :release_prep do
-  gem "puppetlabs_spec_helper", '~> 7.0', require: false
+  gem "puppetlabs_spec_helper", '~> 8.0', require: false
+  gem "puppet-blacksmith", '~> 7.0',      require: false
 end
 group :system_tests do
   gem "puppet_litmus", '~> 1.0',   require: false, platforms: [:ruby, :x64_mingw]
