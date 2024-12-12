@@ -75,17 +75,8 @@
 <h2>Overview</h2>
 <div class="docstring">
   <div class="discussion">
-    <p>Triggers key and csr generation and requests the certificate
-via the host configured in $dehydrated_host.
-This is the main defined type to use if you want to have a
-certificate. Together with the defaults in the dehydrated
-class you should have everything to make requesting certificates
-possible. Especially the dehydrated::certificate::* types do not
-have a public API and can change without warning. Don&#39;t rely on
-them.
-Dehydrated::Certificate[$dn] is also what you want to use to
-subscribe to if you want to restart services after certificates
-have been installed/updated.</p>
+    
+<p>Triggers key and csr generation and requests the certificate via the host configured in $dehydrated_host. This is the main defined type to use if you want to have a certificate. Together with the defaults in the dehydrated class you should have everything to make requesting certificates possible. Especially the dehydrated::certificate::* types do not have a public API and can change without warning. Don’t rely on them. <a href="$dn">Dehydrated::Certificate</a> is also what you want to use to subscribe to if you want to restart services after certificates have been installed/updated.</p>
 
   </div>
 </div>
@@ -116,8 +107,8 @@ have been installed/updated.</p>
       
       
         &mdash;
-        <div class='inline'><p>The main distinguished name to use for the certificate.
-Defaults to $name.</p>
+        <div class='inline'>
+<p>The main distinguished name to use for the certificate. Defaults to $name.</p>
 </div>
       
     </li>
@@ -134,9 +125,8 @@ Defaults to $name.</p>
       
       
         &mdash;
-        <div class='inline'><p>The base part of the filename of all related files.
-For wildcard certificates the * is replaced by <em>wildcard</em>.
-Feel free to use whatever a valid filename is.</p>
+        <div class='inline'>
+<p>The base part of the filename of all related files. For wildcard certificates the * is replaced by <em>wildcard</em>. Feel free to use whatever a valid filename is.</p>
 </div>
       
     </li>
@@ -153,8 +143,8 @@ Feel free to use whatever a valid filename is.</p>
       
       
         &mdash;
-        <div class='inline'><p>To request a SAN certificate, pass an array with the
-alternative names here. The main $dn will be added automatically.</p>
+        <div class='inline'>
+<p>To request a SAN certificate, pass an array with the alternative names here. The main $dn will be added automatically.</p>
 </div>
       
     </li>
@@ -171,9 +161,8 @@ alternative names here. The main $dn will be added automatically.</p>
       
       
         &mdash;
-        <div class='inline'><p>Default challengetype to use. Defaults to $dehydrated::challengetype,
-which defaults to &#39;dns-01&#39;. You can specify a different
-challengetype for each certificate here.</p>
+        <div class='inline'>
+<p>Default challengetype to use. Defaults to $dehydrated::challengetype, which defaults to ‘dns-01’. You can specify a different challengetype for each certificate here.</p>
 </div>
       
     </li>
@@ -190,9 +179,8 @@ challengetype for each certificate here.</p>
       
       
         &mdash;
-        <div class='inline'><p>Algorithm / elliptic-curve you want to use. Supported: rsa, secp384r1, prime256v1.
-Defaults to $dehydrated::algorithm, which defaults to &#39;rsa&#39;.
-You can specify a different algorithm for each certificate here.</p>
+        <div class='inline'>
+<p>Algorithm / elliptic-curve you want to use. Supported: rsa, secp384r1, prime256v1. Defaults to $dehydrated::algorithm, which defaults to ‘rsa’. You can specify a different algorithm for each certificate here.</p>
 </div>
       
     </li>
@@ -209,7 +197,8 @@ You can specify a different algorithm for each certificate here.</p>
       
       
         &mdash;
-        <div class='inline'><p>Size of the key if we create a new one.  Only used if algorithm is &#39;rsa&#39;.</p>
+        <div class='inline'>
+<p>Size of the key if we create a new one. Only used if algorithm is ‘rsa’.</p>
 </div>
       
     </li>
@@ -226,8 +215,8 @@ You can specify a different algorithm for each certificate here.</p>
       
       
         &mdash;
-        <div class='inline'><p>Size of the DH params we should generate. Defaults to $dehydrated::dh_param_size,
-which defaults to 2048. You can specify a different DH param size for each certificate here.</p>
+        <div class='inline'>
+<p>Size of the DH params we should generate. Defaults to $dehydrated::dh_param_size, which defaults to 2048. You can specify a different DH param size for each certificate here.</p>
 </div>
       
     </li>
@@ -244,9 +233,8 @@ which defaults to 2048. You can specify a different DH param size for each certi
       
       
         &mdash;
-        <div class='inline'><p>$trusted[&#39;certname&#39;] of the host which is responsible to request the certificates from
-the Let&#39;s Encrypt CA. Defaults to $dehydrated::dehydrated_host where you can
-configure your default.</p>
+        <div class='inline'>
+<p>$<a href="'certname'">trusted</a> of the host which is responsible to request the certificates from the Let’s Encrypt CA. Defaults to $dehydrated::dehydrated_host where you can configure your default.</p>
 </div>
       
     </li>
@@ -263,9 +251,8 @@ configure your default.</p>
       
       
         &mdash;
-        <div class='inline'><p>Hash with the environment variables to set for the $dehydrated_domain_validation_hook
-and also for running the hook in dehydrated.
-Defaults to $dehydrated::dehydrated_environment, empty by default.</p>
+        <div class='inline'>
+<p>Hash with the environment variables to set for the $dehydrated_domain_validation_hook and also for running the hook in dehydrated. Defaults to $dehydrated::dehydrated_environment, empty by default.</p>
 </div>
       
     </li>
@@ -282,10 +269,8 @@ Defaults to $dehydrated::dehydrated_environment, empty by default.</p>
       
       
         &mdash;
-        <div class='inline'><p>Name of the hook script you want to use. Can be left on undef if http-01 is being
-used as challengetype to use the built-in http-01 implementation of dehydrated.
-Defaults to $dehydrated::dehydrated_hook, which will use &quot;$challengetype.sh&quot;
-if the challengetype is not http-01.</p>
+        <div class='inline'>
+<p>Name of the hook script you want to use. Can be left on undef if http-01 is being used as challengetype to use the built-in http-01 implementation of dehydrated. Defaults to $dehydrated::dehydrated_hook, which will use “$challengetype.sh” if the challengetype is not http-01.</p>
 </div>
       
     </li>
@@ -302,12 +287,8 @@ if the challengetype is not http-01.</p>
       
       
         &mdash;
-        <div class='inline'><p>Defines the CA you want to use to request certificates. If you want to use a
-non-supported CA, you need to configure it in $dehydrated::letsencrypt_cas on
-your $dehydrated_host.
-Normally, the following CAs are pre-configured:
-staging, production, v2-staging, v2-production
-Defaults to $dehydrated::letsencrypt_ca, which points to v2-production.</p>
+        <div class='inline'>
+<p>Defines the CA you want to use to request certificates. If you want to use a non-supported CA, you need to configure it in $dehydrated::letsencrypt_cas on your $dehydrated_host. Normally, the following CAs are pre-configured: staging, production, v2-staging, v2-production Defaults to $dehydrated::letsencrypt_ca, which points to v2-production.</p>
 </div>
       
     </li>
@@ -324,13 +305,8 @@ Defaults to $dehydrated::letsencrypt_ca, which points to v2-production.</p>
       
       
         &mdash;
-        <div class='inline'><p>Name of the hook script to run before dehydrated is actually executed.
-Used to check if a domain is still valid or if you are allowed to modify it.
-Or whatever else you want to do as preparation.
-Good thing to use before running into limits by trying to request
-certificates for domains you don&#39;t own.
-Defaults to $dehydrated::dehydrated_domain_validation_hook where you
-can configure the default for your setup.</p>
+        <div class='inline'>
+<p>Name of the hook script to run before dehydrated is actually executed. Used to check if a domain is still valid or if you are allowed to modify it. Or whatever else you want to do as preparation. Good thing to use before running into limits by trying to request certificates for domains you don’t own. Defaults to $dehydrated::dehydrated_domain_validation_hook where you can configure the default for your setup.</p>
 </div>
       
     </li>
@@ -347,7 +323,8 @@ can configure the default for your setup.</p>
       
       
         &mdash;
-        <div class='inline'><p>If your key should be protected by a password, specify it here.</p>
+        <div class='inline'>
+<p>If your key should be protected by a password, specify it here.</p>
 </div>
       
     </li>
@@ -364,7 +341,8 @@ can configure the default for your setup.</p>
       
       
         &mdash;
-        <div class='inline'><p>Preferred letsencrypt CA chain you want to use</p>
+        <div class='inline'>
+<p>Preferred letsencrypt CA chain you want to use</p>
 </div>
       
     </li>

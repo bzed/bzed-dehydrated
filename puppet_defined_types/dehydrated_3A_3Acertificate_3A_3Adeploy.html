@@ -75,7 +75,8 @@
 <h2>Overview</h2>
 <div class="docstring">
   <div class="discussion">
-    <p>Deploy collected certificate and CA files.</p>
+    
+<p>Deploy collected certificate and CA files.</p>
 
   </div>
 </div>
@@ -226,7 +227,9 @@
 102
 103
 104
-105</pre>
+105
+106
+107</pre>
       </td>
       <td>
         <pre class="code"><span class="info file"># File 'manifests/certificate/deploy.pp', line 10</span>
@@ -275,9 +278,10 @@ define dehydrated::certificate::deploy (
   }
 
   concat::fragment { &quot;${dn}_key&quot; :
-    target =&gt; $crt_full_chain_with_key,
-    source =&gt; $key,
-    order  =&gt; &#39;01&#39;,
+    target  =&gt; $crt_full_chain_with_key,
+    source  =&gt; $key,
+    order   =&gt; &#39;01&#39;,
+    require =&gt; Dehydrated_key[$key],
   }
   concat::fragment { &quot;${dn}_fullchain&quot; :
     target    =&gt; $crt_full_chain_with_key,
@@ -324,6 +328,7 @@ define dehydrated::certificate::deploy (
       File[$crt],
       File[$ca],
       File[$key],
+      Dehydrated_key[$key],
     ],
   }
 }</pre>

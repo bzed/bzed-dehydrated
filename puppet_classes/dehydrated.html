@@ -82,8 +82,8 @@
 <h2>Overview</h2>
 <div class="docstring">
   <div class="discussion">
-    <p>Base class to setup the letsencrypt certificate handling
-with dehydrated.</p>
+    
+<p>Base class to setup the letsencrypt certificate handling with dehydrated.</p>
 
   </div>
 </div>
@@ -123,14 +123,8 @@ class { &#39;dehydrated&#39; :
       
       
         &mdash;
-        <div class='inline'><p>The base directory where keys/csr/certs are stored.
-Defaults to:</p>
-
-<ul>
-<li>on $::os[&#39;family&#39;]==&#39;Debian&#39;: /etc/dehydrated</li>
-<li>on other Linux/Unix systems: /etc/pki/dehydrated</li>
-<li>on windows: C:\LE_certs.</li>
-</ul>
+        <div class='inline'>
+<p>The base directory where keys/csr/certs are stored. Defaults to: - on $::<a href="'family'">os</a>==‘Debian’: /etc/dehydrated - on other Linux/Unix systems: /etc/pki/dehydrated - on windows: C:LE_certs.</p>
 </div>
       
     </li>
@@ -147,7 +141,8 @@ Defaults to:</p>
       
       
         &mdash;
-        <div class='inline'><p>The directory where certificates are stored. Defaults to $base_dir/certs</p>
+        <div class='inline'>
+<p>The directory where certificates are stored. Defaults to $base_dir/certs</p>
 </div>
       
     </li>
@@ -164,7 +159,8 @@ Defaults to:</p>
       
       
         &mdash;
-        <div class='inline'><p>The directory where CSRs are stored. Defaults to $base_dir/csr</p>
+        <div class='inline'>
+<p>The directory where CSRs are stored. Defaults to $base_dir/csr</p>
 </div>
       
     </li>
@@ -181,7 +177,8 @@ Defaults to:</p>
       
       
         &mdash;
-        <div class='inline'><p>The directory where pricate keys are stored. Defaults to $base_dir/private</p>
+        <div class='inline'>
+<p>The directory where pricate keys are stored. Defaults to $base_dir/private</p>
 </div>
       
     </li>
@@ -198,8 +195,8 @@ Defaults to:</p>
       
       
         &mdash;
-        <div class='inline'><p>Linux: The user who owns the files in /etc/dehydrated.
-Windows: The user who owns the files in C:\LE_Certs. Needs to be specified!</p>
+        <div class='inline'>
+<p>Linux: The user who owns the files in /etc/dehydrated. Windows: The user who owns the files in C:LE_Certs. Needs to be specified!</p>
 </div>
       
     </li>
@@ -216,9 +213,8 @@ Windows: The user who owns the files in C:\LE_Certs. Needs to be specified!</p>
       
       
         &mdash;
-        <div class='inline'><p>Linux: The group which owns the files in /etc/dehydrated.
-  If you have a non-root process which needs to access private keys, add its user to this group.
-Windows: The group which owns the files in C:\LE_Certs. Needs to be specified!</p>
+        <div class='inline'>
+<p>Linux: The group which owns the files in /etc/dehydrated.  If you have a non-root process which needs to access private keys, add its user to this group. Windows: The group which owns the files in C:LE_Certs. Needs to be specified!</p>
 </div>
       
     </li>
@@ -235,7 +231,8 @@ Windows: The group which owns the files in C:\LE_Certs. Needs to be specified!</
       
       
         &mdash;
-        <div class='inline'><p>User to run the dehydrated script as. Only used on the host that actually requests certificates.</p>
+        <div class='inline'>
+<p>User to run the dehydrated script as. Only used on the host that actually requests certificates.</p>
 </div>
       
     </li>
@@ -252,7 +249,8 @@ Windows: The group which owns the files in C:\LE_Certs. Needs to be specified!</
       
       
         &mdash;
-        <div class='inline'><p>Group to run the dehydrated script as. Only used on the host that actually requests certificates.</p>
+        <div class='inline'>
+<p>Group to run the dehydrated script as. Only used on the host that actually requests certificates.</p>
 </div>
       
     </li>
@@ -269,10 +267,8 @@ Windows: The group which owns the files in C:\LE_Certs. Needs to be specified!</
       
       
         &mdash;
-        <div class='inline'><p>Let’s Encrypt CA to use. Defaults to v2-production. See the letsencrypt_cas parameter for a way
-to specify your own Let’s Encrypt / ACME compatible CA. This configures the default CA to use, but
-You can actually define different CAs for each certificate, see the dehydrated::certificate
-define for details.</p>
+        <div class='inline'>
+<p>Let’s Encrypt CA to use. Defaults to v2-production. See the letsencrypt_cas parameter for a way to specify your own Let’s Encrypt / ACME compatible CA. This configures the default CA to use, but You can actually define different CAs for each certificate, see the dehydrated::certificate define for details.</p>
 </div>
       
     </li>
@@ -289,8 +285,8 @@ define for details.</p>
       
       
         &mdash;
-        <div class='inline'><p>Hash with the definitions of the official testing and production Let’s Encrypt CAs this
-puppet module was tested against.</p>
+        <div class='inline'>
+<p>Hash with the definitions of the official testing and production Let’s Encrypt CAs this puppet module was tested against.</p>
 </div>
       
     </li>
@@ -307,7 +303,8 @@ puppet module was tested against.</p>
       
       
         &mdash;
-        <div class='inline'><p>Default size of the DH params we should generate. Defaults to 2048.</p>
+        <div class='inline'>
+<p>Default size of the DH params we should generate. Defaults to 2048.</p>
 </div>
       
     </li>
@@ -324,8 +321,8 @@ puppet module was tested against.</p>
       
       
         &mdash;
-        <div class='inline'><p>Default challengetype to use. Defaults to &#39;dns-01&#39;. You can specify a different
-challengetype for each certificate, see dehydrated::certificate.</p>
+        <div class='inline'>
+<p>Default challengetype to use. Defaults to ‘dns-01’. You can specify a different challengetype for each certificate, see dehydrated::certificate.</p>
 </div>
       
     </li>
@@ -342,9 +339,8 @@ challengetype for each certificate, see dehydrated::certificate.</p>
       
       
         &mdash;
-        <div class='inline'><p>Default algorithm / elliptic-curve you want to use. Supported: rsa, secp384r1, prime256v1.
-Defaults to rsa. You can specify a different algorithm for each certificate,
-see dehydrated::certificate.</p>
+        <div class='inline'>
+<p>Default algorithm / elliptic-curve you want to use. Supported: rsa, secp384r1, prime256v1. Defaults to rsa. You can specify a different algorithm for each certificate, see dehydrated::certificate.</p>
 </div>
       
     </li>
@@ -361,8 +357,8 @@ see dehydrated::certificate.</p>
       
       
         &mdash;
-        <div class='inline'><p>Size of the key if we create a new one.  Only used if algorithm is &#39;rsa&#39;.
-You can specify a different size for each certificate; see dehydrated::certificate.</p>
+        <div class='inline'>
+<p>Size of the key if we create a new one. Only used if algorithm is ‘rsa’. You can specify a different size for each certificate; see dehydrated::certificate.</p>
 </div>
       
     </li>
@@ -379,8 +375,8 @@ You can specify a different size for each certificate; see dehydrated::certifica
       
       
         &mdash;
-        <div class='inline'><p>Only used if $trusted[&#39;certname&#39;] == $dehydrated::dehydrated_host. Path where the dehydrated
-script and configurations/csrs are being stored. Defaults to &#39;/opt/dehydrated&#39;.</p>
+        <div class='inline'>
+<p>Only used if $<a href="'certname'">trusted</a> == $dehydrated::dehydrated_host. Path where the dehydrated script and configurations/csrs are being stored. Defaults to ‘/opt/dehydrated’.</p>
 </div>
       
     </li>
@@ -397,9 +393,8 @@ script and configurations/csrs are being stored. Defaults to &#39;/opt/dehydrate
       
       
         &mdash;
-        <div class='inline'><p>Only used if $trusted[&#39;certname&#39;] == $dehydrated::dehydrated_host.
-Path where the dehydrated script is being checkout out into using git.
-Defaults to $dehydrated_base_dir/dehydrated.</p>
+        <div class='inline'>
+<p>Only used if $<a href="'certname'">trusted</a> == $dehydrated::dehydrated_host. Path where the dehydrated script is being checkout out into using git. Defaults to $dehydrated_base_dir/dehydrated.</p>
 </div>
       
     </li>
@@ -416,9 +411,8 @@ Defaults to $dehydrated_base_dir/dehydrated.</p>
       
       
         &mdash;
-        <div class='inline'><p>Only used if $trusted[&#39;certname&#39;] == $dehydrated::dehydrated_host.
-Version of the dehydrated script we want to use.
-Change it on your own risk.</p>
+        <div class='inline'>
+<p>Only used if $<a href="'certname'">trusted</a> == $dehydrated::dehydrated_host. Version of the dehydrated script we want to use. Change it on your own risk.</p>
 </div>
       
     </li>
@@ -435,9 +429,8 @@ Change it on your own risk.</p>
       
       
         &mdash;
-        <div class='inline'><p>Only used if $trusted[&#39;certname&#39;] == $dehydrated::dehydrated_host.
-Git url to clone dehydrated from. If you have an internal mirror/version, you can override
-the default github url here.</p>
+        <div class='inline'>
+<p>Only used if $<a href="'certname'">trusted</a> == $dehydrated::dehydrated_host. Git url to clone dehydrated from. If you have an internal mirror/version, you can override the default github url here.</p>
 </div>
       
     </li>
@@ -454,12 +447,8 @@ the default github url here.</p>
       
       
         &mdash;
-        <div class='inline'><p>Default setting for the host you want to request the certificates on.
-Required on that host, on all others it is used as default for certificates requested
-via dehydrated::certificate. You can specify a different dehydrated_host on each
-certificate if you want to.
-If $trusted[&#39;certname&#39;] == $dehydrated::dehydrated_host, dehydrated will be installed
-and the certificate request cronjob will be setup.</p>
+        <div class='inline'>
+<p>Default setting for the host you want to request the certificates on. Required on that host, on all others it is used as default for certificates requested via dehydrated::certificate. You can specify a different dehydrated_host on each certificate if you want to. If $<a href="'certname'">trusted</a> == $dehydrated::dehydrated_host, dehydrated will be installed and the certificate request cronjob will be setup.</p>
 </div>
       
     </li>
@@ -476,8 +465,8 @@ and the certificate request cronjob will be setup.</p>
       
       
         &mdash;
-        <div class='inline'><p>Only used if $trusted[&#39;certname&#39;] == $dehydrated::dehydrated_host.
-Path where requests that need to be handled are being stored.</p>
+        <div class='inline'>
+<p>Only used if $<a href="'certname'">trusted</a> == $dehydrated::dehydrated_host. Path where requests that need to be handled are being stored.</p>
 </div>
       
     </li>
@@ -494,7 +483,8 @@ Path where requests that need to be handled are being stored.</p>
       
       
         &mdash;
-        <div class='inline'><p>Only used if $trusted[&#39;certname&#39;] == $dehydrated::dehydrated_host.</p>
+        <div class='inline'>
+<p>Only used if $<a href="'certname'">trusted</a> == $dehydrated::dehydrated_host.</p>
 </div>
       
     </li>
@@ -511,7 +501,8 @@ Path where requests that need to be handled are being stored.</p>
       
       
         &mdash;
-        <div class='inline'><p>Only used if $trusted[&#39;certname&#39;] == $dehydrated::dehydrated_host.</p>
+        <div class='inline'>
+<p>Only used if $<a href="'certname'">trusted</a> == $dehydrated::dehydrated_host.</p>
 </div>
       
     </li>
@@ -528,7 +519,8 @@ Path where requests that need to be handled are being stored.</p>
       
       
         &mdash;
-        <div class='inline'><p>Only used if $trusted[&#39;certname&#39;] == $dehydrated::dehydrated_host.</p>
+        <div class='inline'>
+<p>Only used if $<a href="'certname'">trusted</a> == $dehydrated::dehydrated_host.</p>
 </div>
       
     </li>
@@ -545,7 +537,8 @@ Path where requests that need to be handled are being stored.</p>
       
       
         &mdash;
-        <div class='inline'><p>Only used if $trusted[&#39;certname&#39;] == $dehydrated::dehydrated_host.</p>
+        <div class='inline'>
+<p>Only used if $<a href="'certname'">trusted</a> == $dehydrated::dehydrated_host.</p>
 </div>
       
     </li>
@@ -562,7 +555,8 @@ Path where requests that need to be handled are being stored.</p>
       
       
         &mdash;
-        <div class='inline'><p>Only used if $trusted[&#39;certname&#39;] == $dehydrated::dehydrated_host.</p>
+        <div class='inline'>
+<p>Only used if $<a href="'certname'">trusted</a> == $dehydrated::dehydrated_host.</p>
 </div>
       
     </li>
@@ -579,7 +573,8 @@ Path where requests that need to be handled are being stored.</p>
       
       
         &mdash;
-        <div class='inline'><p>Only used if $trusted[&#39;certname&#39;] == $dehydrated::dehydrated_host.</p>
+        <div class='inline'>
+<p>Only used if $<a href="'certname'">trusted</a> == $dehydrated::dehydrated_host.</p>
 </div>
       
     </li>
@@ -596,7 +591,8 @@ Path where requests that need to be handled are being stored.</p>
       
       
         &mdash;
-        <div class='inline'><p>Only used if $trusted[&#39;certname&#39;] == $dehydrated::dehydrated_host.</p>
+        <div class='inline'>
+<p>Only used if $<a href="'certname'">trusted</a> == $dehydrated::dehydrated_host.</p>
 </div>
       
     </li>
@@ -613,8 +609,8 @@ Path where requests that need to be handled are being stored.</p>
       
       
         &mdash;
-        <div class='inline'><p>Name of the hook script dehydrated will use to validate the authorization request. The hook script
-must live in the $dehydrated_hooks_dir on $dehydrated::dehydrated_host.</p>
+        <div class='inline'>
+<p>Name of the hook script dehydrated will use to validate the authorization request. The hook script must live in the $dehydrated_hooks_dir on $dehydrated::dehydrated_host.</p>
 </div>
       
     </li>
@@ -631,8 +627,8 @@ must live in the $dehydrated_hooks_dir on $dehydrated::dehydrated_host.</p>
       
       
         &mdash;
-        <div class='inline'><p>Contact email address for created accounts. We&#39;ll create one account for each
-puppet host.</p>
+        <div class='inline'>
+<p>Contact email address for created accounts. We’ll create one account for each puppet host.</p>
 </div>
       
     </li>
@@ -649,7 +645,8 @@ puppet host.</p>
       
       
         &mdash;
-        <div class='inline'><p>Create one ACME account per puppet client (true; the default), or one account globally.</p>
+        <div class='inline'>
+<p>Create one ACME account per puppet client (true; the default), or one account globally.</p>
 </div>
       
     </li>
@@ -666,7 +663,8 @@ puppet host.</p>
       
       
         &mdash;
-        <div class='inline'><p>File the dehydrated job runner will dump its status into. Pretty printed JSON.</p>
+        <div class='inline'>
+<p>File the dehydrated job runner will dump its status into. Pretty printed JSON.</p>
 </div>
       
     </li>
@@ -683,7 +681,8 @@ puppet host.</p>
       
       
         &mdash;
-        <div class='inline'><p>Status file for monitoring with check_statusfile, see README.md for details.</p>
+        <div class='inline'>
+<p>Status file for monitoring with check_statusfile, see README.md for details.</p>
 </div>
       
     </li>
@@ -700,7 +699,8 @@ puppet host.</p>
       
       
         &mdash;
-        <div class='inline'><p>Create $dehydrated_user/$dehydrated_group and $user/$group if necessary.</p>
+        <div class='inline'>
+<p>Create $dehydrated_user/$dehydrated_group and $user/$group if necessary.</p>
 </div>
       
     </li>
@@ -717,8 +717,8 @@ puppet host.</p>
       
       
         &mdash;
-        <div class='inline'><p>Install required packages using ensure_packages?
-Should be safe to leave enabled in most cases.</p>
+        <div class='inline'>
+<p>Install required packages using ensure_packages? Should be safe to leave enabled in most cases.</p>
 </div>
       
     </li>
@@ -735,7 +735,8 @@ Should be safe to leave enabled in most cases.</p>
       
       
         &mdash;
-        <div class='inline'><p>Required packages to create /etc/pki. Not really used yet.</p>
+        <div class='inline'>
+<p>Required packages to create /etc/pki. Not really used yet.</p>
 </div>
       
     </li>
@@ -752,8 +753,8 @@ Should be safe to leave enabled in most cases.</p>
       
       
         &mdash;
-        <div class='inline'><p>The list of packages we actually need to install to make this module work properly.
-You are free to modify this list if you need to.</p>
+        <div class='inline'>
+<p>The list of packages we actually need to install to make this module work properly. You are free to modify this list if you need to.</p>
 </div>
       
     </li>
@@ -770,17 +771,8 @@ You are free to modify this list if you need to.</p>
       
       
         &mdash;
-        <div class='inline'><p>Allows to request certificates instead of using dehydrated::certificate.
-The puppet definition of this rather complex parameter is
-    Array[Variant[Dehydrated::DN, Tuple[Dehydrated::DN, Array[Dehydrated::DN]]]]
-So basically, you need to specify an Array. Contents are either a</p>
-
-<ul>
-<li>distinguished name</li>
-<li>tuple with [distinguished name, array of distinguished names]
-The first case requests a default certificate. The tuple version will request a
-SAN certificate.</li>
-</ul>
+        <div class='inline'>
+<p>Allows to request certificates instead of using dehydrated::certificate. The puppet definition of this rather complex parameter is  Array[Variant[Dehydrated::DN, Tuple[Dehydrated::DN, <a href="Dehydrated::DN">Array</a>]]] So basically, you need to specify an Array. Contents are either a - distinguished name - tuple with [distinguished name, array of distinguished names] The first case requests a default certificate. The tuple version will request a SAN certificate.</p>
 </div>
       
     </li>
@@ -797,8 +789,8 @@ SAN certificate.</li>
       
       
         &mdash;
-        <div class='inline'><p>Create PKCS12 container with key, certificate and ca certificates.
-Defaults to true on windows, to false on all other OS.</p>
+        <div class='inline'>
+<p>Create PKCS12 container with key, certificate and ca certificates. Defaults to true on windows, to false on all other OS.</p>
 </div>
       
     </li>
@@ -815,7 +807,8 @@ Defaults to true on windows, to false on all other OS.</p>
       
       
         &mdash;
-        <div class='inline'><p>Preferred dehydrated CA chain to use</p>
+        <div class='inline'>
+<p>Preferred dehydrated CA chain to use</p>
 </div>
       
     </li>

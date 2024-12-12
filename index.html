@@ -57,105 +57,75 @@
         <div class="clear"></div>
       </div>
 
-      <div id="content"><div id='filecontents'><h1 id="dehydrated">dehydrated</h1>
+      <div id="content"><div id='filecontents'>
+<h1 id="label-dehydrated">dehydrated</h1>
 
-<p><a href="https://forge.puppet.com/bzed/dehydrated"><img src="http://img.shields.io/puppetforge/v/bzed/dehydrated.svg" alt="Puppet Forge"></a></p>
+<p><a href="https://forge.puppet.com/bzed/dehydrated"><img src="http://img.shields.io/puppetforge/v/bzed/dehydrated.svg"></a></p>
 
 <p>Centralized CSR signing using Let’s Encrypt™ - keeping your keys safe on the host they belong to.</p>
 
-<h4 id="table-of-contents">Table of Contents</h4>
+<h4 id="label-Table+of+Contents">Table of Contents</h4>
+<ol><li>
+<p><a href="#description">Description</a></p>
+</li><li>
+<p><a href="#setup">Setup - The basics of getting started with dehydrated</a></p>
+<ul><li>
+<p><a href="#what-dehydrated-affects">What dehydrated affects</a></p>
+</li><li>
+<p><a href="#setup-requirements">Setup requirements</a></p>
+</li><li>
+<p><a href="#beginning-with-dehydrated">Beginning with dehydrated</a></p>
+</li></ul>
+</li><li>
+<p><a href="#usage">Usage - Configuration options and additional functionality</a></p>
+<ul><li>
+<p><a href="#monitoring--debugging">Monitoring and debugging</a></p>
+</li></ul>
+</li><li>
+<p><a href="#migrating-from-bzed-letsencrypt">Migrating from bzed-letsencrypt</a></p>
+</li><li>
+<p><a href="#limitations">Limitations - OS compatibility, Deployment time, etc.</a></p>
+</li><li>
+<p><a href="#development">Development - Guide for contributing to the module</a></p>
+</li></ol>
 
-<ol>
-<li><a href="#description">Description</a></li>
-<li><a href="#setup">Setup - The basics of getting started with dehydrated</a>
+<h2 id="label-Description">Description</h2>
 
-<ul>
-<li><a href="#what-dehydrated-affects">What dehydrated affects</a></li>
-<li><a href="#setup-requirements">Setup requirements</a></li>
-<li><a href="#beginning-with-dehydrated">Beginning with dehydrated</a></li>
-</ul></li>
-<li><a href="#usage">Usage - Configuration options and additional functionality</a>
-
-<ul>
-<li><a href="#monitoring--debugging">Monitoring and debugging</a></li>
-</ul></li>
-<li><a href="#migrating-from-bzed-letsencrypt">Migrating from bzed-letsencrypt</a></li>
-<li><a href="#limitations">Limitations - OS compatibility, Deployment time, etc.</a></li>
-<li><a href="#development">Development - Guide for contributing to the module</a></li>
-</ol>
-
-<h2 id="description">Description</h2>
-
-<p>bzed-dehydrated creates private keys and CSRs, transfers
-the CSR to a central host (for example your puppetmaster)
-where it is signed using the well known dehydrated
-<a href="https://github.com/dehydrated-io/dehydrated">https://github.com/dehydrated-io/dehydrated</a></p>
+<p>bzed-dehydrated creates private keys and CSRs, transfers the CSR to a central host (for example your puppetmaster) where it is signed using the well known dehydrated <a href="https://github.com/dehydrated-io/dehydrated">github.com/dehydrated-io/dehydrated</a></p>
 
 <p>Signed certificates are shipped back to the requesting host.</p>
 
-<p>You need to provide an appropriate hook script for dehydrated.
-The default is to use the DNS-01 challenge, but if your hook
-supports it you could also create the necessary files for http-01.</p>
+<p>You need to provide an appropriate hook script for dehydrated. The default is to use the DNS-01 challenge, but if your hook supports it you could also create the necessary files for http-01.</p>
 
 <p>Let’s Encrypt is a trademark of the Internet Security Research Group. All rights reserved.</p>
 
-<h3 id="deprecation-of-bzed-letsencrypt">Deprecation of bzed-letsencrypt</h3>
+<h3 id="label-Deprecation+of+bzed-letsencrypt">Deprecation of bzed-letsencrypt</h3>
 
-<p>With the release of <strong>bzed-dehydrated</strong> my old module <em>bzed-letsencrypt</em> will be deprecated.
-Renaming the module to avoid trademark related troubles is one of the reasons for a new module,
-the other is that I did not want to break the API for all users of the old module.
-If there is enough interest I&#39;ll change bzed-letsencrypt to become a wrapper around
-the new module, but with all the new features and options I don&#39;t think that makes much
-sense. So I&#39;m sorry for the extra trouble of migrating an existing installation (to make
-it easier, see below), but I hope that the extra amount of flexibility and less hacks in the
-code make it worth to migrate.</p>
+<p>With the release of <strong>bzed-dehydrated</strong> my old module <em>bzed-letsencrypt</em> will be deprecated. Renaming the module to avoid trademark related troubles is one of the reasons for a new module, the other is that I did not want to break the API for all users of the old module. If there is enough interest I’ll change bzed-letsencrypt to become a wrapper around the new module, but with all the new features and options I don’t think that makes much sense. So I’m sorry for the extra trouble of migrating an existing installation (to make it easier, see below), but I hope that the extra amount of flexibility and less hacks in the code make it worth to migrate.</p>
 
-<h2 id="setup">Setup</h2>
+<h2 id="label-Setup">Setup</h2>
 
-<h3 id="what-dehydrated-affects">What dehydrated affects</h3>
+<h3 id="label-What+dehydrated+affects">What dehydrated affects</h3>
 
-<p>dehydrated needs to use facter to retrieve the signed certificates
-and other data from your central signing hosts if you are not using
-a puppet master host to handle it. Although only certificates which
-need to be renewed are transferred, it is unknown how well this
-approach scales if you plan to request lots of certificates. Using
-a (designated) puppet master is the better option.</p>
+<p>dehydrated needs to use facter to retrieve the signed certificates and other data from your central signing hosts if you are not using a puppet master host to handle it. Although only certificates which need to be renewed are transferred, it is unknown how well this approach scales if you plan to request lots of certificates. Using a (designated) puppet master is the better option.</p>
 
-<h3 id="setup-requirements">Setup Requirements</h3>
+<h3 id="label-Setup+Requirements">Setup Requirements</h3>
 
-<p>You need to ensure that exported resources are working and pluginsync
-is enabled.</p>
+<p>You need to ensure that exported resources are working and pluginsync is enabled.</p>
 
-<h3 id="beginning-with-dehydrated">Beginning with dehydrated</h3>
+<h3 id="label-Beginning+with+dehydrated">Beginning with dehydrated</h3>
 
-<p>Basic things you need:</p>
+<p>Basic things you need:  - a host with internet access, preferable a puppet master. This will be known as <em>dehydrated_host</em> now.  - a working hook script for dehydrated, for exampes and documentation see <a href="https://github.com/dehydrated-io/dehydrated/tree/master/docs">dehydrated-io/dehydrated</a>  - bzed-dehydrated installed as <code>dehydrated</code> module in your Puppet environment.  You will also need recent versions of <code>puppetlabs-stdlib</code>, <code>puppetlabs-concat</code>, <code>puppetlabs-vcsrepo</code>.  For puppet &gt;= 6.0 you’ll also need <code>puppetlabs-cron_core</code>.  - I’d assume at least puppet version 4.8. Not tested or developed for older version.  - Working exportable ressources. Make sure your puppetdb is working well, this module  heavily depends on it.</p>
 
-<ul>
-<li> a host with internet access, preferable a puppet master. This will be known as <em>dehydrated_host</em> now.</li>
-<li> a working hook script for dehydrated, for exampes and documentation see <a href="https://github.com/dehydrated-io/dehydrated/tree/master/docs">dehydrated-io/dehydrated</a></li>
-<li> bzed-dehydrated installed as <code>dehydrated</code> module in your Puppet environment.
-You will also need recent versions of <code>puppetlabs-stdlib</code>, <code>puppetlabs-concat</code>, <code>puppetlabs-vcsrepo</code>.
-For puppet &gt;= 6.0 you&#39;ll also need <code>puppetlabs-cron\_core</code>.</li>
-<li> I&#39;d assume at least puppet version 4.8. Not tested or developed for older version.</li>
-<li> Working exportable ressources. Make sure your puppetdb is working well, this module
-heavily depends on it.</li>
-</ul>
+<h2 id="label-Usage">Usage</h2>
 
-<h2 id="usage">Usage</h2>
-
-<p>This only describes the very basic usage. Almost all things are configurable, see the reference for details.
-So for a basic setup, the following steps should give you a running setup.</p>
-
-<ol>
-<li> Do a basic setup of your <strong>dehydrated_host</strong>:
- <code>
-     class { &#39;dehydrated&#39; :
-         dehydrated_host =&gt; &#39;your.dehydrated.host.example.com&#39;,
-     }
-</code></li>
-<li> As example we&#39;ll use the dehydrated hook for Cloudflare®. Take <a href="https://github.com/socram8888/dehydrated-hook-cloudflare/blob/master/cf-hook.sh">socram8888/dehydrated-hook-cloudflare</a>
- and <strong>on your dehydrated_host</strong> install it into <em>/opt/dehydrated/hooks/dns-01.sh</em></li>
-<li><p>Add the hook configuration to your config from above:</p>
+<p>This only describes the very basic usage. Almost all things are configurable, see the reference for details. So for a basic setup, the following steps should give you a running setup.</p>
+<ol><li>
+<p>Do a basic setup of your <strong>dehydrated_host</strong>:  <code>      class { &#39;dehydrated&#39; :          dehydrated_host =&gt; &#39;your.dehydrated.host.example.com&#39;,      } </code></p>
+</li><li>
+<p>As example we’ll use the dehydrated hook for Cloudflare®. Take [socram8888/dehydrated-hook-cloudflare](  <a href="https://github.com/socram8888/dehydrated-hook-cloudflare/blob/master/cf-hook.sh">github.com/socram8888/dehydrated-hook-cloudflare/blob/master/cf-hook.sh</a>)  and <strong>on your dehydrated_host</strong> install it into <em>/opt/dehydrated/hooks/dns-01.sh</em></p>
+</li><li>
+<p>Add the hook configuration to your config from above:</p>
 
 <pre class="code ruby"><code class="ruby"> class { &#39;dehydrated&#39; :
      dehydrated_host =&gt; &#39;your.dehydrated.host.example.com&#39;,
@@ -164,8 +134,9 @@ So for a basic setup, the following steps should give you a running setup.</p>
          &#39;CF_KEY&#39;   =&gt; &#39;your-long-Cloudflare-api-key&#39;,
      }
  }
-</code></pre></li>
-<li><p>On the host that needs a new certificate, add this to your puppet code:</p>
+</code></pre>
+</li><li>
+<p>On the host that needs a new certificate, add this to your puppet code:</p>
 
 <pre class="code ruby"><code class="ruby"> class { &#39;dehydrated&#39; :
      dehydrated_host =&gt; &#39;your.dehydrated.host.example.com&#39;,
@@ -174,18 +145,14 @@ So for a basic setup, the following steps should give you a running setup.</p>
  ::dehydrated::certificate { &#39;my-https-host.example.com&#39; :
      subject_alternative_names =&gt; [ &#39;example.com&#39;, &#39;host2.example.com&#39; ],
  }
-</code></pre></li>
-<li><p>Wait.... it will take a few puppet runs until your certificate will appear.
- The certificates will be requestd by a cronjob, not directly from puppet.
- Otherwise puppet runs will take way too much time. For detailed description of the workflow see <a href="#deployment-workflow">Deployment workflow
-</a></p></li>
-</ol>
+</code></pre>
+</li><li>
+<p>Wait.... it will take a few puppet runs until your certificate will appear.  The certificates will be requestd by a cronjob, not directly from puppet.  Otherwise puppet runs will take way too much time. For detailed description of the workflow see <a href="#deployment-workflow">Deployment workflow </a></p>
+</li></ol>
 
-<h3 id="using-hiera">Using hiera</h3>
+<h3 id="label-Using+hiera">Using hiera</h3>
 
-<p>To use hiera, make sure you include your dehdrated class somewhere. As default configuration for all
-hosts setup the defaults, in this case we are using dehydrated in the way to be compatible to the
-old bzed-letsencrypt setup:</p>
+<p>To use hiera, make sure you include your dehdrated class somewhere. As default configuration for all hosts setup the defaults, in this case we are using dehydrated in the way to be compatible to the old bzed-letsencrypt setup:</p>
 
 <pre class="code ruby"><code class="ruby">dehydrated::dehydrated_host: &#39;my.dehydrated.host&#39;
 dehydrated::base_dir: &#39;/etc/letsencrypt&#39;
@@ -205,34 +172,25 @@ dehydrated::dehydrated_domain_validation_hook: &#39;domain_validation_hook.sh&#3
       - [ &quot;second_domain.san.example.com&quot;, &quot;third_domain.san.example.com&quot; ]
 </code></pre>
 
-<p>With the yaml snippet above you&#39;d request the following certificates:</p>
+<p>With the yaml snippet above you’d request the following certificates:  - wildcard certificate <strong>*.subdomain.example.com</strong>  - “normal” certificate <strong>subdomain.example.com</strong>  - SAN certificate <strong>san.example.com</strong> with <strong>second_domain.san.example.com</strong>  and <strong>third_domain.san.example.com</strong> as subject alternative names.</p>
 
-<ul>
-<li> wildcard certificate <strong>*.subdomain.example.com</strong></li>
-<li> &quot;normal&quot; certificate <strong>subdomain.example.com</strong></li>
-<li> SAN certificate <strong>san.example.com</strong> with <strong>second_domain.san.example.com</strong>
-and <strong>third_domain.san.example.com</strong> as subject alternative names.</li>
-</ul>
-
-<h3 id="monitoring-debugging">Monitoring &amp; debugging</h3>
-
-<ul>
-<li> usual Puppet debugging rules apply &gt;:-)</li>
-<li> you&#39;ll find the output and errors from the last cronjob run in <strong>/opt/dehydrated/status.json</strong>.
-Unfortunately proper logging and maybe a better error handling is not implemented yet.
-Pull requests are welcome :-)</li>
-<li><p>monitoring the cronjob results is possible by using check_statusfile. On Debian and derivates
-this is available in the <em>nagios-plugins-contrib</em> package. Or find the source here: <a href="https://github.com/bzed/pkg-nagios-plugins-contrib/blob/master/dsa/checks/dsa-check-statusfile">check_statusfile</a></p>
+<h3 id="label-Monitoring+-26+debugging">Monitoring &amp; debugging</h3>
+<ul><li>
+<p>usual Puppet debugging rules apply &gt;:-)</p>
+</li><li>
+<p>you'll find the output and errors from the last cronjob run in <strong>/opt/dehydrated/status.json</strong>. Unfortunately proper logging and maybe a better error handling is not implemented yet. Pull requests are welcome :-)</p>
+</li><li>
+<p>monitoring the cronjob results is possible by using check_statusfile. On Debian and derivates this is available in the <em>nagios-plugins-contrib</em> package. Or find the source here: <a href="https://github.com/bzed/pkg-nagios-plugins-contrib/blob/master/dsa/checks/dsa-check-statusfile">check_statusfile</a></p>
 
 <pre class="code ruby"><code class="ruby"># /usr/lib/nagios/plugins/check_statusfile /opt/dehydrated/monitoring.status
 dehydrated certificates: OK: 2, FAILED: 1
 foo.example.com (from bar.example.com): OCSP update failed
-</code></pre></li>
-</ul>
+</code></pre>
+</li></ul>
 
-<h2 id="migrating-from-bzed-letsencrypt">Migrating from <em>bzed-letsencrypt</em></h2>
+<h2 id="label-Migrating+from+bzed-letsencrypt">Migrating from <em>bzed-letsencrypt</em></h2>
 
-<p>If you were using the bzed-letsencrypt module before, I&#39;d suggest to use the following settings on the hosts that request certificates:</p>
+<p>If you were using the bzed-letsencrypt module before, I’d suggest to use the following settings on the hosts that request certificates:</p>
 
 <pre class="code ruby"><code class="ruby">class { &#39;dehydrated&#39; :
     group    =&gt; &#39;letsencrypt&#39;,
@@ -240,120 +198,114 @@ foo.example.com (from bar.example.com): OCSP update failed
 }
 </code></pre>
 
-<p>Migrating the files on the dehydrated_host (former letsencrypt_host) is a harder task and
-not implemented. A new setup or manual migration is preferred.</p>
+<p>Migrating the files on the dehydrated_host (former letsencrypt_host) is a harder task and not implemented. A new setup or manual migration is preferred.</p>
 
-<h2 id="reference">Reference</h2>
+<h2 id="label-Reference">Reference</h2>
 
-<p>An html version of the reference is available here: <a href="https://bzed.github.io/bzed-dehydrated/">https://bzed.github.io/bzed-dehydrated/</a>
-There is also a markdown version in REFERENCE.md</p>
+<p>An html version of the reference is available here: <a href="https://bzed.github.io/bzed-dehydrated">bzed.github.io/bzed-dehydrated</a>/ There is also a markdown version in REFERENCE.md</p>
 
-<h2 id="monitoring">Monitoring</h2>
+<h2 id="label-Monitoring">Monitoring</h2>
 
-<p>The cron-triggered dehydrated worker creates a status file in a format compatible with check_statusfile, which is - in Debian and derivates - packaged in the <em>nagios-plugins-contrib</em> package.
-If you ar enot using Debian you can retrieve the source code here: <a href="https://github.com/bzed/pkg-nagios-plugins-contrib/blob/master/dsa/checks/dsa-check-statusfile">check_statusfile</a></p>
+<p>The cron-triggered dehydrated worker creates a status file in a format compatible with check_statusfile, which is - in Debian and derivates - packaged in the <em>nagios-plugins-contrib</em> package. If you ar enot using Debian you can retrieve the source code here: <a href="https://github.com/bzed/pkg-nagios-plugins-contrib/blob/master/dsa/checks/dsa-check-statusfile">check_statusfile</a></p>
 
-<h2 id="limitations">Limitations</h2>
+<h2 id="label-Limitations">Limitations</h2>
 
-<p>Don&#39;t forget that Let’s Encrypt limits apply!
-Also: this code might not work for your use-case out of the box, please test it properly against
-the Let’s Encrypt testing CA instead of running into the limit for failed authorizations and blaiming me for it ;)</p>
+<p>Don’t forget that Let’s Encrypt limits apply! Also: this code might not work for your use-case out of the box, please test it properly against the Let’s Encrypt testing CA instead of running into the limit for failed authorizations and blaiming me for it ;)</p>
 
-<h3 id="deployment-workflow">Deployment workflow</h3>
+<h3 id="label-Deployment+workflow">Deployment workflow</h3>
 
 <p>The cerfificates take some time to appear on the target host. This is due to the way this modules works. The Following Steps are taken to create all cerficate files. The time depends on your puppet and cron schedule.</p>
 
-<table><thead>
+<table role="table">
+<thead>
 <tr>
 <th>Step</th>
-<th style="text-align: left">Server</th>
-<th style="text-align: left">System</th>
-<th style="text-align: left">Description</th>
-<th style="text-align: left">Relevant Source</th>
+<th align="left">Server</th>
+<th align="left">System</th>
+<th align="left">Description</th>
+<th align="left">Relevant Source</th>
 </tr>
-</thead><tbody>
+</thead>
+<tbody>
 <tr>
 <td>1</td>
-<td style="text-align: left">target</td>
-<td style="text-align: left">puppet</td>
-<td style="text-align: left">Create Key and CSR</td>
-<td style="text-align: left"><a href="manifests/certificate.pp#L115">dehydrated::certificate</a> <a href="manifests/certificate/csr.pp#L52-L81">dehydrated::certificate::csr</a></td>
+<td align="left">target</td>
+<td align="left">puppet</td>
+<td align="left">Create Key and CSR</td>
+<td align="left">[dehydrated::certificate](manifests/certificate.pp#L115) [dehydrated::certificate::csr](manifests/certificate/csr.pp#L52-L81)</td>
 </tr>
 <tr>
 <td>2</td>
-<td style="text-align: left">target</td>
-<td style="text-align: left">puppet</td>
-<td style="text-align: left">get CSR from <code>$fact[&#39;dehydrated_domains&#39;]</code> and export it as a <code>dehydrated::certificate::request</code>.</td>
-<td style="text-align: left"><a href="manifests/init.pp#L217-L222">dehydrated</a></td>
+<td align="left">target</td>
+<td align="left">puppet</td>
+<td align="left">get CSR from `$fact[&#39;dehydrated_domains&#39;]` and export it as a `dehydrated::certificate::request`.</td>
+<td align="left">[dehydrated](manifests/init.pp#L217-L222)</td>
 </tr>
 <tr>
 <td>3</td>
-<td style="text-align: left"><em>dehydrated_host</em></td>
-<td style="text-align: left">puppet</td>
-<td style="text-align: left">Collect all <code>dehydrated::certificate::request</code> and save them for the cronjob.</td>
-<td style="text-align: left"><a href="manifests/init.pp#L235">dehydrated</a> <a href="manifests/certificate/request.pp">dehydrated::certificate::request</a></td>
+<td align="left">*dehydrated\_host*</td>
+<td align="left">puppet</td>
+<td align="left">Collect all `dehydrated::certificate::request` and save them for the cronjob.</td>
+<td align="left">[dehydrated](manifests/init.pp#L235) [dehydrated::certificate::request](manifests/certificate/request.pp)</td>
 </tr>
 <tr>
 <td>4</td>
-<td style="text-align: left"><em>dehydrated_host</em></td>
-<td style="text-align: left">cron</td>
-<td style="text-align: left">finds the files from previous step and requests the certificates.</td>
-<td style="text-align: left"><a href="files/dehydrated_job_runner.rb">dehydrated_job_runner</a></td>
+<td align="left">*dehydrated\_host*</td>
+<td align="left">cron</td>
+<td align="left">finds the files from previous step and requests the certificates.</td>
+<td align="left">[dehydrated_job_runner](files/dehydrated_job_runner.rb)</td>
 </tr>
 <tr>
 <td>5</td>
-<td style="text-align: left"><em>dehydrated_host</em></td>
-<td style="text-align: left">puppet</td>
-<td style="text-align: left">Find the certificates and export them as <code>dehydrated::certificate::transfer</code></td>
-<td style="text-align: left"><a href="manifests/init.pp#L243-L247">dehydrated</a> <a href="manifests/certificate/collect.pp#L76-L111">dehydrated::certificate:collect</a></td>
+<td align="left">*dehydrated\_host*</td>
+<td align="left">puppet</td>
+<td align="left">Find the certificates and export them as `dehydrated::certificate::transfer`</td>
+<td align="left">[dehydrated](manifests/init.pp#L243-L247) [dehydrated::certificate:collect](manifests/certificate/collect.pp#L76-L111)</td>
 </tr>
 <tr>
 <td>6</td>
-<td style="text-align: left">target</td>
-<td style="text-align: left">puppet</td>
-<td style="text-align: left">Collect all <code>dehydrated::certificate::transfer</code> and save them to the files.</td>
-<td style="text-align: left"><a href="manifests/init.pp#L225-L228">dehydrated</a> <a href="manifests/certificate/transfer.pp">dehydrated::certificate::transfer</a></td>
+<td align="left">target</td>
+<td align="left">puppet</td>
+<td align="left">Collect all `dehydrated::certificate::transfer` and save them to the files.</td>
+<td align="left">[dehydrated](manifests/init.pp#L225-L228) [dehydrated::certificate::transfer](manifests/certificate/transfer.pp)</td>
 </tr>
 <tr>
 <td>7.</td>
-<td style="text-align: left">target</td>
-<td style="text-align: left">puppet</td>
-<td style="text-align: left">identify deployed certificates by <code>$fact[&#39;dehydrated_domains::</code><em>dn</em><code>::&#39;ready_for_merge]</code> and create joined files like <code>*_fullchain.pem</code>.</td>
-<td style="text-align: left"><a href="manifests/certificate.pp#L123-L131">dehydrated::certificate</a> <a href="manifests/certificate/deploy.pp">dehydrated::certificate::deploy</a></td>
+<td align="left">target</td>
+<td align="left">puppet</td>
+<td align="left">identify deployed certificates by `$fact[&#39;dehydrated_domains::`*dn*`::&#39;ready_for_merge]` and create joined files like `*_fullchain.pem`.</td>
+<td align="left">[dehydrated::certificate](manifests/certificate.pp#L123-L131) [dehydrated::certificate::deploy](manifests/certificate/deploy.pp)</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
 
-<h2 id="development">Development</h2>
+<h2 id="label-Development">Development</h2>
 
-<p>Please use the github issue tracker and send pull requests. Make sure that your pull requests keep travis happy!</p>
+<p>Please use the github issue tracker and send pull requests. Make sure that your pull requests keep pdk validate/test unit happy!</p>
 
-<h3 id="for-a-release">For a release:</h3>
-
-<ul>
-<li><p>Update gh_pages:</p>
+<h3 id="label-For+a+release-3A">For a release:</h3>
+<ul><li>
+<p>Update gh_pages:</p>
 
 <pre class="code ruby"><code class="ruby">bundle exec rake strings:gh_pages:update
-</code></pre></li>
-<li><p>Update REFERENCE.md:</p>
+</code></pre>
+</li><li>
+<p>Update REFERENCE.md:</p>
 
 <pre class="code ruby"><code class="ruby">puppet strings generate --format markdown --out REFERENCE.md
-</code></pre></li>
-<li><p>Create changelog:</p>
-
-<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_bundle'>bundle</span> <span class='id identifier rubyid_exec'>exec</span> <span class='id identifier rubyid_rake'>rake</span> <span class='id identifier rubyid_changelog'>changelog</span>
-</code></pre></li>
-<li><p>Release:</p>
+</code></pre>
+</li><li>
+<p>Release:</p>
 
 <pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_pdk'>pdk</span> <span class='id identifier rubyid_build'>build</span>
-</code></pre></li>
-<li><p>Bump version number: bump/change the version in metadata.json.</p></li>
-</ul>
+</code></pre>
+</li><li>
+<p>Bump version number: bump/change the version in metadata.json.</p>
+</li></ul>
 
-<h2 id="support-and-help">Support and help</h2>
+<h3 id="label-Support+and+help">Support and help</h3>
 
-<p>There is no official commercial support for this puppet module, but I&#39;m happy to help you if you open a bug in the issue tracker.
-Please make sure to add enough information about what you have done so far and how your setup looks like.
-I&#39;m also reachable by <a href="mailto:bernd@bzed.de">email</a>. Use GPG to encrypt confidential data:</p>
+<p>There is no official commercial support for this puppet module, but I’m happy to help you if you open a bug in the issue tracker. Please make sure to add enough information about what you have done so far and how your setup looks like. I’m also reachable by <a href="mailto:bernd@bzed.de">email</a>. Use GPG to encrypt confidential data:</p>
 
 <pre class="code ruby"><code class="ruby">ECA1 E3F2 8E11 2432 D485  DD95 EB36 171A 6FF9 435F
 </code></pre>

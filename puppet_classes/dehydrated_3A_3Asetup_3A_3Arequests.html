@@ -77,8 +77,8 @@
 <h2>Overview</h2>
 <div class="docstring">
   <div class="discussion">
-    <p>We collect all request information from puppetdb, clean, enrich and merge it
-to create requests.json on the dehydrated host</p>
+    
+<p>We collect all request information from puppetdb, clean, enrich and merge it to create requests.json on the dehydrated host</p>
 
   </div>
 </div>
@@ -219,9 +219,7 @@ to create requests.json on the dehydrated host</p>
 120
 121
 122
-123
-124
-125</pre>
+123</pre>
       </td>
       <td>
         <pre class="code"><span class="info file"># File 'manifests/setup/requests.pp', line 8</span>
@@ -260,7 +258,6 @@ class dehydrated::setup::requests {
     $base_filename = $config[&#39;base_filename&#39;]
     $dh_param_size = $config[&#39;dh_param_size&#39;]
     $crt_serial = $config[&#39;crt_serial&#39;]
-    $fingerprints = $config[&#39;fingerprints&#39;]
     $subject_alternative_names = $config[&#39;subject_alternative_names&#39;]
     $dehydrated_host = $config[&#39;dehydrated_host&#39;]
     $dehydrated_environment = $config[&#39;dehydrated_environment&#39;]
@@ -307,7 +304,6 @@ class dehydrated::setup::requests {
           &#39;subject_alternative_names&#39;                =&gt; $subject_alternative_names,
           &#39;base_filename&#39;                            =&gt; $base_filename,
           &#39;crt_serial&#39;                               =&gt; $crt_serial,
-          &#39;fingerprints&#39;                             =&gt; $fingerprints,
           &#39;request_fqdn_dir&#39;                         =&gt; $request_fqdn_dir,
           &#39;request_base_dir&#39;                         =&gt; $request_base_dir,
           &#39;request_account_dir&#39;                      =&gt; $request_account_dir,

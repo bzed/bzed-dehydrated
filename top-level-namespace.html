@@ -184,28 +184,6 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="top-level-namespace.html#get_key_fingerprints-instance_method" title="#get_key_fingerprints (instance method)">#<strong>get_key_fingerprints</strong>(keyfile)  &#x21d2; Object </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'></div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
       <a href="top-level-namespace.html#get_ocsp-instance_method" title="#get_ocsp (instance method)">#<strong>get_ocsp</strong>(ocsp)  &#x21d2; Object </a>
     
 
@@ -424,58 +402,6 @@
   <span class='kw'>else</span>
     <span class='kw'>nil</span>
   <span class='kw'>end</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="get_key_fingerprints-instance_method">
-  
-    #<strong>get_key_fingerprints</strong>(keyfile)  &#x21d2; <tt>Object</tt> 
-  
-
-  
-
-  
-</h3><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-40
-41
-42
-43
-44
-45
-46
-47
-48
-49
-50
-51
-52
-53</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/facter/dehydrated_config.rb', line 40</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_get_key_fingerprints'>get_key_fingerprints</span><span class='lparen'>(</span><span class='id identifier rubyid_keyfile'>keyfile</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_privkey'>privkey</span> <span class='op'>=</span> <span class='const'>OpenSSL</span><span class='op'>::</span><span class='const'>PKey</span><span class='period'>.</span><span class='id identifier rubyid_read'>read</span><span class='lparen'>(</span><span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_read'>read</span><span class='lparen'>(</span><span class='id identifier rubyid_keyfile'>keyfile</span><span class='rparen'>)</span><span class='rparen'>)</span>
-  <span class='kw'>begin</span>
-    <span class='id identifier rubyid_pubkey_der'>pubkey_der</span> <span class='op'>=</span> <span class='id identifier rubyid_privkey'>privkey</span><span class='period'>.</span><span class='id identifier rubyid_public_to_der'>public_to_der</span>
-  <span class='kw'>rescue</span> <span class='const'>NoMethodError</span>
-    <span class='id identifier rubyid_pubkey_der'>pubkey_der</span> <span class='op'>=</span> <span class='id identifier rubyid_privkey'>privkey</span><span class='period'>.</span><span class='id identifier rubyid_public_key'>public_key</span><span class='period'>.</span><span class='id identifier rubyid_to_der'>to_der</span>
-  <span class='kw'>end</span>
-
-  <span class='id identifier rubyid_digests'>digests</span> <span class='op'>=</span> <span class='lbrace'>{</span>
-    <span class='label'>sha256:</span> <span class='const'>OpenSSL</span><span class='op'>::</span><span class='const'>Digest</span><span class='op'>::</span><span class='const'>SHA256</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_pubkey_der'>pubkey_der</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='comma'>,</span>
-  <span class='rbrace'>}</span>
-
-  <span class='id identifier rubyid_digests'>digests</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>

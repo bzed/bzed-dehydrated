@@ -75,8 +75,8 @@
 <h2>Overview</h2>
 <div class="docstring">
   <div class="discussion">
-    <p>Manage certificate keys and create CSRs for the
-configured domains / altnames.</p>
+    
+<p>Manage certificate keys and create CSRs for the configured domains / altnames.</p>
 
   </div>
 </div>
@@ -407,7 +407,14 @@ configured domains / altnames.</p>
 92
 93
 94
-95</pre>
+95
+96
+97
+98
+99
+100
+101
+102</pre>
       </td>
       <td>
         <pre class="code"><span class="info file"># File 'manifests/certificate/csr.pp', line 14</span>
@@ -446,6 +453,7 @@ define dehydrated::certificate::csr (
   $key = &quot;${key_dir}/${base_filename}.key&quot;
   $csr = &quot;${csr_dir}/${base_filename}.csr&quot;
   $dh  = &quot;${crt_dir}/${base_filename}.dh&quot;
+  $fingerprint = &quot;${key}.fingerprint&quot;
 
   if ($ensure == &#39;present&#39;) {
     dehydrated_key { $key :
@@ -455,6 +463,12 @@ define dehydrated::certificate::csr (
       size      =&gt; $size,
       require   =&gt; File[$key_dir],
       before    =&gt; File[$key],
+    }
+    dehydrated_fingerprint { $fingerprint :
+      ensure      =&gt; $ensure,
+      private_key =&gt; $key,
+      password    =&gt; $key_password,
+      require     =&gt; Dehydrated_key[$key],
     }
     dehydrated_csr { $csr :
       ensure                    =&gt; $ensure,
