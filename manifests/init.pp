@@ -244,7 +244,7 @@ class dehydrated (
             [ "=", "type", "Dehydrated::Certificate::Transfer" ],
             [ "=", "parameters.request_fqdn", "${trusted['certname']}" ],
             [ "=", "parameters.request_base_filename", "${_base_filename}" ],
-            [ "!=", "parameters.file_type", "ocsp" ],
+            [ "not", [ "=", "parameters.file_type", "ocsp" ]],
             [ "=", "exported", true ]
           ]
         ]
