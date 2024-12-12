@@ -271,7 +271,7 @@ class dehydrated (
     }
 
     # mark as ready for merge in case we have 3 files to transfer.
-    if length($transfer_data) == 3 {
+    if length($transfer_data) == 2 {
       $_dn
     } else {
       undef
