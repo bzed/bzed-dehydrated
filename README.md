@@ -197,6 +197,8 @@ The cerfificates take some time to appear on the target host. This is due to the
 Please use the github issue tracker and send pull requests. Make sure that your pull requests keep pdk validate/test unit happy!
 
 ### For a release:
+ -  Update CHANGELOG.md
+
  -  Update gh\_pages:
 
         bundle exec rake strings:gh_pages:update
