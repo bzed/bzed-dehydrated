@@ -36,6 +36,7 @@
 
 * [`dehydrated_csr`](#dehydrated_csr): CSRs for dehydrated
 * [`dehydrated_dhparam`](#dehydrated_dhparam): DH params for dehydrated
+* [`dehydrated_fingerprint`](#dehydrated_fingerprint): Create a fingerprint file key for a private key file.
 * [`dehydrated_key`](#dehydrated_key): Create a private key for dehydrated.
 * [`dehydrated_pfx`](#dehydrated_pfx): pkcs12 / pfx files for dehydrated
 
@@ -829,6 +830,48 @@ usually discover the appropriate provider for your platform.
 The key size
 
 Default value: `2048`
+
+### <a name="dehydrated_fingerprint"></a>`dehydrated_fingerprint`
+
+Create a fingerprint file key for a private key file.
+
+#### Properties
+
+The following properties are available in the `dehydrated_fingerprint` type.
+
+##### `ensure`
+
+Valid values: `present`, `absent`
+
+The basic property that the resource should be in.
+
+Default value: `present`
+
+#### Parameters
+
+The following parameters are available in the `dehydrated_fingerprint` type.
+
+* [`password`](#-dehydrated_fingerprint--password)
+* [`path`](#-dehydrated_fingerprint--path)
+* [`private_key`](#-dehydrated_fingerprint--private_key)
+* [`provider`](#-dehydrated_fingerprint--provider)
+
+##### <a name="-dehydrated_fingerprint--password"></a>`password`
+
+The optional password for the key
+
+##### <a name="-dehydrated_fingerprint--path"></a>`path`
+
+Fingerprint location, must be absolute.
+
+##### <a name="-dehydrated_fingerprint--private_key"></a>`private_key`
+
+Key location, must be absolute.
+
+##### <a name="-dehydrated_fingerprint--provider"></a>`provider`
+
+The specific backend to use for this `dehydrated_fingerprint` resource. You will seldom need to specify this --- Puppet
+will usually discover the appropriate provider for your platform.
 
 ### <a name="dehydrated_key"></a>`dehydrated_key`
 
