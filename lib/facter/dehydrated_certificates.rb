@@ -3,14 +3,6 @@ require 'json'
 require 'openssl'
 require 'base64'
 
-def get_ocsp(ocsp)
-  if File.exist?(ocsp)
-    Base64.strict_encode64(File.read(ocsp))
-  else
-    nil
-  end
-end
-
 def get_file(filename)
   if File.exist?(filename)
     File.read(filename)
@@ -51,8 +43,6 @@ def handle_requests(config)
             ca_file = "#{request_base_dir}/#{base_filename}_ca.pem"
             requests[request_fqdn][dn]['ca'] = get_file(ca_file)
           end
-          ocsp_file = "#{crt_file}.ocsp"
-          requests[request_fqdn][dn]['ocsp'] = get_ocsp(ocsp_file)
         end
       end
     end

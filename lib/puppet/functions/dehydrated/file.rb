@@ -17,11 +17,7 @@ Puppet::Functions.create_function(:'dehydrated::file') do
         raise(Puppet::ParseError, 'Files must be fully qualified')
       end
       next unless File.exist?(file)
-      ret = if %r{.*\.ocsp$}.match?(file)
-              Base64.strict_encode64(File.read(file))
-            else
-              File.read(file)
-            end
+      ret = File.read(file)
     end
     ret
   end

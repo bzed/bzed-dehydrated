@@ -83,70 +83,6 @@ def update_ca_chain(crt_file, ca_file)
   [stdout, stderr, status]
 end
 
-def update_ocsp(ocsp_file, crt_file, ca_file)
-  crt = OpenSSL::X509::Certificate.new(File.read(crt_file))
-  ca = OpenSSL::X509::Certificate.new(File.read(ca_file))
-  digest = OpenSSL::Digest::SHA1.new
-  certificate_id = OpenSSL::OCSP::CertificateId.new(crt, ca, digest)
-  request = OpenSSL::OCSP::Request.new
-  request.add_certid certificate_id
-
-  # seems LE doesn't handle nonces.
-  # request.add_nonce
-
-  ocsp_uri = _get_authority_url(crt, 'OCSP')
-
-  ocsp_response = ''
-  limit = 10
-  while limit > 0
-    path = if ocsp_uri.path.empty?
-             '/'
-           else
-             ocsp_uri.path
-           end
-    response = Net::HTTP.start ocsp_uri.hostname, ocsp_uri.port do |http|
-      http.post(
-        path,
-        request.to_der,
-        'content-type' => 'application/ocsp-request',
-      )
-    end
-    case response
-    when Net::HTTPSuccess then
-      ocsp_response = response.body
-      status = 0
-      stdout = ''
-      stderr = response.message
-    when Net::HTTPRedirection then
-      ocsp_uri = URI(response['location'])
-      limit -= 1
-      status = response.code
-      stdout = response.body
-      stderr = response.message
-      next
-    else
-      status = 1
-      stdout = ''
-      stderr = response.class.name
-    end
-    break
-  end
-
-  if status.zero? && ocsp_response != ''
-    ocsp = OpenSSL::OCSP::Response.new ocsp_response
-    store = OpenSSL::X509::Store.new
-    store.add_cert(ca)
-
-    if ocsp.basic # && ocsp.basic().verify([], store)
-      File.write(ocsp_file, ocsp.to_der)
-    else
-      status = 1
-      stderr = stdout = 'OCSP verification failed'
-    end
-  end
-  [stdout, stderr, status.to_i]
-end
-
 def register_account(dehydrated_config)
   run_dehydrated(dehydrated_config, '--accept-terms --register')
 end
@@ -236,7 +172,6 @@ def handle_request(fqdn, dn, config)
   csr_content = config['csr_content']
   csr_file = File.join(request_base_dir, "#{base_filename}.csr")
   ca_file = File.join(request_base_dir, "#{base_filename}_ca.pem")
-  ocsp_file = "#{crt_file}.ocsp"
   subject_alternative_names = config['subject_alternative_names'].sort.uniq
   dehydrated_domain_validation_hook_script = config['dehydrated_domain_validation_hook_script']
   dehydrated_hook_script = config['dehydrated_hook_script']
@@ -252,6 +187,10 @@ def handle_request(fqdn, dn, config)
                       else
                         new_dn_config
                       end
+
+  # clean up OCSP files as they are not supported by letsencrypt anymore.
+  ocsp_file = "#{crt_file}.ocsp"
+  File.delete(ocsp_file) if File.exist?(ocsp_file)
 
   # register / update account
   # prior to 2024-04, the config did not contain the request_account_dir.  Fall back to the
@@ -319,25 +258,12 @@ def handle_request(fqdn, dn, config)
     if status > 0 || !cert_still_valid(crt_file)
       return ['CSR signing failed', stdout, stderr, status] if status > 0
     end
-    # remove ocsp file after getting a new certificate
-    if status.zero? && File.exist?(ocsp_file)
-      File.delete(ocsp_file)
-    end
   end
 
   # track currently used config
   # we do this before the OCSP stuff as we have a valid cert already.
   File.write(dn_config_file, JSON.generate(new_dn_config))
 
-  if cert_still_valid(crt_file)
-    ocsp_uptodate = File.exist?(ocsp_file) &&
-                    (File.mtime(ocsp_file) + 24 * 60 * 60) > Time.now &&
-                    File.mtime(ocsp_file) > File.mtime(crt_file)
-    unless ocsp_uptodate
-      stdout, stderr, status = update_ocsp(ocsp_file, crt_file, ca_file)
-      return ['OCSP update failed', stdout, stderr, status] if status > 0
-    end
-  end
   old_env.each do |key, value|
     ENV[key] = value
   end

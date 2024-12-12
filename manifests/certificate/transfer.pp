@@ -1,6 +1,6 @@
-# Used as exported ressource to ransfer crt/ca/ocsp files.
+# Used as exported ressource to ransfer crt/ca files.
 #
-# @summary Transfer crt/ca/ocsp files.
+# @summary Transfer crt/ca files.
 #
 # @example
 #   dehydrated::certificate::transfer { 'namevar':
@@ -13,7 +13,7 @@
 # @api private
 #
 define dehydrated::certificate::transfer (
-  Enum['crt', 'ca', 'ocsp'] $file_type,
+  Enum['crt', 'ca'] $file_type,
   Dehydrated::DN $request_dn,
   Stdlib::Fqdn $request_fqdn,
   String $request_base_filename,

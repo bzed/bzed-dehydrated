@@ -31,10 +31,8 @@ define dehydrated::certificate::collect (
     $dehydrated_requests_dir = $dehydrated::dehydrated_requests_dir
     $crt_file = "${request_base_dir}/${request_base_filename}.crt"
     $ca_file = "${request_base_dir}/${request_base_filename}_ca.pem"
-    $ocsp_file = "${crt_file}.ocsp"
 
     $crt = dehydrated::file($crt_file)
-    $ocsp = dehydrated::file($ocsp_file)
     $ca = dehydrated::file($ca_file)
   } else {
     # we are on a non-puppetmaster host
@@ -50,14 +48,6 @@ define dehydrated::certificate::collect (
       } else {
         $crt = undef
       }
-      if (
-        'ocsp' in $config and
-        $config['ocsp'] =~ Stdlib::Base64
-      ) {
-        $ocsp = String(Binary($config['ocsp']))
-      } else {
-        $ocsp = undef
-      }
       if 'ca' in $config {
         $ca = $config['ca']
       } else {
@@ -66,7 +56,6 @@ define dehydrated::certificate::collect (
     } else {
       notify { 'No dehydrated certificate config from facter :(' : }
       $crt = undef
-      $ocsp = undef
       $ca = undef
     }
   }
@@ -86,15 +75,6 @@ define dehydrated::certificate::collect (
       request_dn            => $request_dn,
       request_fqdn          => $request_fqdn,
       file_content          => $ca,
-      request_base_filename => $request_base_filename,
-    }
-  }
-  if ($ocsp) {
-    @@dehydrated::certificate::transfer { "${name}-transfer-ocsp" :
-      file_type             => 'ocsp',
-      request_dn            => $request_dn,
-      request_fqdn          => $request_fqdn,
-      file_content          => $ocsp,
       request_base_filename => $request_base_filename,
     }
   }

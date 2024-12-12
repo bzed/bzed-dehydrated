@@ -30,7 +30,7 @@
 * `dehydrated::certificate::deploy`: Deploy collected certificate and CA files.
 * `dehydrated::certificate::dh`: Create the DH params file.
 * `dehydrated::certificate::request`: Prepare everything to request a certifificate for our CSRs.
-* `dehydrated::certificate::transfer`: Transfer crt/ca/ocsp files.
+* `dehydrated::certificate::transfer`: Transfer crt/ca files.
 
 ### Resource types
 

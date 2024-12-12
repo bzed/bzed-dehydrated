@@ -148,7 +148,7 @@ With the yaml snippet above you'd request the following certificates:
 
         # /usr/lib/nagios/plugins/check_statusfile /opt/dehydrated/monitoring.status
         dehydrated certificates: OK: 2, FAILED: 1
-        foo.example.com (from bar.example.com): OCSP update failed
+        foo.example.com (from bar.example.com): some error description
 
 
 ## Migrating from _bzed-letsencrypt_

@@ -252,16 +252,11 @@ class dehydrated (
 
     $transfer_data = puppetdb_query($transfer_query)
     $transfer_data.each |$transfer| {
-      if ($transfer['parameters.file_type'] == 'ocsp') {
-        $content = base64('decode', $transfer['parameters.file_content'])
-      } else {
-        $content = $transfer['parameters.file_content']
-      }
+      $content = $transfer['parameters.file_content']
 
       $filenames = {
         'ca'   => "${crt_dir}/${_base_filename}_ca.pem",
         'crt'  => "${crt_dir}/${_base_filename}.crt",
-        'ocsp' => "${crt_dir}/${_base_filename}.crt.ocsp",
       }
 
       $filename = $filenames[$transfer['parameters.file_type']]
