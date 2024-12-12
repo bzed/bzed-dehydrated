@@ -1,6 +1,6 @@
 {
   "name": "bzed-dehydrated",
-  "version": "2.0.0",
+  "version": "1.0.1",
   "author": "bzed",
   "summary": "Puppet module for centralized CSR signing using Let’s Encrypt™ and dehydrated-io/dehydrated - keeping your keys safe on the host they belong to.",
   "license": "Apache-2.0",
