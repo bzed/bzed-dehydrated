@@ -2,8 +2,9 @@
 # See https://github.com/puppetlabs/puppetlabs_spec_helper#using-fixtures for details
 ---
 fixtures:
+  repositories:
+    stdlib: "https://github.com/puppetlabs/puppetlabs-stdlib"
   forge_modules:
-     stdlib: "puppetlabs/stdlib"
      vcsrepo: "puppetlabs/vcsrepo"
      concat: "puppetlabs/concat"
      cron_core: "puppetlabs/cron_core"

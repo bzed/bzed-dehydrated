@@ -8,16 +8,11 @@ describe 'dehydrated' do
       let(:facts) { os_facts }
       let(:params) do
         {
-          'dehydrated_host' => os_facts[:fqdn],
+          'dehydrated_host' => os_facts[:networking][:fqdn],
         }
       end
 
       it { is_expected.to compile }
-    end
-    before :each do
-      Puppet::Parser::Functions.newfunction(:puppetdb_query, type: :rvalue) do |_args|
-        []
-      end
     end
   end
 end

@@ -6,13 +6,23 @@ require 'rspec/support/ruby_features'
 require 'spec_helper'
 
 RSpec.configure do |c|
-  c.enable_pathname_stubbing = true
-  Puppet::Parser::Functions.newfunction(:assert_private, type: :rvalue) do |args|
-  end
-  Puppet::Parser::Functions.newfunction(:puppetdb_query, type: :rvalue) do
-    []
+  c.before :each do
+    # don't fail spec tests, re-implement assert_private here.
+    Puppet::Parser::Functions.newfunction(:assert_private, type: :rvalue) do |args|
+    end
+    # no puppetdb available during spec tests.
+    # TODO: return more than just an empty array
+    Puppet::Parser::Functions.newfunction(:puppetdb_query, type: :rvalue) do |args|
+      query = args[0]
+      if query.empty?
+        nil
+      else
+        []
+      end
+    end
   end
 end
+
 WINDOWS = defined?(RSpec::Support) ? RSpec::Support::OS.windows? : !File::ALT_SEPARATOR.nil?
 
 add_custom_fact :puppet_vardir, ->(os, _facts) do

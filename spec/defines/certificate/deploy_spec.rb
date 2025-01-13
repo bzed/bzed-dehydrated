@@ -13,11 +13,17 @@ describe 'dehydrated::certificate::deploy' do
       let(:facts) { os_facts }
 
       let :pre_condition do
-        if %r{windows.*}.match?(os)
-          'class { "dehydrated" : dehydrated_host => "some.other.host.example.com" }'
-        else
-          'class { "dehydrated" : dehydrated_host => $facts["fqdn"] }'
-        end
+        [
+          'class { "dehydrated" : dehydrated_host => "test.example.com" }',
+          'dehydrated_key{ "/etc/pki/dehydrated/private/test.example.com.key": }',
+          'dehydrated_key{ "/etc/dehydrated/private/test.example.com.key": }',
+          'file{"/etc/dehydrated/certs/test.example.com.crt": }',
+          'file{"/etc/dehydrated/certs/test.example.com_ca.pem": }',
+          'file{"/etc/dehydrated/private/test.example.com.key": }',
+          'file{"/etc/pki/dehydrated/certs/test.example.com.crt": }',
+          'file{"/etc/pki/dehydrated/certs/test.example.com_ca.pem": }',
+          'file{"/etc/pki/dehydrated/private/test.example.com.key": }',
+        ].join("\n")
       end
 
       it { is_expected.to compile }

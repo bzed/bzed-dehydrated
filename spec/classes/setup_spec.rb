@@ -9,7 +9,7 @@ describe 'dehydrated::setup' do
         if %r{windows.*}.match?(os)
           'class { "dehydrated" : dehydrated_host => "some.other.host.example.com" }'
         else
-          'class { "dehydrated" : dehydrated_host => $facts["fqdn"] }'
+          'class { "dehydrated" : dehydrated_host => $facts["networking"]["fqdn"] }'
         end
       end
       let(:facts) { os_facts }
