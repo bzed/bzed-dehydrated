@@ -15,6 +15,7 @@ define dehydrated::certificate::deploy (
     fail('You must include the dehydrated base class first.')
   }
 
+  include dehydrated
   require dehydrated::setup
 
   $dehydrated_domains = $facts['dehydrated_domains']
