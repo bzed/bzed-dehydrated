@@ -14,6 +14,7 @@ group :development do
   gem 'guard-rake',                             :require => false
   gem 'overcommit', '>= 0.39.1',                :require => false
   gem 'github_changelog_generator',             :require => false, :git => 'https://github.com/skywinder/github-changelog-generator'
+  gem 'rspec-puppet-facts', '~> 1.7',           :require => false
   gem 'rspec-puppet',                           :require => false
   gem 'puppet-strings',                         :require => false
   gem 'rgen',                                   :require => false
