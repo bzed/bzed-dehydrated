@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # based on https://github.com/camptocamp/puppet-openssl/blob/master/lib/puppet/provider/ssl_pkey/openssl.rb
 # Apache License, Version 2.0, January 2004
 
@@ -32,9 +34,11 @@ Puppet::Type.type(:dehydrated_key).provide(:openssl) do
 
   def exists?
     return false unless Pathname.new(resource[:path]).exist?
+
     key = File.read(resource[:path])
     return false if key.empty?
     return false if key.include?('ENCRYPTED') && !resource[:password]
+
     begin
       key = OpenSSL::PKey.read(key, resource[:password])
       true if key
@@ -46,9 +50,7 @@ Puppet::Type.type(:dehydrated_key).provide(:openssl) do
   def create
     key = self.class.generate_key(resource)
     pem = self.class.to_pem(resource, key)
-    File.open(resource[:path], 'w') do |f|
-      f.write(pem)
-    end
+    File.write(resource[:path], pem)
   end
 
   def destroy

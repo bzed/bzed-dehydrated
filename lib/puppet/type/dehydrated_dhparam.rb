@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # idea taken from https://github.com/camptocamp/puppet-openssl/blob/master/lib/puppet/type/dhparam.rb
 # Apache License, Version 2.0, January 2004
 
@@ -10,9 +12,7 @@ Puppet::Type.newtype(:dehydrated_dhparam) do
   newparam(:path, namevar: true) do
     validate do |value|
       path = Pathname.new(value)
-      unless path.absolute?
-        raise ArgumentError, "Path must be absolute: #{path}"
-      end
+      raise ArgumentError, "Path must be absolute: #{path}" unless path.absolute?
     end
   end
 
@@ -21,12 +21,8 @@ Puppet::Type.newtype(:dehydrated_dhparam) do
     defaultto 2048
     validate do |value|
       size = value.to_i
-      if size < 3 || value.to_s != size.to_s
-        raise Puppet::Error, "Size must be an integer >=3: #{value.inspect}"
-      end
+      raise Puppet::Error, "Size must be an integer >=3: #{value.inspect}" if size < 3 || value.to_s != size.to_s
     end
-    munge do |value|
-      value.to_i
-    end
+    munge(&:to_i)
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'pathname'
 Puppet::Type.newtype(:dehydrated_fingerprint) do
   desc 'Create a fingerprint file key for a private key file.'
@@ -8,9 +10,7 @@ Puppet::Type.newtype(:dehydrated_fingerprint) do
     desc 'Fingerprint location, must be absolute.'
     validate do |value|
       path = Pathname.new(value)
-      unless path.absolute?
-        raise Puppet::Error, "Path must be absolute: #{path}"
-      end
+      raise Puppet::Error, "Path must be absolute: #{path}" unless path.absolute?
     end
   end
 
@@ -18,9 +18,7 @@ Puppet::Type.newtype(:dehydrated_fingerprint) do
     desc 'Key location, must be absolute.'
     validate do |value|
       path = Pathname.new(value)
-      unless path.absolute?
-        raise Puppet::Error, "Path must be absolute: #{path}"
-      end
+      raise Puppet::Error, "Path must be absolute: #{path}" unless path.absolute?
     end
   end
 

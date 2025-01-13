@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # based on https://github.com/camptocamp/puppet-openssl/blob/master/lib/puppet/type/ssl_pkey.rb
 # Apache License, Version 2.0, January 2004
 
@@ -11,9 +13,7 @@ Puppet::Type.newtype(:dehydrated_key) do
     desc 'Key location, must be absolute.'
     validate do |value|
       path = Pathname.new(value)
-      unless path.absolute?
-        raise Puppet::Error, "Path must be absolute: #{path}"
-      end
+      raise Puppet::Error, "Path must be absolute: #{path}" unless path.absolute?
     end
   end
 
@@ -22,9 +22,7 @@ Puppet::Type.newtype(:dehydrated_key) do
     newvalues(:prime256v1, :secp384r1, :rsa)
     defaultto :rsa
 
-    munge do |val|
-      val.to_sym
-    end
+    munge(&:to_sym)
   end
 
   newparam(:password) do
@@ -36,16 +34,10 @@ Puppet::Type.newtype(:dehydrated_key) do
     defaultto 3072
 
     validate do |value|
-      unless (value.to_i.to_s == value) || (value.to_i == value)
-        raise Puppet::Error, 'The key size must be an integer.'
-      end
-      unless value.to_i >= 512 && value.to_i <= 16_384
-        raise Puppet::Error, 'Only key sizes >= 512 and <= 16384 are supported.'
-      end
+      raise Puppet::Error, 'The key size must be an integer.' unless (value.to_i.to_s == value) || (value.to_i == value)
+      raise Puppet::Error, 'Only key sizes >= 512 and <= 16384 are supported.' unless value.to_i >= 512 && value.to_i <= 16_384
     end
 
-    munge do |val|
-      val.to_i
-    end
+    munge(&:to_i)
   end
 end
