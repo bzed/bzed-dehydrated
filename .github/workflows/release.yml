@@ -1,0 +1,16 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  deploy:
+    name: Deploy
+    uses: voxpupuli/gha-puppet/.github/workflows/release.yml@v1
+    with:
+      allowed_owner: bzed
+    secrets:
+      username: ${{ secrets.PUPPET_FORGE_USERNAME }}
+      api_key: ${{ secrets.PUPPET_FORGE_API_KEY }}
