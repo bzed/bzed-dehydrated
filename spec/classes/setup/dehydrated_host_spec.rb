@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 # buggy rubocop
 # rubocop:disable RSpec/EmptyExampleGroup
 describe 'dehydrated::setup::dehydrated_host' do
   on_supported_os.each do |os, os_facts|
-    next if os_facts[:kernel] == 'windows' && !WINDOWS
+    next if os_facts[:kernel] == 'windows'
 
     let :pre_condition do
       if %r{windows.*}.match?(os)
