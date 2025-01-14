@@ -17,16 +17,16 @@ Puppet::Type.type(:dehydrated_csr).provide(:openssl) do
     end
   end
 
-  def self._parse_san_value(v)
-    case v.tag
+  def self._parse_san_value(san_value)
+    case san_value.tag
     when 2
-      v.value
+      san_value.value
     when 7
-      case v.value.size
+      case san_value.value.size
       when 4
-        v.value.unpack('C*').join('.')
+        san_value.value.unpack('C*').join('.')
       when 16
-        v.value.unpack('n*').map { |o| '%X' % o }.join(':')
+        san_value.value.unpack('n*').map { |o| format('%X', o) }.join(':')
       end
     end
   end
@@ -39,16 +39,16 @@ Puppet::Type.type(:dehydrated_csr).provide(:openssl) do
       end
 
       csr_alt_names = if ext_req
-                        san_value = ext_req.value.map do |ext_req_v|
+                        san_values = ext_req.value.map do |ext_req_v|
                           san = ext_req_v.find do |v|
                             v.value[0].value == 'subjectAltName'
                           end
                           san.value[1] if san
                         end
-                        if san_value
-                          san_value = OpenSSL::ASN1.decode(san_value[0].value)
+                        if san_values
+                          san_values = OpenSSL::ASN1.decode(san_values[0].value)
 
-                          san_value.map do |v|
+                          san_values.map do |v|
                             _parse_san_value(v)
                           end
                         else

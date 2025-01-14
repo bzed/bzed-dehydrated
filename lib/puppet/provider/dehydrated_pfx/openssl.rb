@@ -41,13 +41,7 @@ Puppet::Type.type(:dehydrated_pfx).provide(:openssl) do
         pfx_ca_serials == ca_serials &&
           pfx.certificate.serial.to_s == cert.serial.to_s &&
           key.to_pem == pfx.key.to_pem
-      rescue OpenSSL::PKCS12::PKCS12Error
-        false
-      rescue OpenSSL::X509::CertificateError
-        false
-      rescue OpenSSL::PKey::ECError
-        false
-      rescue OpenSSL::PKey::RSAError
+      rescue OpenSSL::PKCS12::PKCS12Error, OpenSSL::X509::CertificateError, OpenSSL::PKey::ECError, OpenSSL::PKey::RSAError
         false
       end
     else
