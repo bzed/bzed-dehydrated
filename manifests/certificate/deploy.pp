@@ -2,6 +2,12 @@
 #
 # @summary Deploy collected certificate and CA files.
 #
+# @param dn
+# Certificate DN
+#
+# @param key_password
+# Password of the key if needed to access it.
+#
 # @example
 #   dehydrated::certificate::deploy { 'namevar': }
 #
