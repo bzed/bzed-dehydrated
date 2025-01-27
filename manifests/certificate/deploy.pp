@@ -48,7 +48,6 @@ define dehydrated::certificate::deploy (
   }
   concat { $crt_full_chain_with_key :
     mode   => '0640',
-    notify => Dehydrated_pfx[$pfx],
   }
 
   concat::fragment { "${dn}_key" :
@@ -87,22 +86,25 @@ define dehydrated::certificate::deploy (
 
   if ($dehydrated::build_pfx_files) {
     $dehydrated_pfx_ensure = 'present'
+    dehydrated_pfx { $pfx:
+      ensure       => 'present',
+      pkcs12_name  => $dn,
+      key_password => $key_password,
+      password     => $key_password,
+      ca           => $ca,
+      certificate  => $crt,
+      private_key  => $key,
+      require      => [
+        File[$crt],
+        File[$ca],
+        File[$key],
+        Dehydrated_key[$key],
+      ],
+      subscribe    => Concat[$crt_full_chain_with_key],
+    }
   } else {
-    $dehydrated_pfx_ensure = 'absent'
-  }
-  dehydrated_pfx { $pfx:
-    ensure       => $dehydrated_pfx_ensure,
-    pkcs12_name  => $dn,
-    key_password => $key_password,
-    password     => $key_password,
-    ca           => $ca,
-    certificate  => $crt,
-    private_key  => $key,
-    require      => [
-      File[$crt],
-      File[$ca],
-      File[$key],
-      Dehydrated_key[$key],
-    ],
+    file { $pfx:
+      ensure => absent,
+    }
   }
 }
