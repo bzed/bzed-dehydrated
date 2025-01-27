@@ -49,7 +49,6 @@ define dehydrated::certificate::csr (
 
   if ($ensure == 'present') {
     dehydrated_key { $key :
-      ensure    => $ensure,
       algorithm => $algorithm,
       password  => $key_password,
       size      => $size,
@@ -57,13 +56,11 @@ define dehydrated::certificate::csr (
       before    => File[$key],
     }
     dehydrated_fingerprint { $fingerprint :
-      ensure      => $ensure,
       private_key => $key,
       password    => $key_password,
       require     => Dehydrated_key[$key],
     }
     dehydrated_csr { $csr :
-      ensure                    => $ensure,
       private_key               => $key,
       password                  => $key_password,
       algorithm                 => $algorithm,

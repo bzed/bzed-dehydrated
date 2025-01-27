@@ -85,9 +85,7 @@ define dehydrated::certificate::deploy (
   }
 
   if ($dehydrated::build_pfx_files) {
-    $dehydrated_pfx_ensure = 'present'
     dehydrated_pfx { $pfx:
-      ensure       => 'present',
       pkcs12_name  => $dn,
       key_password => $key_password,
       password     => $key_password,

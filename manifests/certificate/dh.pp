@@ -27,7 +27,6 @@ define dehydrated::certificate::dh (
   $dh  = "${crt_dir}/${base_filename}.dh"
 
   dehydrated_dhparam { $dh :
-    ensure => present,
     size   => $dh_param_size,
   }
 
