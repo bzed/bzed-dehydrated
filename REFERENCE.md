@@ -42,19 +42,19 @@
 
 ### Functions
 
-* [`dehydrated::file`](#dehydrated--file)
+* [`dehydrated::file`](#dehydrated--file): Returns the contents of a file - or nil if the file does not exist. based on file.rb from puppet.
 
 ### Data types
 
-* [`Dehydrated::Algorithm`](#Dehydrated--Algorithm)
-* [`Dehydrated::CRT`](#Dehydrated--CRT)
-* [`Dehydrated::CSR`](#Dehydrated--CSR)
-* [`Dehydrated::Challengetype`](#Dehydrated--Challengetype)
+* [`Dehydrated::Algorithm`](#Dehydrated--Algorithm): Algorithms supported by dehydrated/letsencrypt
+* [`Dehydrated::CRT`](#Dehydrated--CRT): PEM Certificate
+* [`Dehydrated::CSR`](#Dehydrated--CSR): PEM CSR
+* [`Dehydrated::Challengetype`](#Dehydrated--Challengetype): Valid challenge types for letsencrypt
 * [`Dehydrated::DN`](#Dehydrated--DN): what we can request certificates for.
-* [`Dehydrated::Email`](#Dehydrated--Email)
-* [`Dehydrated::GitSSHUrl`](#Dehydrated--GitSSHUrl)
+* [`Dehydrated::Email`](#Dehydrated--Email): match an email address
+* [`Dehydrated::GitSSHUrl`](#Dehydrated--GitSSHUrl): Match ssh URLs for git
 * [`Dehydrated::GitUrl`](#Dehydrated--GitUrl): a type that hopefully matches all possible git urls.
-* [`Dehydrated::Hook`](#Dehydrated--Hook)
+* [`Dehydrated::Hook`](#Dehydrated--Hook): Match a filename for a hook, don not follow paths.
 * [`Dehydrated::WildcardDN`](#Dehydrated--WildcardDN): based on Stdlib::Fqdn lint:ignore:140chars
 
 ## Classes
@@ -690,18 +690,6 @@ Default value: `$dehydrated::preferred_chain`
 
 CSRs for dehydrated
 
-#### Properties
-
-The following properties are available in the `dehydrated_csr` type.
-
-##### `ensure`
-
-Valid values: `present`, `absent`
-
-The basic property that the resource should be in.
-
-Default value: `present`
-
 #### Parameters
 
 The following parameters are available in the `dehydrated_csr` type.
@@ -774,9 +762,11 @@ The optional password for the private key
 
 ##### <a name="-dehydrated_csr--path"></a>`path`
 
+Absolute path of the CSR location
 
 ##### <a name="-dehydrated_csr--private_key"></a>`private_key`
 
+Absolute path of the key we want to use
 
 ##### <a name="-dehydrated_csr--provider"></a>`provider`
 
@@ -797,18 +787,6 @@ Default value: `[]`
 
 DH params for dehydrated
 
-#### Properties
-
-The following properties are available in the `dehydrated_dhparam` type.
-
-##### `ensure`
-
-Valid values: `present`, `absent`
-
-The basic property that the resource should be in.
-
-Default value: `present`
-
 #### Parameters
 
 The following parameters are available in the `dehydrated_dhparam` type.
@@ -819,6 +797,7 @@ The following parameters are available in the `dehydrated_dhparam` type.
 
 ##### <a name="-dehydrated_dhparam--path"></a>`path`
 
+Absolute pathname of the DH file
 
 ##### <a name="-dehydrated_dhparam--provider"></a>`provider`
 
@@ -834,18 +813,6 @@ Default value: `2048`
 ### <a name="dehydrated_fingerprint"></a>`dehydrated_fingerprint`
 
 Create a fingerprint file key for a private key file.
-
-#### Properties
-
-The following properties are available in the `dehydrated_fingerprint` type.
-
-##### `ensure`
-
-Valid values: `present`, `absent`
-
-The basic property that the resource should be in.
-
-Default value: `present`
 
 #### Parameters
 
@@ -876,18 +843,6 @@ will usually discover the appropriate provider for your platform.
 ### <a name="dehydrated_key"></a>`dehydrated_key`
 
 Create a private key for dehydrated.
-
-#### Properties
-
-The following properties are available in the `dehydrated_key` type.
-
-##### `ensure`
-
-Valid values: `present`, `absent`
-
-The basic property that the resource should be in.
-
-Default value: `present`
 
 #### Parameters
 
@@ -930,18 +885,6 @@ Default value: `3072`
 
 pkcs12 / pfx files for dehydrated
 
-#### Properties
-
-The following properties are available in the `dehydrated_pfx` type.
-
-##### `ensure`
-
-Valid values: `present`, `absent`
-
-The basic property that the resource should be in.
-
-Default value: `present`
-
 #### Parameters
 
 The following parameters are available in the `dehydrated_pfx` type.
@@ -973,6 +916,7 @@ The optional password for the pkcs12 container
 
 ##### <a name="-dehydrated_pfx--path"></a>`path`
 
+Absolute path of the pfx file
 
 ##### <a name="-dehydrated_pfx--pkcs12_name"></a>`pkcs12_name`
 
@@ -980,6 +924,7 @@ A string describing the key / pkcs12 container
 
 ##### <a name="-dehydrated_pfx--private_key"></a>`private_key`
 
+absolute path of the private keyfile
 
 ##### <a name="-dehydrated_pfx--provider"></a>`provider`
 
@@ -992,49 +937,49 @@ usually discover the appropriate provider for your platform.
 
 Type: Ruby 4.x API
 
-The dehydrated::file function.
+Returns the contents of a file - or nil if the file does not exist. based on file.rb from puppet.
 
 #### `dehydrated::file(String $files, Optional[String] *$more_files)`
 
 The dehydrated::file function.
 
-Returns: `Any`
+Returns: `String`
 
 ##### `files`
 
 Data type: `String`
 
-
+File to check
 
 ##### `*more_files`
 
 Data type: `Optional[String]`
 
-
+optional other files to check
 
 ## Data types
 
 ### <a name="Dehydrated--Algorithm"></a>`Dehydrated::Algorithm`
 
-The Dehydrated::Algorithm data type.
+Algorithms supported by dehydrated/letsencrypt
 
 Alias of `Pattern[/^(rsa|prime256v1|secp384r1)$/]`
 
 ### <a name="Dehydrated--CRT"></a>`Dehydrated::CRT`
 
-The Dehydrated::CRT data type.
+PEM Certificate
 
 Alias of `Pattern[/(?m:.*-+BEGIN CERTIFICATE-+.*-+END CERTIFICATE-+.*)/]`
 
 ### <a name="Dehydrated--CSR"></a>`Dehydrated::CSR`
 
-The Dehydrated::CSR data type.
+PEM CSR
 
 Alias of `Pattern[/(?m:.*-+BEGIN CERTIFICATE REQUEST-+.*-+END CERTIFICATE REQUEST-+.*)/]`
 
 ### <a name="Dehydrated--Challengetype"></a>`Dehydrated::Challengetype`
 
-The Dehydrated::Challengetype data type.
+Valid challenge types for letsencrypt
 
 Alias of `Pattern[/^(http-01|dns-01|tls-alpn-01)$/]`
 
@@ -1046,13 +991,13 @@ Alias of `Variant[Stdlib::Fqdn, Dehydrated::WildcardDN]`
 
 ### <a name="Dehydrated--Email"></a>`Dehydrated::Email`
 
-The Dehydrated::Email data type.
+match an email address
 
 Alias of `Pattern[/^(?i:[A-Z0-9_%+"-]+[A-Z0-9._%+"-]+@[A-Z0-9.-]+\.[A-Z]{2,})$/]`
 
 ### <a name="Dehydrated--GitSSHUrl"></a>`Dehydrated::GitSSHUrl`
 
-The Dehydrated::GitSSHUrl data type.
+Match ssh URLs for git
 
 Alias of `Pattern[/(?i:^(ssh:\/\/([^\/@]+@)?[^\/]+\/.*|([^@:]+@)?[^:]+:.*))/]`
 
@@ -1064,7 +1009,7 @@ Alias of `Variant[Dehydrated::GitSSHUrl, Stdlib::HTTPUrl, Stdlib::Absolutepath]`
 
 ### <a name="Dehydrated--Hook"></a>`Dehydrated::Hook`
 
-The Dehydrated::Hook data type.
+Match a filename for a hook, don not follow paths.
 
 Alias of `Pattern[/^[^\\\/]+$/]`
 
