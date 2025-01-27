@@ -6,6 +6,8 @@
 require 'base64'
 
 Puppet::Functions.create_function(:'dehydrated::file') do
+  # @param files File to check
+  # @param more_files optional other files to check
   dispatch :getfile do
     required_param 'String', :files
     optional_repeated_param 'String', :more_files

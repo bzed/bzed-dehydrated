@@ -8,6 +8,7 @@ Puppet::Type.newtype(:dehydrated_dhparam) do
   desc 'DH params for dehydrated'
 
   newparam(:path, namevar: true) do
+    desc 'Absolute pathname of the DH file'
     validate do |value|
       path = Pathname.new(value)
       raise ArgumentError, "Path must be absolute: #{path}" unless path.absolute?

@@ -6,6 +6,7 @@ Puppet::Type.newtype(:dehydrated_pfx) do
   desc 'pkcs12 / pfx files for dehydrated'
 
   newparam(:path, namevar: true) do
+    desc 'Absolute path of the pfx file'
     validate do |value|
       path = Pathname.new(value)
       raise ArgumentError, "Path must be absolute: #{path}" unless path.absolute?
@@ -48,6 +49,7 @@ Puppet::Type.newtype(:dehydrated_pfx) do
   end
 
   newparam(:private_key) do
+    desc 'absolute path of the private keyfile'
     defaultto do
       path = Pathname.new(@resource[:path])
       "#{path.dirname}/#{path.basename(path.extname)}.key"

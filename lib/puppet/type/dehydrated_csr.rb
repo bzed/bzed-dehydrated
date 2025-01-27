@@ -9,6 +9,7 @@ Puppet::Type.newtype(:dehydrated_csr) do
   desc 'CSRs for dehydrated'
 
   newparam(:path, namevar: true) do
+    desc 'Absolute path of the CSR location'
     validate do |value|
       path = Pathname.new(value)
       raise ArgumentError, "Path must be absolute: #{path}" unless path.absolute?
@@ -26,6 +27,7 @@ Puppet::Type.newtype(:dehydrated_csr) do
   end
 
   newparam(:private_key) do
+    desc 'Absolute path of the key we want to use'
     defaultto do
       path = Pathname.new(@resource[:path])
       "#{path.dirname}/#{path.basename(path.extname)}.key"
