@@ -14,9 +14,6 @@
 # @param ensure
 # present or absent
 #
-# @param max_age
-# Maximum age for the DH params until we renew them
-#
 # @example
 #   dehydrated::certificate::dh { 'test.example.com':
 #     dh_param_size => 1024,
@@ -30,7 +27,6 @@ define dehydrated::certificate::dh (
   Integer[786] $dh_param_size,
   String $base_filename = $name,
   Enum['present', 'absent'] $ensure = 'present',
-  Integer[3600] $max_age = (30*24*60*60),
 ) {
   if ! defined(Class['dehydrated']) {
     fail('You must include the dehydrated base class first.')
