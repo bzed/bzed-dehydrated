@@ -2,6 +2,21 @@
 #
 # @summary Create the DH params file.
 #
+# @param dn
+# DN for the certificate
+#
+# @param dh_param_size
+# Size of the DH params
+#
+# @param base_filename
+# Filename of the DH file without .dh
+#
+# @param ensure
+# present or absent
+#
+# @param max_age
+# Maximum age for the DH params until we renew them
+#
 # @example
 #   dehydrated::certificate::dh { 'test.example.com':
 #     dh_param_size => 1024,
