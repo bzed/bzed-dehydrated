@@ -5,8 +5,6 @@ require 'pathname'
 Puppet::Type.newtype(:dehydrated_pfx) do
   desc 'pkcs12 / pfx files for dehydrated'
 
-  ensurable
-
   newparam(:path, namevar: true) do
     validate do |value|
       path = Pathname.new(value)
