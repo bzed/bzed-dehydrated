@@ -4,6 +4,8 @@ require 'pathname'
 Puppet::Type.newtype(:dehydrated_fingerprint) do
   desc 'Create a fingerprint file key for a private key file.'
 
+  ensurable
+
   newparam(:path, namevar: true) do
     desc 'Fingerprint location, must be absolute.'
     validate do |value|
