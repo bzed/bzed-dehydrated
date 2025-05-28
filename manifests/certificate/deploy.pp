@@ -2,6 +2,10 @@
 #
 # @summary Deploy collected certificate and CA files.
 #
+# @param ensure
+# present/absent
+# absent removes all related files!
+#
 # @param dn
 # Certificate DN
 #
@@ -14,6 +18,7 @@
 # @api private
 #
 define dehydrated::certificate::deploy (
+  Enum['present', 'absent'] $ensure = 'present',
   Dehydrated::DN $dn = $name,
   Optional[String] $key_password = undef,
 ) {
@@ -44,72 +49,90 @@ define dehydrated::certificate::deploy (
   $crt_full_chain = "${crt_dir}/${base_filename}_fullchain.pem"
   $crt_full_chain_with_key = "${key_dir}/${base_filename}_fullchain_with_key.pem"
 
-  Concat {
-    owner => $dehydrated::user,
-    group => $dehydrated::group,
-  }
+  if ($ensure == 'present') {
+    Concat {
+      owner => $dehydrated::user,
+      group => $dehydrated::group,
+    }
 
-  concat { $crt_full_chain :
-    mode => '0644',
-  }
-  concat { $crt_full_chain_with_key :
-    mode => '0640',
-  }
+    concat { $crt_full_chain :
+      mode => '0644',
+    }
+    concat { $crt_full_chain_with_key :
+      mode => '0640',
+    }
 
-  concat::fragment { "${dn}_key" :
-    target  => $crt_full_chain_with_key,
-    source  => $key,
-    order   => '01',
-    require => Dehydrated_key[$key],
-  }
-  concat::fragment { "${dn}_fullchain" :
-    target    => $crt_full_chain_with_key,
-    source    => $crt_full_chain,
-    order     => '10',
-    subscribe => Concat[$crt_full_chain],
-  }
+    concat::fragment { "${dn}_key" :
+      target  => $crt_full_chain_with_key,
+      source  => $key,
+      order   => '01',
+      require => Dehydrated_key[$key],
+    }
+    concat::fragment { "${dn}_fullchain" :
+      target    => $crt_full_chain_with_key,
+      source    => $crt_full_chain,
+      order     => '10',
+      subscribe => Concat[$crt_full_chain],
+    }
 
-  concat::fragment { "${dn}_crt" :
-    target  => $crt_full_chain,
-    source  => $crt,
-    order   => '10',
-    require => File[$crt],
-  }
+    concat::fragment { "${dn}_crt" :
+      target  => $crt_full_chain,
+      source  => $crt,
+      order   => '10',
+      require => File[$crt],
+    }
 
-  concat::fragment { "${dn}_dh" :
-    target  => $crt_full_chain,
-    source  => $dh,
-    order   => '30',
-    require => File[$dh],
-  }
+    concat::fragment { "${dn}_dh" :
+      target  => $crt_full_chain,
+      source  => $dh,
+      order   => '30',
+      require => File[$dh],
+    }
 
-  concat::fragment { "${dn}_ca" :
-    target  => $crt_full_chain,
-    source  => $ca,
-    order   => '50',
-    require => File[$ca],
-  }
+    concat::fragment { "${dn}_ca" :
+      target  => $crt_full_chain,
+      source  => $ca,
+      order   => '50',
+      require => File[$ca],
+    }
 
-  if ($dehydrated::build_pfx_files) {
-    $dehydrated_pfx_ensure = 'present'
-    dehydrated_pfx { $pfx:
-      ensure       => 'present',
-      pkcs12_name  => $dn,
-      key_password => $key_password,
-      password     => $key_password,
-      ca           => $ca,
-      certificate  => $crt,
-      private_key  => $key,
-      require      => [
-        File[$crt],
-        File[$ca],
-        File[$key],
-        Dehydrated_key[$key],
-      ],
-      subscribe    => Concat[$crt_full_chain_with_key],
+    if ($dehydrated::build_pfx_files) {
+      $dehydrated_pfx_ensure = 'present'
+      dehydrated_pfx { $pfx:
+        ensure       => 'present',
+        pkcs12_name  => $dn,
+        key_password => $key_password,
+        password     => $key_password,
+        ca           => $ca,
+        certificate  => $crt,
+        private_key  => $key,
+        require      => [
+          File[$crt],
+          File[$ca],
+          File[$key],
+          Dehydrated_key[$key],
+        ],
+        subscribe    => Concat[$crt_full_chain_with_key],
+      }
+    } else {
+      file { $pfx:
+        ensure => absent,
+      }
     }
   } else {
-    file { $pfx:
+    $cert_files = [
+      $cnf,
+      $crt,
+      $key,
+      $pfx,
+      $csr,
+      $dh ,
+      $ca,
+
+      $crt_full_chain,
+      $crt_full_chain_with_key,
+    ]
+    file { $cert_files:
       ensure => absent,
     }
   }
