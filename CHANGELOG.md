@@ -1,5 +1,10 @@
 # Change log
 
+## [2.0.0](https://github.com/bzed/bzed-dehydrated/tree/2.0.0) (2025-05-28)
+
+[Full Changelog](https://github.com/bzed/bzed-dehydrated/compare/1.0.1...2.0.0)
+**Important**: OCSP Support was removed!
+
 ## [1.0.1](https://github.com/bzed/bzed-dehydrated/tree/1.0.1) (2024-12-12)
 
 [Full Changelog](https://github.com/bzed/bzed-dehydrated/compare/1.0.0...1.0.1)
