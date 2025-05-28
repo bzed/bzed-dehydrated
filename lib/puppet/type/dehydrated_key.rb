@@ -7,6 +7,8 @@ require 'pathname'
 Puppet::Type.newtype(:dehydrated_key) do
   desc 'Create a private key for dehydrated.'
 
+  ensurable
+
   newparam(:path, namevar: true) do
     desc 'Key location, must be absolute.'
     validate do |value|

@@ -8,6 +8,8 @@ require 'pathname'
 Puppet::Type.newtype(:dehydrated_csr) do
   desc 'CSRs for dehydrated'
 
+  ensurable
+
   newparam(:path, namevar: true) do
     desc 'Absolute path of the CSR location'
     validate do |value|

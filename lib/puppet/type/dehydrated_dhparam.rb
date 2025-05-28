@@ -7,6 +7,8 @@ require 'pathname'
 Puppet::Type.newtype(:dehydrated_dhparam) do
   desc 'DH params for dehydrated'
 
+  ensurable
+
   newparam(:path, namevar: true) do
     desc 'Absolute pathname of the DH file'
     validate do |value|
