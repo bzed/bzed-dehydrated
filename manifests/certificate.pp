@@ -17,6 +17,9 @@
 #
 # @api public
 #
+# @param ensure
+#   present / absent. Defaults to present. absent removes all
+#   files related to this certificate.
 # @param dn
 #   The main distinguished name to use for the certificate.
 #   Defaults to $name.
@@ -33,37 +36,40 @@
 #   which defaults to 'dns-01'. You can specify a different
 #   challengetype for each certificate here.
 # @param algorithm
-#   Algorithm / elliptic-curve you want to use. Supported: rsa, secp384r1, prime256v1.
+#   Algorithm / elliptic-curve you want to use. Supported: rsa, secp384r1,
+#   prime256v1.
 #   Defaults to $dehydrated::algorithm, which defaults to 'rsa'.
 #   You can specify a different algorithm for each certificate here.
 # @param key_size
 #   Size of the key if we create a new one.  Only used if algorithm is 'rsa'.
 # @param dh_param_size
-#   Size of the DH params we should generate. Defaults to $dehydrated::dh_param_size,
-#   which defaults to 2048. You can specify a different DH param size for each certificate here.
+#   Size of the DH params we should generate. Defaults to
+#   $dehydrated::dh_param_size, which defaults to 2048. You can specify a
+#   different DH param size for each certificate here.
 # @param dehydrated_host
-#   $trusted['certname'] of the host which is responsible to request the certificates from
-#   the Let's Encrypt CA. Defaults to $dehydrated::dehydrated_host where you can
-#   configure your default.
+#   $trusted['certname'] of the host which is responsible to request the
+#   certificates from the Let's Encrypt CA. Defaults to
+#   $dehydrated::dehydrated_host where you can configure your default.
 # @param dehydrated_environment
-#   Hash with the environment variables to set for the $dehydrated_domain_validation_hook
-#   and also for running the hook in dehydrated.
-#   Defaults to $dehydrated::dehydrated_environment, empty by default.
+#   Hash with the environment variables to set for the
+#   $dehydrated_domain_validation_hook and also for running the hook in
+#   dehydrated. Defaults to $dehydrated::dehydrated_environment,
+#   empty by default.
 # @param dehydrated_hook
-#   Name of the hook script you want to use. Can be left on undef if http-01 is being
-#   used as challengetype to use the built-in http-01 implementation of dehydrated.
-#   Defaults to $dehydrated::dehydrated_hook, which will use "${challengetype}.sh"
-#   if the challengetype is not http-01.
+#   Name of the hook script you want to use. Can be left on undef if http-01
+#   is being used as challengetype to use the built-in http-01 implementation
+#   of dehydrated. Defaults to $dehydrated::dehydrated_hook, which will use
+#   "${challengetype}.sh" if the challengetype is not http-01.
 # @param letsencrypt_ca
 #   Defines the CA you want to use to request certificates. If you want to use a
-#   non-supported CA, you need to configure it in $dehydrated::letsencrypt_cas on
-#   your $dehydrated_host.
+#   non-supported CA, you need to configure it in $dehydrated::letsencrypt_cas
+#   on your $dehydrated_host.
 #   Normally, the following CAs are pre-configured:
 #   staging, production, v2-staging, v2-production
 #   Defaults to $dehydrated::letsencrypt_ca, which points to v2-production.
 # @param dehydrated_domain_validation_hook
-#   Name of the hook script to run before dehydrated is actually executed.
-#   Used to check if a domain is still valid or if you are allowed to modify it.
+#   Name of the hook script to run before dehydrated is actually executed. Used
+#   to check if a domain is still valid or if you are allowed to modify it.
 #   Or whatever else you want to do as preparation.
 #   Good thing to use before running into limits by trying to request
 #   certificates for domains you don't own.
@@ -74,6 +80,7 @@
 # @param preferred_chain
 #   Preferred letsencrypt CA chain you want to use
 define dehydrated::certificate (
+  Enum['present', 'absent'] $ensure = 'present',
   Dehydrated::DN $dn = $name,
   String $base_filename = regsubst($dn, '^\*', '_wildcard_'),
   Array[Dehydrated::DN] $subject_alternative_names = [],
@@ -114,26 +121,32 @@ define dehydrated::certificate (
     },
   }
 
-  $json_fragment = to_json($domain_config)
-  ::concat::fragment { "${trusted['certname']}-${dn}" :
-    target  => $dehydrated::params::domainfile,
-    content => $json_fragment,
-    order   => '50',
-  }
+  if ($ensure == 'present') {
+    $json_fragment = to_json($domain_config)
+    ::concat::fragment { "${trusted['certname']}-${dn}" :
+      target  => $dehydrated::params::domainfile,
+      content => $json_fragment,
+      order   => '50',
+    }
 
-  dehydrated::certificate::csr { $base_filename :
-    dn                        => $dn,
-    subject_alternative_names => $subject_alternative_names,
-    key_password              => $key_password,
-    algorithm                 => $algorithm,
-    size                      => $key_size,
-  }
+    dehydrated::certificate::csr { $base_filename :
+      dn                        => $dn,
+      subject_alternative_names => $subject_alternative_names,
+      key_password              => $key_password,
+      algorithm                 => $algorithm,
+      size                      => $key_size,
+    }
 
-  $ready_for_merge = $dn in $dehydrated::ready_for_merge
+    $ready_for_merge = $dn in $dehydrated::ready_for_merge
 
-  if $ready_for_merge {
+    if $ready_for_merge {
+      dehydrated::certificate::deploy { $dn :
+        key_password => $key_password,
+      }
+    }
+  } else {
     dehydrated::certificate::deploy { $dn :
-      key_password => $key_password,
+      ensure => $ensure,
     }
   }
 }
