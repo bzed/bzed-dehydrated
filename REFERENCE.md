@@ -530,6 +530,7 @@ dehydrated::certificate { 'test.example.com': }
 
 The following parameters are available in the `dehydrated::certificate` defined type:
 
+* [`ensure`](#-dehydrated--certificate--ensure)
 * [`dn`](#-dehydrated--certificate--dn)
 * [`base_filename`](#-dehydrated--certificate--base_filename)
 * [`subject_alternative_names`](#-dehydrated--certificate--subject_alternative_names)
@@ -544,6 +545,15 @@ The following parameters are available in the `dehydrated::certificate` defined 
 * [`dehydrated_domain_validation_hook`](#-dehydrated--certificate--dehydrated_domain_validation_hook)
 * [`key_password`](#-dehydrated--certificate--key_password)
 * [`preferred_chain`](#-dehydrated--certificate--preferred_chain)
+
+##### <a name="-dehydrated--certificate--ensure"></a>`ensure`
+
+Data type: `Enum['present', 'absent']`
+
+present / absent. Defaults to present. absent removes all
+files related to this certificate.
+
+Default value: `'present'`
 
 ##### <a name="-dehydrated--certificate--dn"></a>`dn`
 
@@ -587,7 +597,8 @@ Default value: `$dehydrated::challengetype`
 
 Data type: `Dehydrated::Algorithm`
 
-Algorithm / elliptic-curve you want to use. Supported: rsa, secp384r1, prime256v1.
+Algorithm / elliptic-curve you want to use. Supported: rsa, secp384r1,
+prime256v1.
 Defaults to $dehydrated::algorithm, which defaults to 'rsa'.
 You can specify a different algorithm for each certificate here.
 
@@ -605,8 +616,9 @@ Default value: `$dehydrated::key_size`
 
 Data type: `Integer[768]`
 
-Size of the DH params we should generate. Defaults to $dehydrated::dh_param_size,
-which defaults to 2048. You can specify a different DH param size for each certificate here.
+Size of the DH params we should generate. Defaults to
+$dehydrated::dh_param_size, which defaults to 2048. You can specify a
+different DH param size for each certificate here.
 
 Default value: `$dehydrated::dh_param_size`
 
@@ -614,9 +626,9 @@ Default value: `$dehydrated::dh_param_size`
 
 Data type: `Stdlib::Fqdn`
 
-$trusted['certname'] of the host which is responsible to request the certificates from
-the Let's Encrypt CA. Defaults to $dehydrated::dehydrated_host where you can
-configure your default.
+$trusted['certname'] of the host which is responsible to request the
+certificates from the Let's Encrypt CA. Defaults to
+$dehydrated::dehydrated_host where you can configure your default.
 
 Default value: `$dehydrated::dehydrated_host`
 
@@ -624,9 +636,10 @@ Default value: `$dehydrated::dehydrated_host`
 
 Data type: `Hash`
 
-Hash with the environment variables to set for the $dehydrated_domain_validation_hook
-and also for running the hook in dehydrated.
-Defaults to $dehydrated::dehydrated_environment, empty by default.
+Hash with the environment variables to set for the
+$dehydrated_domain_validation_hook and also for running the hook in
+dehydrated. Defaults to $dehydrated::dehydrated_environment,
+empty by default.
 
 Default value: `$dehydrated::dehydrated_environment`
 
@@ -634,10 +647,10 @@ Default value: `$dehydrated::dehydrated_environment`
 
 Data type: `Optional[Dehydrated::Hook]`
 
-Name of the hook script you want to use. Can be left on undef if http-01 is being
-used as challengetype to use the built-in http-01 implementation of dehydrated.
-Defaults to $dehydrated::dehydrated_hook, which will use "${challengetype}.sh"
-if the challengetype is not http-01.
+Name of the hook script you want to use. Can be left on undef if http-01
+is being used as challengetype to use the built-in http-01 implementation
+of dehydrated. Defaults to $dehydrated::dehydrated_hook, which will use
+"${challengetype}.sh" if the challengetype is not http-01.
 
 Default value: `$dehydrated::dehydrated_hook`
 
@@ -646,8 +659,8 @@ Default value: `$dehydrated::dehydrated_hook`
 Data type: `String`
 
 Defines the CA you want to use to request certificates. If you want to use a
-non-supported CA, you need to configure it in $dehydrated::letsencrypt_cas on
-your $dehydrated_host.
+non-supported CA, you need to configure it in $dehydrated::letsencrypt_cas
+on your $dehydrated_host.
 Normally, the following CAs are pre-configured:
 staging, production, v2-staging, v2-production
 Defaults to $dehydrated::letsencrypt_ca, which points to v2-production.
@@ -658,8 +671,8 @@ Default value: `$dehydrated::letsencrypt_ca`
 
 Data type: `Optional[Dehydrated::Hook]`
 
-Name of the hook script to run before dehydrated is actually executed.
-Used to check if a domain is still valid or if you are allowed to modify it.
+Name of the hook script to run before dehydrated is actually executed. Used
+to check if a domain is still valid or if you are allowed to modify it.
 Or whatever else you want to do as preparation.
 Good thing to use before running into limits by trying to request
 certificates for domains you don't own.
@@ -689,6 +702,18 @@ Default value: `$dehydrated::preferred_chain`
 ### <a name="dehydrated_csr"></a>`dehydrated_csr`
 
 CSRs for dehydrated
+
+#### Properties
+
+The following properties are available in the `dehydrated_csr` type.
+
+##### `ensure`
+
+Valid values: `present`, `absent`
+
+The basic property that the resource should be in.
+
+Default value: `present`
 
 #### Parameters
 
@@ -787,6 +812,18 @@ Default value: `[]`
 
 DH params for dehydrated
 
+#### Properties
+
+The following properties are available in the `dehydrated_dhparam` type.
+
+##### `ensure`
+
+Valid values: `present`, `absent`
+
+The basic property that the resource should be in.
+
+Default value: `present`
+
 #### Parameters
 
 The following parameters are available in the `dehydrated_dhparam` type.
@@ -813,6 +850,18 @@ Default value: `2048`
 ### <a name="dehydrated_fingerprint"></a>`dehydrated_fingerprint`
 
 Create a fingerprint file key for a private key file.
+
+#### Properties
+
+The following properties are available in the `dehydrated_fingerprint` type.
+
+##### `ensure`
+
+Valid values: `present`, `absent`
+
+The basic property that the resource should be in.
+
+Default value: `present`
 
 #### Parameters
 
@@ -843,6 +892,18 @@ will usually discover the appropriate provider for your platform.
 ### <a name="dehydrated_key"></a>`dehydrated_key`
 
 Create a private key for dehydrated.
+
+#### Properties
+
+The following properties are available in the `dehydrated_key` type.
+
+##### `ensure`
+
+Valid values: `present`, `absent`
+
+The basic property that the resource should be in.
+
+Default value: `present`
 
 #### Parameters
 
@@ -884,6 +945,18 @@ Default value: `3072`
 ### <a name="dehydrated_pfx"></a>`dehydrated_pfx`
 
 pkcs12 / pfx files for dehydrated
+
+#### Properties
+
+The following properties are available in the `dehydrated_pfx` type.
+
+##### `ensure`
+
+Valid values: `present`, `absent`
+
+The basic property that the resource should be in.
+
+Default value: `present`
 
 #### Parameters
 
