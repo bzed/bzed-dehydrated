@@ -11,17 +11,8 @@ group :test do
 end
 
 group :development do
-  gem 'guard-rake',                             :require => false
-  gem 'overcommit', '>= 0.39.1',                :require => false
-  gem 'github_changelog_generator',             :require => false, :git => 'https://github.com/skywinder/github-changelog-generator'
-  gem 'rspec-puppet-facts', '~> 1.7',           :require => false
-  gem 'rspec-puppet',                           :require => false
-  gem 'puppet-strings',                         :require => false
-  gem 'rgen',                                   :require => false
-  gem 'hiera-eyaml',                            :require => false
-  gem 'puppet-lint-resource_reference_syntax',  :require => false
-  gem 'puppet-lint-trailing_comma-check',       :require => false
-  gem 'puppet-lint-variable_contains_upcase',   :require => false
+  gem 'guard-rake',               :require => false
+  gem 'overcommit', '>= 0.39.1',  :require => false
 end
 
 group :system_tests do
