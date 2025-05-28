@@ -1,12 +1,14 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 if Puppet::Util::Package.versioncmp(Puppet.version, '4.5.0') >= 0
   describe 'Dehydrated::Challengetype' do
     describe 'accepts letsencrypt challenge type' do
-      [
-        'http-01',
-        'dns-01',
-        'tls-alpn-01',
+      %w[
+        http-01
+        dns-01
+        tls-alpn-01
       ].each do |value|
         describe value.inspect do
           it { is_expected.to allow_value(value) }

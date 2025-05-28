@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'facter'
 require 'json'
 require 'openssl'
@@ -7,11 +9,7 @@ Facter.add(:dehydrated_config) do
     puppet_vardir = Facter.value(:puppet_vardir)
     configfile = File.join(puppet_vardir, 'bzed-dehydrated', 'config.json')
 
-    if File.exist?(configfile)
-      JSON.parse(File.read(configfile))
-    else
-      nil
-    end
+    JSON.parse(File.read(configfile)) if File.exist?(configfile)
   end
 end
 
@@ -30,11 +28,10 @@ def get_cert_fingerprints(crt)
   cert = OpenSSL::X509::Certificate.new raw_cert
   der = cert.to_der
 
-  digests = {
+  {
     sha1: OpenSSL::Digest::SHA1.new(der).to_s,
     sha256: OpenSSL::Digest::SHA256.new(der).to_s,
   }
-  digests
 end
 
 Facter.add(:dehydrated_domains) do
@@ -46,9 +43,7 @@ Facter.add(:dehydrated_domains) do
       ret = JSON.parse(File.read(domainsfile))
       ret.each do |dn, dnconfig|
         base_filename = dnconfig['base_filename']
-        unless config
-          next
-        end
+        next unless config
 
         csr_dir = config['csr_dir']
         crt_dir = config['crt_dir']
@@ -69,9 +64,7 @@ Facter.add(:dehydrated_domains) do
           ret[dn]['crt_serial'] = get_cert_serial(crt)
           ret[dn]['crt_fingerprints'] = get_cert_fingerprints(crt)
         end
-        if File.exist?(fingerprint)
-          ret[dn]['fingerprints'] = JSON.parse(File.read(fingerprint))
-        end
+        ret[dn]['fingerprints'] = JSON.parse(File.read(fingerprint)) if File.exist?(fingerprint)
 
         ca = File.join(crt_dir, "#{base_filename}_ca.pem")
 

@@ -2,6 +2,12 @@
 #
 # @summary Deploy collected certificate and CA files.
 #
+# @param dn
+# Certificate DN
+#
+# @param key_password
+# Password of the key if needed to access it.
+#
 # @example
 #   dehydrated::certificate::deploy { 'namevar': }
 #
@@ -15,6 +21,7 @@ define dehydrated::certificate::deploy (
     fail('You must include the dehydrated base class first.')
   }
 
+  include dehydrated
   require dehydrated::setup
 
   $dehydrated_domains = $facts['dehydrated_domains']
@@ -47,7 +54,6 @@ define dehydrated::certificate::deploy (
   }
   concat { $crt_full_chain_with_key :
     mode   => '0640',
-    notify => Dehydrated_pfx[$pfx],
   }
 
   concat::fragment { "${dn}_key" :
@@ -85,23 +91,24 @@ define dehydrated::certificate::deploy (
   }
 
   if ($dehydrated::build_pfx_files) {
-    $dehydrated_pfx_ensure = 'present'
+    dehydrated_pfx { $pfx:
+      pkcs12_name  => $dn,
+      key_password => $key_password,
+      password     => $key_password,
+      ca           => $ca,
+      certificate  => $crt,
+      private_key  => $key,
+      require      => [
+        File[$crt],
+        File[$ca],
+        File[$key],
+        Dehydrated_key[$key],
+      ],
+      subscribe    => Concat[$crt_full_chain_with_key],
+    }
   } else {
-    $dehydrated_pfx_ensure = 'absent'
-  }
-  dehydrated_pfx { $pfx:
-    ensure       => $dehydrated_pfx_ensure,
-    pkcs12_name  => $dn,
-    key_password => $key_password,
-    password     => $key_password,
-    ca           => $ca,
-    certificate  => $crt,
-    private_key  => $key,
-    require      => [
-      File[$crt],
-      File[$ca],
-      File[$key],
-      Dehydrated_key[$key],
-    ],
+    file { $pfx:
+      ensure => absent,
+    }
   }
 }

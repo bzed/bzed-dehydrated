@@ -2,6 +2,18 @@
 #
 # @summary A short summary of the purpose of this defined type.
 #
+# @param request_dn
+# DN of the request we want to collect
+#
+# @param request_fqdn
+# FQDN of the requesting host
+#
+# @param request_base_dir
+# Base directory for lesencrypt certificates/keys
+#
+# @param request_base_filename
+# Base filename of the certificate/request/key
+#
 # @example
 #   dehydrated::certificate::collect { 'namevar':
 #       request_dn            => '*.foo.bar.com',

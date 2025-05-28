@@ -1,6 +1,17 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'dehydrated::certificate::collect' do
+  let(:pre_condition) do
+    <<~PUPPET
+      function puppetdb_query(String[1] $data) {
+        return [
+        ]
+      }
+      class { 'dehydrated' : dehydrated_host => $facts['networking']['fqdn'] }
+    PUPPET
+  end
   let(:title) { 'namevar' }
   let(:params) do
     {
@@ -13,14 +24,6 @@ describe 'dehydrated::certificate::collect' do
 
   on_supported_os.each do |os, os_facts|
     next if os_facts[:kernel] == 'windows'
-
-    let :pre_condition do
-      if %r{windows.*}.match?(os)
-        'class { "dehydrated" : dehydrated_host => "some.other.host.example.com" }'
-      else
-        'class { "dehydrated" : dehydrated_host => $facts["fqdn"] }'
-      end
-    end
 
     context "on #{os}" do
       let(:facts) { os_facts }

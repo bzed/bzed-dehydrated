@@ -3,6 +3,57 @@
 #
 # @summary Creates a key file with CSR
 #
+# @param dn
+# Certificate DN
+#
+# @param subject_alternative_names
+# Array of SANs
+#
+# @param base_filename
+# base filename, used for csr/key filename by default
+#
+# @param csr_filename
+# filename for the csr file
+#
+# @param key_filename
+# filename for the key file
+#
+# @param algorithm
+# algorithm to use, defaults to rsa
+#
+# @param country
+# country to write into the csr, not used by letsencrypt
+#
+# @param state
+# state to write into the csr, not used by letsencrypt
+#
+# @param locality
+# locality to write into the csr, not used by letsencrypt
+#
+# @param organization
+# organization to write into the csr, not used by letsencrypt
+#
+# @param organizational_unit
+# organizational_unit to write into the csr, not used by letsencrypt
+#
+# @param email_address
+# email address to write into the csr, not used by letsencrypt
+#
+# @param key_password
+# Set / use key password to access/write the key
+#
+# @param ensure
+# Ensure absent/present
+#
+# @param force
+# Overwrite csr if it exists and doesn't match
+#
+# @param size
+# Optional size param
+#
+# @param digest
+# Digest to use, defaults to SHA512
+#
 # @example
 #   dehydrated::csr { '_wildcard_.example.com':
 #     $subject_alternative_names => [],
@@ -49,7 +100,6 @@ define dehydrated::certificate::csr (
 
   if ($ensure == 'present') {
     dehydrated_key { $key :
-      ensure    => $ensure,
       algorithm => $algorithm,
       password  => $key_password,
       size      => $size,
@@ -57,13 +107,11 @@ define dehydrated::certificate::csr (
       before    => File[$key],
     }
     dehydrated_fingerprint { $fingerprint :
-      ensure      => $ensure,
       private_key => $key,
       password    => $key_password,
       require     => Dehydrated_key[$key],
     }
     dehydrated_csr { $csr :
-      ensure                    => $ensure,
       private_key               => $key,
       password                  => $key_password,
       algorithm                 => $algorithm,

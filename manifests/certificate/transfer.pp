@@ -2,6 +2,21 @@
 #
 # @summary Transfer crt/ca files.
 #
+# @param file_type
+# File type to transfer, supports crt and ca.
+#
+# @param request_dn
+# DN of the certificate request
+#
+# @param request_fqdn
+# Fqdn of the requesting host
+#
+# @param request_base_filename
+# Base filename from the request
+#
+# @param file_content
+# Content of the file we want to transfert
+#
 # @example
 #   dehydrated::certificate::transfer { 'namevar':
 #       file_type    => 'crt',

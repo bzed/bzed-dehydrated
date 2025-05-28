@@ -23,6 +23,7 @@ dehydrated_domains:
     subject_alternative_names: []
 
 networking:
+  ip: 10.11.12.13
   fqdn: dehydrated.example.com
 
 servername: dehydrated.example.com

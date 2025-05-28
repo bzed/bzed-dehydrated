@@ -1,12 +1,14 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 if Puppet::Util::Package.versioncmp(Puppet.version, '4.5.0') >= 0
   describe 'Dehydrated::Algorithm' do
     describe 'accept letsencrypt algorithms type' do
-      [
-        'rsa',
-        'prime256v1',
-        'secp384r1',
+      %w[
+        rsa
+        prime256v1
+        secp384r1
       ].each do |value|
         describe value.inspect do
           it { is_expected.to allow_value(value) }

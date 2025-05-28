@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # based on https://github.com/camptocamp/puppet-openssl/blob/master/lib/puppet/type/x509_request.rb
 # Apache License, Version 2.0, January 2004
 
@@ -6,14 +8,11 @@ require 'pathname'
 Puppet::Type.newtype(:dehydrated_csr) do
   desc 'CSRs for dehydrated'
 
-  ensurable
-
   newparam(:path, namevar: true) do
+    desc 'Absolute path of the CSR location'
     validate do |value|
       path = Pathname.new(value)
-      unless path.absolute?
-        raise ArgumentError, "Path must be absolute: #{path}"
-      end
+      raise ArgumentError, "Path must be absolute: #{path}" unless path.absolute?
     end
   end
 
@@ -28,15 +27,14 @@ Puppet::Type.newtype(:dehydrated_csr) do
   end
 
   newparam(:private_key) do
+    desc 'Absolute path of the key we want to use'
     defaultto do
       path = Pathname.new(@resource[:path])
       "#{path.dirname}/#{path.basename(path.extname)}.key"
     end
     validate do |value|
       path = Pathname.new(value)
-      unless path.absolute?
-        raise Puppet::Error, "Path must be absolute: #{path}"
-      end
+      raise Puppet::Error, "Path must be absolute: #{path}" unless path.absolute?
     end
   end
 
@@ -45,9 +43,7 @@ Puppet::Type.newtype(:dehydrated_csr) do
     newvalues(:prime256v1, :secp384r1, :rsa)
     defaultto :rsa
 
-    munge do |val|
-      val.to_sym
-    end
+    munge(&:to_sym)
   end
 
   newparam(:common_name) do
@@ -72,19 +68,13 @@ Puppet::Type.newtype(:dehydrated_csr) do
       raise Puppet::Error, 'subject_alternative_names must be an array!' unless value.is_a?(Array)
     end
 
-    munge do |val|
-      val.uniq
-    end
+    munge(&:uniq)
   end
 
   newparam(:country) do
     desc 'country part of the certificate name'
     validate do |value|
-      if value && !value.empty?
-        unless %r{^([A-Z]{2}|(COM|EDU|GOV|INT|MIL|NET|ORG)|ARPA)$}.match?(value)
-          raise Puppet::Error, 'valid ssl country name (usually two capital letters) required'
-        end
-      end
+      raise Puppet::Error, 'valid ssl country name (usually two capital letters) required' if value && !value.empty? && !%r{^([A-Z]{2}|(COM|EDU|GOV|INT|MIL|NET|ORG)|ARPA)$}.match?(value)
     end
   end
 
@@ -107,9 +97,9 @@ Puppet::Type.newtype(:dehydrated_csr) do
   newparam(:email_address) do
     desc 'emailAddress part of the certificate name'
     validate do |value|
-      if value && !value.blank?
-        raise Puppet::Error, 'email_address should be valid!' unless %r{\A[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@
+      if value && !value.blank? && !%r{\A[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@
 (?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\z}.match?(value)
+        raise Puppet::Error, 'email_address should be valid!'
       end
     end
   end

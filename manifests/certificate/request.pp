@@ -4,6 +4,18 @@
 #
 # @summary Prepare everything to request a certifificate for our CSRs.
 #
+# @param request_fqdn
+# FQDN of the host the triggers the request
+#
+# @param dn
+# DN of the request
+#
+# @param config
+# config for dehydrated for the request
+#
+# @param dehydrated_host
+# Host that run dehydrated
+#
 # @example
 #   dehydrated::certificate::request { 'namevar':
 #       request_fqdn    => 'foo.bar.example.com',

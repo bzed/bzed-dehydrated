@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # idea taken from https://github.com/camptocamp/puppet-openssl/blob/master/lib/puppet/provider/x509_request/openssl.rb
 # Apache License, Version 2.0, January 2004
 
@@ -15,16 +17,16 @@ Puppet::Type.type(:dehydrated_csr).provide(:openssl) do
     end
   end
 
-  def self._parse_san_value(v)
-    case v.tag
+  def self._parse_san_value(san_value)
+    case san_value.tag
     when 2
-      v.value
+      san_value.value
     when 7
-      case v.value.size
+      case san_value.value.size
       when 4
-        v.value.unpack('C*').join('.')
+        san_value.value.unpack('C*').join('.')
       when 16
-        v.value.unpack('n*').map { |o| '%X' % o }.join(':')
+        san_value.value.unpack('n*').map { |o| format('%X', o) }.join(':')
       end
     end
   end
@@ -37,18 +39,16 @@ Puppet::Type.type(:dehydrated_csr).provide(:openssl) do
       end
 
       csr_alt_names = if ext_req
-                        san_value = ext_req.value.map do |ext_req_v|
+                        san_values = ext_req.value.map do |ext_req_v|
                           san = ext_req_v.find do |v|
                             v.value[0].value == 'subjectAltName'
                           end
-                          if san
-                            san.value[1]
-                          end
+                          san.value[1] if san
                         end
-                        if san_value
-                          san_value = OpenSSL::ASN1.decode(san_value[0].value)
+                        if san_values
+                          san_values = OpenSSL::ASN1.decode(san_values[0].value)
 
-                          san_value.map do |v|
+                          san_values.map do |v|
                             _parse_san_value(v)
                           end
                         else
@@ -71,6 +71,7 @@ Puppet::Type.type(:dehydrated_csr).provide(:openssl) do
       request = OpenSSL::X509::Request.new(File.read(resource[:path]))
       priv = private_key(resource)
       return false unless priv
+
       request.verify(priv)
     else
       false
@@ -102,9 +103,7 @@ Puppet::Type.type(:dehydrated_csr).provide(:openssl) do
   end
 
   def self.create_san_attribute(subject_alternative_names)
-    unless subject_alternative_names.is_a?(Array)
-      raise Puppet::Error, 'subject_alternative_names must be an array!'
-    end
+    raise Puppet::Error, 'subject_alternative_names must be an array!' unless subject_alternative_names.is_a?(Array)
 
     factory = OpenSSL::X509::ExtensionFactory.new
     dns_subject_alternative_names = subject_alternative_names.map do |san|
@@ -114,7 +113,7 @@ Puppet::Type.type(:dehydrated_csr).provide(:openssl) do
     ext = factory.create_extension(
       'subjectAltName',
       dns_subject_alternative_names_list,
-      false,
+      false
     )
     ext_set = OpenSSL::ASN1::Set.new([OpenSSL::ASN1::Sequence.new([ext])])
     OpenSSL::X509::Attribute.new('extReq', ext_set)
@@ -134,13 +133,13 @@ Puppet::Type.type(:dehydrated_csr).provide(:openssl) do
                 [
                   OpenSSL::ASN1::ObjectId('id-ecPublicKey'),
                   OpenSSL::ASN1::ObjectId(private_key.public_key.group.curve_name),
-                ],
+                ]
               ),
               OpenSSL::ASN1::BitString(private_key.public_key.to_octet_string(:uncompressed)),
-            ],
+            ]
           )
           pubkey_der = OpenSSL::PKey::EC.new(asn1.to_der)
-        rescue
+        rescue StandardError
           raise Puppet::Error, 'Your ruby version is too old or your openssl broken, it does not support EC keys properly'
         end
       end
@@ -164,19 +163,19 @@ Puppet::Type.type(:dehydrated_csr).provide(:openssl) do
 
   def exists?
     exists = begin
-               if Pathname.new(resource[:path]).exist?
-                 request = OpenSSL::X509::Request.new(File.read(resource[:path]))
-                 if request
-                   true
-                 else
-                   false
-                 end
-               else
-                 false
-               end
-             rescue OpenSSL::X509::RequestError
-               false
-             end
+      if Pathname.new(resource[:path]).exist?
+        request = OpenSSL::X509::Request.new(File.read(resource[:path]))
+        if request
+          true
+        else
+          false
+        end
+      else
+        false
+      end
+    rescue OpenSSL::X509::RequestError
+      false
+    end
     if exists && resource[:force]
       self.class.check_private_key(resource) &&
         self.class.check_sans(resource) &&
@@ -198,6 +197,7 @@ Puppet::Type.type(:dehydrated_csr).provide(:openssl) do
     attributes = [self.class.create_san_attribute(subject_alternative_names)]
     private_key = self.class.private_key(resource)
     return false unless private_key
+
     digest = resource[:digest]
     x509_csr = self.class.create_x509_csr(subject, attributes, private_key, digest)
     File.write(resource[:path], x509_csr)

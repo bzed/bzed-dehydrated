@@ -1,16 +1,15 @@
+# frozen_string_literal: true
+
 require 'pathname'
 
 Puppet::Type.newtype(:dehydrated_pfx) do
   desc 'pkcs12 / pfx files for dehydrated'
 
-  ensurable
-
   newparam(:path, namevar: true) do
+    desc 'Absolute path of the pfx file'
     validate do |value|
       path = Pathname.new(value)
-      unless path.absolute?
-        raise ArgumentError, "Path must be absolute: #{path}"
-      end
+      raise ArgumentError, "Path must be absolute: #{path}" unless path.absolute?
     end
   end
 
@@ -29,9 +28,7 @@ Puppet::Type.newtype(:dehydrated_pfx) do
     desc 'The path of the certificate to put into the pkcs12 container'
     validate do |value|
       path = Pathname.new(value)
-      unless path.absolute?
-        raise Puppet::Error, "Path must be absolute: #{path}"
-      end
+      raise Puppet::Error, "Path must be absolute: #{path}" unless path.absolute?
     end
   end
 
@@ -39,9 +36,7 @@ Puppet::Type.newtype(:dehydrated_pfx) do
     desc 'The path of the ca certificates to put into the pkcs12 container'
     validate do |value|
       path = Pathname.new(value)
-      unless path.absolute?
-        raise Puppet::Error, "Path must be absolute: #{path}"
-      end
+      raise Puppet::Error, "Path must be absolute: #{path}" unless path.absolute?
     end
   end
 
@@ -54,15 +49,14 @@ Puppet::Type.newtype(:dehydrated_pfx) do
   end
 
   newparam(:private_key) do
+    desc 'absolute path of the private keyfile'
     defaultto do
       path = Pathname.new(@resource[:path])
       "#{path.dirname}/#{path.basename(path.extname)}.key"
     end
     validate do |value|
       path = Pathname.new(value)
-      unless path.absolute?
-        raise Puppet::Error, "Path must be absolute: #{path}"
-      end
+      raise Puppet::Error, "Path must be absolute: #{path}" unless path.absolute?
     end
   end
 

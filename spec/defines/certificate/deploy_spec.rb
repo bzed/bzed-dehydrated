@@ -1,6 +1,25 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'dehydrated::certificate::deploy' do
+  let(:pre_condition) do
+    <<~PUPPET
+      function puppetdb_query(String[1] $data) {
+        return [
+        ]
+      }
+      class { 'dehydrated' : dehydrated_host => $facts['networking']['fqdn'] }
+      dehydrated_key{ '/etc/pki/dehydrated/private/test.example.com.key': }
+      dehydrated_key{ '/etc/dehydrated/private/test.example.com.key': }
+      file{'/etc/dehydrated/certs/test.example.com.crt': }
+      file{'/etc/dehydrated/certs/test.example.com_ca.pem': }
+      file{'/etc/dehydrated/private/test.example.com.key': }
+      file{'/etc/pki/dehydrated/certs/test.example.com.crt': }
+      file{'/etc/pki/dehydrated/certs/test.example.com_ca.pem': }
+      file{'/etc/pki/dehydrated/private/test.example.com.key': }
+    PUPPET
+  end
   let(:title) { 'namevar' }
   let(:params) do
     { 'dn' => 'test.example.com' }
@@ -8,23 +27,9 @@ describe 'dehydrated::certificate::deploy' do
 
   on_supported_os.each do |os, os_facts|
     context "on #{os}" do
-      next if os_facts[:kernel] == 'windows' && !WINDOWS
+      next if os_facts[:kernel] == 'windows'
 
       let(:facts) { os_facts }
-
-      let :pre_condition do
-        [
-          'class { "dehydrated" : dehydrated_host => "test.example.com" }',
-          'dehydrated_key{ "/etc/pki/dehydrated/private/test.example.com.key": }',
-          'dehydrated_key{ "/etc/dehydrated/private/test.example.com.key": }',
-          'file{"/etc/dehydrated/certs/test.example.com.crt": }',
-          'file{"/etc/dehydrated/certs/test.example.com_ca.pem": }',
-          'file{"/etc/dehydrated/private/test.example.com.key": }',
-          'file{"/etc/pki/dehydrated/certs/test.example.com.crt": }',
-          'file{"/etc/pki/dehydrated/certs/test.example.com_ca.pem": }',
-          'file{"/etc/pki/dehydrated/private/test.example.com.key": }',
-        ].join("\n")
-      end
 
       it { is_expected.to compile }
     end
