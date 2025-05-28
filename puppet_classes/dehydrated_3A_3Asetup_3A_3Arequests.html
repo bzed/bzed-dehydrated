@@ -219,7 +219,9 @@
 120
 121
 122
-123</pre>
+123
+124
+125</pre>
       </td>
       <td>
         <pre class="code"><span class="info file"># File 'manifests/setup/requests.pp', line 8</span>
@@ -227,7 +229,9 @@
 class dehydrated::setup::requests {
   assert_private()
 
+  include dehydrated
   include dehydrated::params
+  include dehydrated::setup::dehydrated_host
 
   $request_query = @(&quot;EOF&quot;:json)
     [&quot;from&quot;, &quot;resources&quot;,

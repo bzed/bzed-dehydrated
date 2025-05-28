@@ -97,6 +97,24 @@
   
     <li>
       
+        <span class='name'>ensure</span>
+      
+      
+        <span class='type'>(<tt>Enum['present', 'absent']</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>&#39;present&#39;</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>present / absent. Defaults to present. absent removes all files related to this certificate.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
         <span class='name'>dn</span>
       
       
@@ -234,7 +252,7 @@
       
         &mdash;
         <div class='inline'>
-<p>$<a href="'certname'">trusted</a> of the host which is responsible to request the certificates from the Let’s Encrypt CA. Defaults to $dehydrated::dehydrated_host where you can configure your default.</p>
+<p>$<a href="&#39;certname&#39;">trusted</a> of the host which is responsible to request the certificates from the Let’s Encrypt CA. Defaults to $dehydrated::dehydrated_host where you can configure your default.</p>
 </div>
       
     </li>
@@ -358,12 +376,6 @@
         <pre class="lines">
 
 
-76
-77
-78
-79
-80
-81
 82
 83
 84
@@ -421,12 +433,26 @@
 136
 137
 138
-139</pre>
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152</pre>
       </td>
       <td>
-        <pre class="code"><span class="info file"># File 'manifests/certificate.pp', line 76</span>
+        <pre class="code"><span class="info file"># File 'manifests/certificate.pp', line 82</span>
 
 define dehydrated::certificate (
+  Enum[&#39;present&#39;, &#39;absent&#39;] $ensure = &#39;present&#39;,
   Dehydrated::DN $dn = $name,
   String $base_filename = regsubst($dn, &#39;^\*&#39;, &#39;_wildcard_&#39;),
   Array[Dehydrated::DN] $subject_alternative_names = [],
@@ -467,26 +493,32 @@ define dehydrated::certificate (
     },
   }
 
-  $json_fragment = to_json($domain_config)
-  ::concat::fragment { &quot;${trusted[&#39;certname&#39;]}-${dn}&quot; :
-    target  =&gt; $dehydrated::params::domainfile,
-    content =&gt; $json_fragment,
-    order   =&gt; &#39;50&#39;,
-  }
+  if ($ensure == &#39;present&#39;) {
+    $json_fragment = to_json($domain_config)
+    ::concat::fragment { &quot;${trusted[&#39;certname&#39;]}-${dn}&quot; :
+      target  =&gt; $dehydrated::params::domainfile,
+      content =&gt; $json_fragment,
+      order   =&gt; &#39;50&#39;,
+    }
 
-  dehydrated::certificate::csr { $base_filename :
-    dn                        =&gt; $dn,
-    subject_alternative_names =&gt; $subject_alternative_names,
-    key_password              =&gt; $key_password,
-    algorithm                 =&gt; $algorithm,
-    size                      =&gt; $key_size,
-  }
+    dehydrated::certificate::csr { $base_filename :
+      dn                        =&gt; $dn,
+      subject_alternative_names =&gt; $subject_alternative_names,
+      key_password              =&gt; $key_password,
+      algorithm                 =&gt; $algorithm,
+      size                      =&gt; $key_size,
+    }
 
-  $ready_for_merge = $dn in $dehydrated::ready_for_merge
+    $ready_for_merge = $dn in $dehydrated::ready_for_merge
 
-  if $ready_for_merge {
+    if $ready_for_merge {
+      dehydrated::certificate::deploy { $dn :
+        key_password =&gt; $key_password,
+      }
+    }
+  } else {
     dehydrated::certificate::deploy { $dn :
-      key_password =&gt; $key_password,
+      ensure =&gt; $ensure,
     }
   }
 }</pre>

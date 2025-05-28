@@ -124,7 +124,7 @@ class { &#39;dehydrated&#39; :
       
         &mdash;
         <div class='inline'>
-<p>The base directory where keys/csr/certs are stored. Defaults to: - on $::<a href="'family'">os</a>==‘Debian’: /etc/dehydrated - on other Linux/Unix systems: /etc/pki/dehydrated - on windows: C:LE_certs.</p>
+<p>The base directory where keys/csr/certs are stored. Defaults to: - on $::<a href="&#39;family&#39;">os</a>==‘Debian’: /etc/dehydrated - on other Linux/Unix systems: /etc/pki/dehydrated - on windows: C:LE_certs.</p>
 </div>
       
     </li>
@@ -214,7 +214,7 @@ class { &#39;dehydrated&#39; :
       
         &mdash;
         <div class='inline'>
-<p>Linux: The group which owns the files in /etc/dehydrated.  If you have a non-root process which needs to access private keys, add its user to this group. Windows: The group which owns the files in C:LE_Certs. Needs to be specified!</p>
+<p>Linux: The group which owns the files in /etc/dehydrated. If you have a non-root process which needs to access private keys, add its user to this group. Windows: The group which owns the files in C:LE_Certs. Needs to be specified!</p>
 </div>
       
     </li>
@@ -376,7 +376,7 @@ class { &#39;dehydrated&#39; :
       
         &mdash;
         <div class='inline'>
-<p>Only used if $<a href="'certname'">trusted</a> == $dehydrated::dehydrated_host. Path where the dehydrated script and configurations/csrs are being stored. Defaults to ‘/opt/dehydrated’.</p>
+<p>Only used if $<a href="&#39;certname&#39;">trusted</a> == $dehydrated::dehydrated_host. Path where the dehydrated script and configurations/csrs are being stored. Defaults to ‘/opt/dehydrated’.</p>
 </div>
       
     </li>
@@ -394,7 +394,7 @@ class { &#39;dehydrated&#39; :
       
         &mdash;
         <div class='inline'>
-<p>Only used if $<a href="'certname'">trusted</a> == $dehydrated::dehydrated_host. Path where the dehydrated script is being checkout out into using git. Defaults to $dehydrated_base_dir/dehydrated.</p>
+<p>Only used if $<a href="&#39;certname&#39;">trusted</a> == $dehydrated::dehydrated_host. Path where the dehydrated script is being checkout out into using git. Defaults to $dehydrated_base_dir/dehydrated.</p>
 </div>
       
     </li>
@@ -412,7 +412,7 @@ class { &#39;dehydrated&#39; :
       
         &mdash;
         <div class='inline'>
-<p>Only used if $<a href="'certname'">trusted</a> == $dehydrated::dehydrated_host. Version of the dehydrated script we want to use. Change it on your own risk.</p>
+<p>Only used if $<a href="&#39;certname&#39;">trusted</a> == $dehydrated::dehydrated_host. Version of the dehydrated script we want to use. Change it on your own risk.</p>
 </div>
       
     </li>
@@ -430,7 +430,7 @@ class { &#39;dehydrated&#39; :
       
         &mdash;
         <div class='inline'>
-<p>Only used if $<a href="'certname'">trusted</a> == $dehydrated::dehydrated_host. Git url to clone dehydrated from. If you have an internal mirror/version, you can override the default github url here.</p>
+<p>Only used if $<a href="&#39;certname&#39;">trusted</a> == $dehydrated::dehydrated_host. Git url to clone dehydrated from. If you have an internal mirror/version, you can override the default github url here.</p>
 </div>
       
     </li>
@@ -448,7 +448,7 @@ class { &#39;dehydrated&#39; :
       
         &mdash;
         <div class='inline'>
-<p>Default setting for the host you want to request the certificates on. Required on that host, on all others it is used as default for certificates requested via dehydrated::certificate. You can specify a different dehydrated_host on each certificate if you want to. If $<a href="'certname'">trusted</a> == $dehydrated::dehydrated_host, dehydrated will be installed and the certificate request cronjob will be setup.</p>
+<p>Default setting for the host you want to request the certificates on. Required on that host, on all others it is used as default for certificates requested via dehydrated::certificate. You can specify a different dehydrated_host on each certificate if you want to. If $<a href="&#39;certname&#39;">trusted</a> == $dehydrated::dehydrated_host, dehydrated will be installed and the certificate request cronjob will be setup.</p>
 </div>
       
     </li>
@@ -466,7 +466,7 @@ class { &#39;dehydrated&#39; :
       
         &mdash;
         <div class='inline'>
-<p>Only used if $<a href="'certname'">trusted</a> == $dehydrated::dehydrated_host. Path where requests that need to be handled are being stored.</p>
+<p>Only used if $<a href="&#39;certname&#39;">trusted</a> == $dehydrated::dehydrated_host. Path where requests that need to be handled are being stored.</p>
 </div>
       
     </li>
@@ -484,7 +484,7 @@ class { &#39;dehydrated&#39; :
       
         &mdash;
         <div class='inline'>
-<p>Only used if $<a href="'certname'">trusted</a> == $dehydrated::dehydrated_host.</p>
+<p>Only used if $<a href="&#39;certname&#39;">trusted</a> == $dehydrated::dehydrated_host.</p>
 </div>
       
     </li>
@@ -502,7 +502,7 @@ class { &#39;dehydrated&#39; :
       
         &mdash;
         <div class='inline'>
-<p>Only used if $<a href="'certname'">trusted</a> == $dehydrated::dehydrated_host.</p>
+<p>Only used if $<a href="&#39;certname&#39;">trusted</a> == $dehydrated::dehydrated_host.</p>
 </div>
       
     </li>
@@ -520,7 +520,7 @@ class { &#39;dehydrated&#39; :
       
         &mdash;
         <div class='inline'>
-<p>Only used if $<a href="'certname'">trusted</a> == $dehydrated::dehydrated_host.</p>
+<p>Only used if $<a href="&#39;certname&#39;">trusted</a> == $dehydrated::dehydrated_host.</p>
 </div>
       
     </li>
@@ -538,7 +538,7 @@ class { &#39;dehydrated&#39; :
       
         &mdash;
         <div class='inline'>
-<p>Only used if $<a href="'certname'">trusted</a> == $dehydrated::dehydrated_host.</p>
+<p>Only used if $<a href="&#39;certname&#39;">trusted</a> == $dehydrated::dehydrated_host.</p>
 </div>
       
     </li>
@@ -556,7 +556,7 @@ class { &#39;dehydrated&#39; :
       
         &mdash;
         <div class='inline'>
-<p>Only used if $<a href="'certname'">trusted</a> == $dehydrated::dehydrated_host.</p>
+<p>Only used if $<a href="&#39;certname&#39;">trusted</a> == $dehydrated::dehydrated_host.</p>
 </div>
       
     </li>
@@ -574,7 +574,7 @@ class { &#39;dehydrated&#39; :
       
         &mdash;
         <div class='inline'>
-<p>Only used if $<a href="'certname'">trusted</a> == $dehydrated::dehydrated_host.</p>
+<p>Only used if $<a href="&#39;certname&#39;">trusted</a> == $dehydrated::dehydrated_host.</p>
 </div>
       
     </li>
@@ -592,7 +592,7 @@ class { &#39;dehydrated&#39; :
       
         &mdash;
         <div class='inline'>
-<p>Only used if $<a href="'certname'">trusted</a> == $dehydrated::dehydrated_host.</p>
+<p>Only used if $<a href="&#39;certname&#39;">trusted</a> == $dehydrated::dehydrated_host.</p>
 </div>
       
     </li>
@@ -772,7 +772,7 @@ class { &#39;dehydrated&#39; :
       
         &mdash;
         <div class='inline'>
-<p>Allows to request certificates instead of using dehydrated::certificate. The puppet definition of this rather complex parameter is  Array[Variant[Dehydrated::DN, Tuple[Dehydrated::DN, <a href="Dehydrated::DN">Array</a>]]] So basically, you need to specify an Array. Contents are either a - distinguished name - tuple with [distinguished name, array of distinguished names] The first case requests a default certificate. The tuple version will request a SAN certificate.</p>
+<p>Allows to request certificates instead of using dehydrated::certificate. The puppet definition of this rather complex parameter is Array[Variant[Dehydrated::DN, Tuple[Dehydrated::DN, <a href="Dehydrated::DN">Array</a>]]] So basically, you need to specify an Array. Contents are either a - distinguished name - tuple with [distinguished name, array of distinguished names] The first case requests a default certificate. The tuple version will request a SAN certificate.</p>
 </div>
       
     </li>
@@ -987,11 +987,7 @@ class { &#39;dehydrated&#39; :
 299
 300
 301
-302
-303
-304
-305
-306</pre>
+302</pre>
       </td>
       <td>
         <pre class="code"><span class="info file"># File 'manifests/init.pp', line 139</span>
@@ -1104,6 +1100,7 @@ class dehydrated (
             [ &quot;=&quot;, &quot;type&quot;, &quot;Dehydrated::Certificate::Transfer&quot; ],
             [ &quot;=&quot;, &quot;parameters.request_fqdn&quot;, &quot;${trusted[&#39;certname&#39;]}&quot; ],
             [ &quot;=&quot;, &quot;parameters.request_base_filename&quot;, &quot;${_base_filename}&quot; ],
+            [ &quot;not&quot;, [ &quot;=&quot;, &quot;parameters.file_type&quot;, &quot;ocsp&quot; ]],
             [ &quot;=&quot;, &quot;exported&quot;, true ]
           ]
         ]
@@ -1112,16 +1109,11 @@ class dehydrated (
 
     $transfer_data = puppetdb_query($transfer_query)
     $transfer_data.each |$transfer| {
-      if ($transfer[&#39;parameters.file_type&#39;] == &#39;ocsp&#39;) {
-        $content = base64(&#39;decode&#39;, $transfer[&#39;parameters.file_content&#39;])
-      } else {
-        $content = $transfer[&#39;parameters.file_content&#39;]
-      }
+      $content = $transfer[&#39;parameters.file_content&#39;]
 
       $filenames = {
         &#39;ca&#39;   =&gt; &quot;${crt_dir}/${_base_filename}_ca.pem&quot;,
         &#39;crt&#39;  =&gt; &quot;${crt_dir}/${_base_filename}.crt&quot;,
-        &#39;ocsp&#39; =&gt; &quot;${crt_dir}/${_base_filename}.crt.ocsp&quot;,
       }
 
       $filename = $filenames[$transfer[&#39;parameters.file_type&#39;]]
@@ -1135,7 +1127,7 @@ class dehydrated (
     }
 
     # mark as ready for merge in case we have 3 files to transfer.
-    if length($transfer_data) == 3 {
+    if length($transfer_data) == 2 {
       $_dn
     } else {
       undef

@@ -70,13 +70,23 @@
 </div>
 
   <h2>Summary</h2>
-  Transfer crt/ca/ocsp files.
+  Transfer crt/ca files.
 
 <h2>Overview</h2>
 <div class="docstring">
   <div class="discussion">
     
-<p>Used as exported ressource to ransfer crt/ca/ocsp files.</p>
+<p>Used as exported ressource to ransfer crt/ca files.</p>
+
+<p>File type to transfer, supports crt and ca.</p>
+
+<p>DN of the certificate request</p>
+
+<p>Fqdn of the requesting host</p>
+
+<p>Base filename from the request</p>
+
+<p>Content of the file we want to transfert</p>
 
   </div>
 </div>
@@ -105,7 +115,7 @@
         <span class='name'>file_type</span>
       
       
-        <span class='type'>(<tt>Enum['crt', 'ca', 'ocsp']</tt>)</span>
+        <span class='type'>(<tt>Enum['crt', 'ca']</tt>)</span>
       
       
       
@@ -166,23 +176,23 @@
         <pre class="lines">
 
 
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25</pre>
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40</pre>
       </td>
       <td>
-        <pre class="code"><span class="info file"># File 'manifests/certificate/transfer.pp', line 15</span>
+        <pre class="code"><span class="info file"># File 'manifests/certificate/transfer.pp', line 30</span>
 
 define dehydrated::certificate::transfer (
-  Enum[&#39;crt&#39;, &#39;ca&#39;, &#39;ocsp&#39;] $file_type,
+  Enum[&#39;crt&#39;, &#39;ca&#39;] $file_type,
   Dehydrated::DN $request_dn,
   Stdlib::Fqdn $request_fqdn,
   String $request_base_filename,

@@ -78,6 +78,12 @@
     
 <p>Deploy collected certificate and CA files.</p>
 
+<p>present/absent absent removes all related files!</p>
+
+<p>Certificate DN</p>
+
+<p>Password of the key if needed to access it.</p>
+
   </div>
 </div>
 
@@ -94,6 +100,19 @@
   </div>
 <p class="tag_title">Parameters:</p>
 <ul class="param">
+  
+    <li>
+      
+        <span class='name'>ensure</span>
+      
+      
+        <span class='type'>(<tt>Enum['present', 'absent']</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>&#39;present&#39;</tt>)</em>
+      
+      
+    </li>
   
     <li>
       
@@ -132,16 +151,6 @@
         <pre class="lines">
 
 
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
 20
 21
 22
@@ -229,12 +238,45 @@
 104
 105
 106
-107</pre>
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139</pre>
       </td>
       <td>
-        <pre class="code"><span class="info file"># File 'manifests/certificate/deploy.pp', line 10</span>
+        <pre class="code"><span class="info file"># File 'manifests/certificate/deploy.pp', line 20</span>
 
 define dehydrated::certificate::deploy (
+  Enum[&#39;present&#39;, &#39;absent&#39;] $ensure = &#39;present&#39;,
   Dehydrated::DN $dn = $name,
   Optional[String] $key_password = undef,
 ) {
@@ -242,6 +284,7 @@ define dehydrated::certificate::deploy (
     fail(&#39;You must include the dehydrated base class first.&#39;)
   }
 
+  include dehydrated
   require dehydrated::setup
 
   $dehydrated_domains = $facts[&#39;dehydrated_domains&#39;]
@@ -264,72 +307,92 @@ define dehydrated::certificate::deploy (
   $crt_full_chain = &quot;${crt_dir}/${base_filename}_fullchain.pem&quot;
   $crt_full_chain_with_key = &quot;${key_dir}/${base_filename}_fullchain_with_key.pem&quot;
 
-  Concat {
-    owner =&gt; $dehydrated::user,
-    group =&gt; $dehydrated::group,
-  }
+  if ($ensure == &#39;present&#39;) {
+    Concat {
+      owner =&gt; $dehydrated::user,
+      group =&gt; $dehydrated::group,
+    }
 
-  concat { $crt_full_chain :
-    mode =&gt; &#39;0644&#39;,
-  }
-  concat { $crt_full_chain_with_key :
-    mode   =&gt; &#39;0640&#39;,
-    notify =&gt; Dehydrated_pfx[$pfx],
-  }
+    concat { $crt_full_chain :
+      mode =&gt; &#39;0644&#39;,
+    }
+    concat { $crt_full_chain_with_key :
+      mode =&gt; &#39;0640&#39;,
+    }
 
-  concat::fragment { &quot;${dn}_key&quot; :
-    target  =&gt; $crt_full_chain_with_key,
-    source  =&gt; $key,
-    order   =&gt; &#39;01&#39;,
-    require =&gt; Dehydrated_key[$key],
-  }
-  concat::fragment { &quot;${dn}_fullchain&quot; :
-    target    =&gt; $crt_full_chain_with_key,
-    source    =&gt; $crt_full_chain,
-    order     =&gt; &#39;10&#39;,
-    subscribe =&gt; Concat[$crt_full_chain],
-  }
+    concat::fragment { &quot;${dn}_key&quot; :
+      target  =&gt; $crt_full_chain_with_key,
+      source  =&gt; $key,
+      order   =&gt; &#39;01&#39;,
+      require =&gt; Dehydrated_key[$key],
+    }
+    concat::fragment { &quot;${dn}_fullchain&quot; :
+      target    =&gt; $crt_full_chain_with_key,
+      source    =&gt; $crt_full_chain,
+      order     =&gt; &#39;10&#39;,
+      subscribe =&gt; Concat[$crt_full_chain],
+    }
 
-  concat::fragment { &quot;${dn}_crt&quot; :
-    target  =&gt; $crt_full_chain,
-    source  =&gt; $crt,
-    order   =&gt; &#39;10&#39;,
-    require =&gt; File[$crt],
-  }
+    concat::fragment { &quot;${dn}_crt&quot; :
+      target  =&gt; $crt_full_chain,
+      source  =&gt; $crt,
+      order   =&gt; &#39;10&#39;,
+      require =&gt; File[$crt],
+    }
 
-  concat::fragment { &quot;${dn}_dh&quot; :
-    target  =&gt; $crt_full_chain,
-    source  =&gt; $dh,
-    order   =&gt; &#39;30&#39;,
-    require =&gt; File[$dh],
-  }
+    concat::fragment { &quot;${dn}_dh&quot; :
+      target  =&gt; $crt_full_chain,
+      source  =&gt; $dh,
+      order   =&gt; &#39;30&#39;,
+      require =&gt; File[$dh],
+    }
 
-  concat::fragment { &quot;${dn}_ca&quot; :
-    target  =&gt; $crt_full_chain,
-    source  =&gt; $ca,
-    order   =&gt; &#39;50&#39;,
-    require =&gt; File[$ca],
-  }
+    concat::fragment { &quot;${dn}_ca&quot; :
+      target  =&gt; $crt_full_chain,
+      source  =&gt; $ca,
+      order   =&gt; &#39;50&#39;,
+      require =&gt; File[$ca],
+    }
 
-  if ($dehydrated::build_pfx_files) {
-    $dehydrated_pfx_ensure = &#39;present&#39;
+    if ($dehydrated::build_pfx_files) {
+      $dehydrated_pfx_ensure = &#39;present&#39;
+      dehydrated_pfx { $pfx:
+        ensure       =&gt; &#39;present&#39;,
+        pkcs12_name  =&gt; $dn,
+        key_password =&gt; $key_password,
+        password     =&gt; $key_password,
+        ca           =&gt; $ca,
+        certificate  =&gt; $crt,
+        private_key  =&gt; $key,
+        require      =&gt; [
+          File[$crt],
+          File[$ca],
+          File[$key],
+          Dehydrated_key[$key],
+        ],
+        subscribe    =&gt; Concat[$crt_full_chain_with_key],
+      }
+    } else {
+      file { $pfx:
+        ensure =&gt; absent,
+      }
+    }
   } else {
-    $dehydrated_pfx_ensure = &#39;absent&#39;
-  }
-  dehydrated_pfx { $pfx:
-    ensure       =&gt; $dehydrated_pfx_ensure,
-    pkcs12_name  =&gt; $dn,
-    key_password =&gt; $key_password,
-    password     =&gt; $key_password,
-    ca           =&gt; $ca,
-    certificate  =&gt; $crt,
-    private_key  =&gt; $key,
-    require      =&gt; [
-      File[$crt],
-      File[$ca],
-      File[$key],
-      Dehydrated_key[$key],
-    ],
+    $cert_files = [
+      $cnf,
+      $crt,
+      $key,
+      $pfx,
+      $csr,
+      $dh ,
+      $ca,
+
+      $crt_full_chain,
+      $crt_full_chain_with_key,
+    ]
+    file { $cert_files:
+      ensure =&gt; absent,
+    }
   }
 }</pre>
       </td>

@@ -115,15 +115,15 @@
 
 <h3 id="label-Beginning+with+dehydrated">Beginning with dehydrated</h3>
 
-<p>Basic things you need:  - a host with internet access, preferable a puppet master. This will be known as <em>dehydrated_host</em> now.  - a working hook script for dehydrated, for exampes and documentation see <a href="https://github.com/dehydrated-io/dehydrated/tree/master/docs">dehydrated-io/dehydrated</a>  - bzed-dehydrated installed as <code>dehydrated</code> module in your Puppet environment.  You will also need recent versions of <code>puppetlabs-stdlib</code>, <code>puppetlabs-concat</code>, <code>puppetlabs-vcsrepo</code>.  For puppet &gt;= 6.0 you’ll also need <code>puppetlabs-cron_core</code>.  - I’d assume at least puppet version 4.8. Not tested or developed for older version.  - Working exportable ressources. Make sure your puppetdb is working well, this module  heavily depends on it.</p>
+<p>Basic things you need: - a host with internet access, preferable a puppet master. This will be known as <em>dehydrated_host</em> now. - a working hook script for dehydrated, for exampes and documentation see <a href="https://github.com/dehydrated-io/dehydrated/tree/master/docs">dehydrated-io/dehydrated</a> - bzed-dehydrated installed as <code>dehydrated</code> module in your Puppet environment. You will also need recent versions of <code>puppetlabs-stdlib</code>, <code>puppetlabs-concat</code>, <code>puppetlabs-vcsrepo</code>. For puppet &gt;= 6.0 you’ll also need <code>puppetlabs-cron_core</code>. - I’d assume at least puppet version 4.8. Not tested or developed for older version. - Working exportable ressources. Make sure your puppetdb is working well, this module heavily depends on it.</p>
 
 <h2 id="label-Usage">Usage</h2>
 
 <p>This only describes the very basic usage. Almost all things are configurable, see the reference for details. So for a basic setup, the following steps should give you a running setup.</p>
 <ol><li>
-<p>Do a basic setup of your <strong>dehydrated_host</strong>:  <code>      class { &#39;dehydrated&#39; :          dehydrated_host =&gt; &#39;your.dehydrated.host.example.com&#39;,      } </code></p>
+<p>Do a basic setup of your <strong>dehydrated_host</strong>: <code>     class { &#39;dehydrated&#39; :         dehydrated_host =&gt; &#39;your.dehydrated.host.example.com&#39;,     } </code></p>
 </li><li>
-<p>As example we’ll use the dehydrated hook for Cloudflare®. Take [socram8888/dehydrated-hook-cloudflare](  <a href="https://github.com/socram8888/dehydrated-hook-cloudflare/blob/master/cf-hook.sh">github.com/socram8888/dehydrated-hook-cloudflare/blob/master/cf-hook.sh</a>)  and <strong>on your dehydrated_host</strong> install it into <em>/opt/dehydrated/hooks/dns-01.sh</em></p>
+<p>As example we’ll use the dehydrated hook for Cloudflare®. Take [socram8888/dehydrated-hook-cloudflare]( <a href="https://github.com/socram8888/dehydrated-hook-cloudflare/blob/master/cf-hook.sh">github.com/socram8888/dehydrated-hook-cloudflare/blob/master/cf-hook.sh</a>) and <strong>on your dehydrated_host</strong> install it into <em>/opt/dehydrated/hooks/dns-01.sh</em></p>
 </li><li>
 <p>Add the hook configuration to your config from above:</p>
 
@@ -147,7 +147,7 @@
  }
 </code></pre>
 </li><li>
-<p>Wait.... it will take a few puppet runs until your certificate will appear.  The certificates will be requestd by a cronjob, not directly from puppet.  Otherwise puppet runs will take way too much time. For detailed description of the workflow see <a href="#deployment-workflow">Deployment workflow </a></p>
+<p>Wait.... it will take a few puppet runs until your certificate will appear. The certificates will be requestd by a cronjob, not directly from puppet. Otherwise puppet runs will take way too much time. For detailed description of the workflow see <a href="#deployment-workflow">Deployment workflow </a></p>
 </li></ol>
 
 <h3 id="label-Using+hiera">Using hiera</h3>
@@ -172,7 +172,7 @@ dehydrated::dehydrated_domain_validation_hook: &#39;domain_validation_hook.sh&#3
       - [ &quot;second_domain.san.example.com&quot;, &quot;third_domain.san.example.com&quot; ]
 </code></pre>
 
-<p>With the yaml snippet above you’d request the following certificates:  - wildcard certificate <strong>*.subdomain.example.com</strong>  - “normal” certificate <strong>subdomain.example.com</strong>  - SAN certificate <strong>san.example.com</strong> with <strong>second_domain.san.example.com</strong>  and <strong>third_domain.san.example.com</strong> as subject alternative names.</p>
+<p>With the yaml snippet above you’d request the following certificates: - wildcard certificate <strong>*.subdomain.example.com</strong> - “normal” certificate <strong>subdomain.example.com</strong> - SAN certificate <strong>san.example.com</strong> with <strong>second_domain.san.example.com</strong> and <strong>third_domain.san.example.com</strong> as subject alternative names.</p>
 
 <h3 id="label-Monitoring+-26+debugging">Monitoring &amp; debugging</h3>
 <ul><li>
@@ -184,7 +184,7 @@ dehydrated::dehydrated_domain_validation_hook: &#39;domain_validation_hook.sh&#3
 
 <pre class="code ruby"><code class="ruby"># /usr/lib/nagios/plugins/check_statusfile /opt/dehydrated/monitoring.status
 dehydrated certificates: OK: 2, FAILED: 1
-foo.example.com (from bar.example.com): OCSP update failed
+foo.example.com (from bar.example.com): some error description
 </code></pre>
 </li></ul>
 
@@ -238,42 +238,42 @@ foo.example.com (from bar.example.com): OCSP update failed
 <td>2</td>
 <td align="left">target</td>
 <td align="left">puppet</td>
-<td align="left">get CSR from `$fact[&#39;dehydrated_domains&#39;]` and export it as a `dehydrated::certificate::request`.</td>
+<td align="left">get CSR from ‘$<a href="&#39;dehydrated_domains&#39;">fact</a>` and export it as a `dehydrated::certificate::request`.</td>
 <td align="left">[dehydrated](manifests/init.pp#L217-L222)</td>
 </tr>
 <tr>
 <td>3</td>
-<td align="left">*dehydrated\_host*</td>
+<td align="left"><strong>dehydrated_host</strong></td>
 <td align="left">puppet</td>
-<td align="left">Collect all `dehydrated::certificate::request` and save them for the cronjob.</td>
+<td align="left">Collect all ‘dehydrated::certificate::request` and save them for the cronjob.</td>
 <td align="left">[dehydrated](manifests/init.pp#L235) [dehydrated::certificate::request](manifests/certificate/request.pp)</td>
 </tr>
 <tr>
 <td>4</td>
-<td align="left">*dehydrated\_host*</td>
+<td align="left"><strong>dehydrated_host</strong></td>
 <td align="left">cron</td>
 <td align="left">finds the files from previous step and requests the certificates.</td>
 <td align="left">[dehydrated_job_runner](files/dehydrated_job_runner.rb)</td>
 </tr>
 <tr>
 <td>5</td>
-<td align="left">*dehydrated\_host*</td>
+<td align="left"><strong>dehydrated_host</strong></td>
 <td align="left">puppet</td>
-<td align="left">Find the certificates and export them as `dehydrated::certificate::transfer`</td>
+<td align="left">Find the certificates and export them as ‘dehydrated::certificate::transfer`</td>
 <td align="left">[dehydrated](manifests/init.pp#L243-L247) [dehydrated::certificate:collect](manifests/certificate/collect.pp#L76-L111)</td>
 </tr>
 <tr>
 <td>6</td>
 <td align="left">target</td>
 <td align="left">puppet</td>
-<td align="left">Collect all `dehydrated::certificate::transfer` and save them to the files.</td>
+<td align="left">Collect all ‘dehydrated::certificate::transfer` and save them to the files.</td>
 <td align="left">[dehydrated](manifests/init.pp#L225-L228) [dehydrated::certificate::transfer](manifests/certificate/transfer.pp)</td>
 </tr>
 <tr>
 <td>7.</td>
 <td align="left">target</td>
 <td align="left">puppet</td>
-<td align="left">identify deployed certificates by `$fact[&#39;dehydrated_domains::`*dn*`::&#39;ready_for_merge]` and create joined files like `*_fullchain.pem`.</td>
+<td align="left">identify deployed certificates by ‘$fact[’dehydrated_domains::‘<strong>dn</strong>`::’ready_for_merge]‘ and create joined files like `*_fullchain.pem`.</td>
 <td align="left">[dehydrated::certificate](manifests/certificate.pp#L123-L131) [dehydrated::certificate::deploy](manifests/certificate/deploy.pp)</td>
 </tr>
 </tbody>
@@ -285,6 +285,8 @@ foo.example.com (from bar.example.com): OCSP update failed
 
 <h3 id="label-For+a+release-3A">For a release:</h3>
 <ul><li>
+<p>Update CHANGELOG.md</p>
+</li><li>
 <p>Update gh_pages:</p>
 
 <pre class="code ruby"><code class="ruby">bundle exec rake strings:gh_pages:update

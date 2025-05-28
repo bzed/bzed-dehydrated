@@ -73,13 +73,16 @@
   </dl>
 </div>
 
+  <h2>Summary</h2>
+  Returns the contents of a file - or nil if the file does not exist. based on file.rb from puppet.
+
 <h2>Overview</h2>
 <div class="method_details first">
   
   <div class="tags overload overload_item">
     <span class="overload">
       <span class="overload_item">
-        <span class="signature first" style="margin-left: 0px;"><strong>dehydrated::file(String $files, Optional[String] *$more_files)</strong> &#x21d2; <tt>Any</tt> </span>
+        <span class="signature first" style="margin-left: 0px;"><strong>dehydrated::file(String $files, Optional[String] *$more_files)</strong> &#x21d2; <tt>String</tt> </span>
       </span>
     </span>
   </div>
@@ -106,6 +109,11 @@
       
       
       
+        &mdash;
+        <div class='inline'>
+<p>File to check</p>
+</div>
+      
     </li>
   
     <li>
@@ -116,6 +124,11 @@
         <span class='type'>(<tt>Optional[String]</tt>)</span>
       
       
+      
+        &mdash;
+        <div class='inline'>
+<p>optional other files to check</p>
+</div>
       
     </li>
   
@@ -128,7 +141,7 @@
     <li>
       
       
-        <span class='type'>(<tt>Any</tt>)</span>
+        <span class='type'>(<tt>String</tt>)</span>
       
       
       
@@ -163,32 +176,28 @@
 23
 24
 25
-26
-27
-28</pre>
+26</pre>
       </td>
       <td>
         <pre class="code"><span class="info file"># File 'lib/puppet/functions/dehydrated/file.rb', line 6</span>
 
 <span class='const'>Puppet</span><span class='op'>::</span><span class='const'>Functions</span><span class='period'>.</span><span class='id identifier rubyid_create_function'>create_function</span><span class='lparen'>(</span><span class='symbol'>:&#39;dehydrated::file&#39;</span><span class='rparen'>)</span> <span class='kw'>do</span>
-  <span class='id identifier rubyid_dispatch'>dispatch</span> <span class='symbol'>:getfile</span> <span class='kw'>do</span>
+  <span class='comment'># @param files File to check
+</span>  <span class='comment'># @param more_files optional other files to check
+</span>  <span class='id identifier rubyid_dispatch'>dispatch</span> <span class='symbol'>:getfile</span> <span class='kw'>do</span>
     <span class='id identifier rubyid_required_param'>required_param</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>String</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='symbol'>:files</span>
     <span class='id identifier rubyid_optional_repeated_param'>optional_repeated_param</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>String</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='symbol'>:more_files</span>
+    <span class='id identifier rubyid_return_type'>return_type</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>String</span><span class='tstring_end'>&#39;</span></span>
   <span class='kw'>end</span>
 
   <span class='kw'>def</span> <span class='id identifier rubyid_getfile'>getfile</span><span class='lparen'>(</span><span class='id identifier rubyid_files'>files</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_more_files'>more_files</span><span class='rparen'>)</span>
     <span class='id identifier rubyid_ret'>ret</span> <span class='op'>=</span> <span class='kw'>nil</span>
     <span class='id identifier rubyid_files'>files</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='id identifier rubyid_files'>files</span><span class='rbracket'>]</span> <span class='op'>+</span> <span class='id identifier rubyid_more_files'>more_files</span>
     <span class='id identifier rubyid_files'>files</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_file'>file</span><span class='op'>|</span>
-      <span class='kw'>unless</span> <span class='const'>Puppet</span><span class='op'>::</span><span class='const'>Util</span><span class='period'>.</span><span class='id identifier rubyid_absolute_path?'>absolute_path?</span><span class='lparen'>(</span><span class='id identifier rubyid_file'>file</span><span class='rparen'>)</span>
-        <span class='id identifier rubyid_raise'>raise</span><span class='lparen'>(</span><span class='const'>Puppet</span><span class='op'>::</span><span class='const'>ParseError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Files must be fully qualified</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
-      <span class='kw'>end</span>
+      <span class='id identifier rubyid_raise'>raise</span><span class='lparen'>(</span><span class='const'>Puppet</span><span class='op'>::</span><span class='const'>ParseError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Files must be fully qualified</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='const'>Puppet</span><span class='op'>::</span><span class='const'>Util</span><span class='period'>.</span><span class='id identifier rubyid_absolute_path?'>absolute_path?</span><span class='lparen'>(</span><span class='id identifier rubyid_file'>file</span><span class='rparen'>)</span>
       <span class='kw'>next</span> <span class='kw'>unless</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_exist?'>exist?</span><span class='lparen'>(</span><span class='id identifier rubyid_file'>file</span><span class='rparen'>)</span>
-      <span class='id identifier rubyid_ret'>ret</span> <span class='op'>=</span> <span class='kw'>if</span> <span class='tstring'><span class='regexp_beg'>%r{</span><span class='tstring_content'>.*\.ocsp$</span><span class='regexp_end'>}</span></span><span class='period'>.</span><span class='id identifier rubyid_match?'>match?</span><span class='lparen'>(</span><span class='id identifier rubyid_file'>file</span><span class='rparen'>)</span>
-              <span class='const'>Base64</span><span class='period'>.</span><span class='id identifier rubyid_strict_encode64'>strict_encode64</span><span class='lparen'>(</span><span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_read'>read</span><span class='lparen'>(</span><span class='id identifier rubyid_file'>file</span><span class='rparen'>)</span><span class='rparen'>)</span>
-            <span class='kw'>else</span>
-              <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_read'>read</span><span class='lparen'>(</span><span class='id identifier rubyid_file'>file</span><span class='rparen'>)</span>
-            <span class='kw'>end</span>
+
+      <span class='id identifier rubyid_ret'>ret</span> <span class='op'>=</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_read'>read</span><span class='lparen'>(</span><span class='id identifier rubyid_file'>file</span><span class='rparen'>)</span>
     <span class='kw'>end</span>
     <span class='id identifier rubyid_ret'>ret</span>
   <span class='kw'>end</span>
