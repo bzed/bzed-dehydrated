@@ -9,7 +9,7 @@ Puppet::Functions.create_function(:'dehydrated::file') do
   dispatch :getfile do
     required_param 'String', :files
     optional_repeated_param 'String', :more_files
-    return_type 'String'
+    return_type 'Optional[String]'
   end
 
   def getfile(files, *more_files)
