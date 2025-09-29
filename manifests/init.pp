@@ -135,6 +135,16 @@
 #   Defaults to true on windows, to false on all other OS.
 # @param preferred_chain
 #   Preferred dehydrated CA chain to use
+# @param pkcs12_mac_algorithm
+#   The MAC algorithm to use for PKCS12 files, e.g. `sha1`, `sha256`.
+#   Defaults to `undef`, which uses the OpenSSL default.
+#   Specifying `sha1` can be necessary for compatibility with older systems.
+# @param pkcs12_certpbe
+#   The certificate encryption algorithm for PKCS12 files, e.g. `AES-256-CBC`.
+#   Defaults to `undef`, which uses the OpenSSL default.
+# @param pkcs12_keypbe
+#   The private key encryption algorithm for PKCS12 files, e.g. `AES-256-CBC`.
+#   Defaults to `undef`, which uses the OpenSSL default.
 #
 class dehydrated (
   Stdlib::Absolutepath $base_dir = $dehydrated::params::base_dir,
@@ -180,6 +190,9 @@ class dehydrated (
   Array[Variant[Dehydrated::DN, Tuple[Dehydrated::DN, Array[Dehydrated::DN]]]] $certificates = [],
 
   Boolean $build_pfx_files = $dehydrated::params::build_pfx_files,
+  Optional[String] $pkcs12_mac_algorithm = undef,
+  Optional[String] $pkcs12_certpbe = undef,
+  Optional[String] $pkcs12_keypbe = undef,
   Optional[String] $preferred_chain = $dehydrated::params::preferred_chain,
 ) inherits dehydrated::params {
   require dehydrated::setup

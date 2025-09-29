@@ -5,6 +5,8 @@ require 'openssl'
 Puppet::Type.type(:dehydrated_pfx).provide(:openssl) do
   desc 'Manages pkcs12/pfx file creation with OpenSSL'
 
+  commands openssl: 'openssl'
+
   def self.certificate(filename, read_array)
     file = File.read(filename)
     if read_array
@@ -57,22 +59,43 @@ Puppet::Type.type(:dehydrated_pfx).provide(:openssl) do
     return false unless key
 
     begin
-      pfx = OpenSSL::PKCS12.create(
-        resource[:password],
-        resource[:pkcs12_name],
-        key,
-        cert,
-        ca
-      )
-    rescue OpenSSL::PKCS12::PKCS12Error
+      # The `macalg` parameter is not available in the OpenSSL Ruby version that is shipped with
+      # puppet. Use the command line tool instead.
+      if resource[:mac_algorithm]
+        # Use the command-line tool for compatibility.
+        cmd = [
+          'pkcs12', '-export',
+          '-in', resource[:certificate],
+          '-inkey', resource[:private_key],
+          '-out', resource[:path],
+          '-certfile', resource[:ca],
+          '-name', resource[:pkcs12_name],
+          '-passout', "pass:#{resource[:password]}",
+          '-macalg', resource[:mac_algorithm],
+        ]
+        cmd.push('-certpbe', resource[:certpbe]) if resource[:certpbe]
+        cmd.push('-keypbe', resource[:keypbe]) if resource[:keypbe]
+        openssl(cmd)
+      else
+        # Use the native Ruby method when no specific MAC algorithm is required.
+        pfx = OpenSSL::PKCS12.create(
+          resource[:password],
+          resource[:pkcs12_name],
+          key,
+          cert,
+          ca,
+          resource[:keypbe],
+          resource[:certpbe]
+        )
+        # use binary mode as windows is extra picky.
+        File.binwrite(resource[:path], pfx.to_der)
+      end
+    rescue OpenSSL::PKCS12::PKCS12Error, Puppet::ExecutionFailure => e
       FileUtils.rm_f(resource[:path])
-      return false
+      raise Puppet::Error, "Failed to create pfx file: #{e.message}"
     rescue StandardError => e
       raise Puppet::Error, "Unknown error while creating pfx file: #{e.class} - #{e.message}"
     end
-
-    # use binary mode as windows is extra picky.
-    File.binwrite(resource[:path], pfx.to_der)
   end
 
   def destroy

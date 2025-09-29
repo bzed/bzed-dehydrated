@@ -62,6 +62,27 @@ Puppet::Type.newtype(:dehydrated_pfx) do
     end
   end
 
+  newparam(:mac_algorithm) do
+    desc 'The MAC algorithm to use for the PKCS12 container. e.g. sha1, sha256'
+    defaultto do
+      nil
+    end
+  end
+
+  newparam(:certpbe) do
+    desc 'The certificate encryption algorithm to use. e.g. AES-256-CBC, 3DES-CBC'
+    defaultto do
+      nil
+    end
+  end
+
+  newparam(:keypbe) do
+    desc 'The private key encryption algorithm to use. e.g. AES-256-CBC, 3DES-CBC'
+    defaultto do
+      nil
+    end
+  end
+
   autorequire(:dehydrated_key) do
     self[:private_key]
   end

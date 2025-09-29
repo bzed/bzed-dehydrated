@@ -99,13 +99,16 @@ define dehydrated::certificate::deploy (
     if ($dehydrated::build_pfx_files) {
       $dehydrated_pfx_ensure = 'present'
       dehydrated_pfx { $pfx:
-        ensure       => 'present',
-        pkcs12_name  => $dn,
-        key_password => $key_password,
-        password     => $key_password,
-        ca           => $ca,
-        certificate  => $crt,
-        private_key  => $key,
+        ensure        => 'present',
+        pkcs12_name   => $dn,
+        key_password  => $key_password,
+        password      => $key_password,
+        ca            => $ca,
+        certificate   => $crt,
+        private_key   => $key,
+        mac_algorithm => $dehydrated::pkcs12_mac_algorithm,
+        certpbe       => $dehydrated::pkcs12_certpbe,
+        keypbe        => $dehydrated::pkcs12_keypbe,
         require      => [
           File[$crt],
           File[$ca],
