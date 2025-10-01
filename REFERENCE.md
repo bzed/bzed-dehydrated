@@ -124,6 +124,9 @@ The following parameters are available in the `dehydrated` class:
 * [`certificates`](#-dehydrated--certificates)
 * [`build_pfx_files`](#-dehydrated--build_pfx_files)
 * [`preferred_chain`](#-dehydrated--preferred_chain)
+* [`pkcs12_mac_algorithm`](#-dehydrated--pkcs12_mac_algorithm)
+* [`pkcs12_certpbe`](#-dehydrated--pkcs12_certpbe)
+* [`pkcs12_keypbe`](#-dehydrated--pkcs12_keypbe)
 
 ##### <a name="-dehydrated--base_dir"></a>`base_dir`
 
@@ -476,6 +479,34 @@ Data type: `Optional[String]`
 Preferred dehydrated CA chain to use
 
 Default value: `$dehydrated::params::preferred_chain`
+
+##### <a name="-dehydrated--pkcs12_mac_algorithm"></a>`pkcs12_mac_algorithm`
+
+Data type: `Optional[String]`
+
+The MAC algorithm to use for PKCS12 files, e.g. `sha1`, `sha256`.
+Defaults to `undef`, which uses the OpenSSL default.
+Specifying `sha1` can be necessary for compatibility with older systems.
+
+Default value: `undef`
+
+##### <a name="-dehydrated--pkcs12_certpbe"></a>`pkcs12_certpbe`
+
+Data type: `Optional[String]`
+
+The certificate encryption algorithm for PKCS12 files, e.g. `AES-256-CBC`.
+Defaults to `undef`, which uses the OpenSSL default.
+
+Default value: `undef`
+
+##### <a name="-dehydrated--pkcs12_keypbe"></a>`pkcs12_keypbe`
+
+Data type: `Optional[String]`
+
+The private key encryption algorithm for PKCS12 files, e.g. `AES-256-CBC`.
+Defaults to `undef`, which uses the OpenSSL default.
+
+Default value: `undef`
 
 ### <a name="dehydrated--params"></a>`dehydrated::params`
 
@@ -964,7 +995,10 @@ The following parameters are available in the `dehydrated_pfx` type.
 
 * [`ca`](#-dehydrated_pfx--ca)
 * [`certificate`](#-dehydrated_pfx--certificate)
+* [`certpbe`](#-dehydrated_pfx--certpbe)
 * [`key_password`](#-dehydrated_pfx--key_password)
+* [`keypbe`](#-dehydrated_pfx--keypbe)
+* [`mac_algorithm`](#-dehydrated_pfx--mac_algorithm)
 * [`password`](#-dehydrated_pfx--password)
 * [`path`](#-dehydrated_pfx--path)
 * [`pkcs12_name`](#-dehydrated_pfx--pkcs12_name)
@@ -979,9 +1013,21 @@ The path of the ca certificates to put into the pkcs12 container
 
 The path of the certificate to put into the pkcs12 container
 
+##### <a name="-dehydrated_pfx--certpbe"></a>`certpbe`
+
+The certificate encryption algorithm to use. e.g. AES-256-CBC, 3DES-CBC
+
 ##### <a name="-dehydrated_pfx--key_password"></a>`key_password`
 
 The optional password for the private key
+
+##### <a name="-dehydrated_pfx--keypbe"></a>`keypbe`
+
+The private key encryption algorithm to use. e.g. AES-256-CBC, 3DES-CBC
+
+##### <a name="-dehydrated_pfx--mac_algorithm"></a>`mac_algorithm`
+
+The MAC algorithm to use for the PKCS12 container. e.g. sha1, sha256
 
 ##### <a name="-dehydrated_pfx--password"></a>`password`
 
@@ -1016,7 +1062,7 @@ Returns the contents of a file - or nil if the file does not exist. based on fil
 
 The dehydrated::file function.
 
-Returns: `String`
+Returns: `Optional[String]`
 
 ##### `files`
 
