@@ -109,13 +109,13 @@ define dehydrated::certificate::deploy (
         mac_algorithm => $dehydrated::pkcs12_mac_algorithm,
         certpbe       => $dehydrated::pkcs12_certpbe,
         keypbe        => $dehydrated::pkcs12_keypbe,
-        require      => [
+        require       => [
           File[$crt],
           File[$ca],
           File[$key],
           Dehydrated_key[$key],
         ],
-        subscribe    => Concat[$crt_full_chain_with_key],
+        subscribe     => Concat[$crt_full_chain_with_key],
       }
     } else {
       file { $pfx:
