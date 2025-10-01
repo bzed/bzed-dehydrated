@@ -62,7 +62,6 @@ Puppet::Type.type(:dehydrated_pfx).provide(:openssl) do
       # The `macalg` parameter is not available in the OpenSSL Ruby version that is shipped with
       # puppet. Use the command line tool instead.
       if resource[:mac_algorithm]
-        # Use the command-line tool for compatibility.
         cmd = [
           'pkcs12', '-export',
           '-in', resource[:certificate],
@@ -70,11 +69,12 @@ Puppet::Type.type(:dehydrated_pfx).provide(:openssl) do
           '-out', resource[:path],
           '-certfile', resource[:ca],
           '-name', resource[:pkcs12_name],
-          '-passout', "pass:#{resource[:password]}",
           '-macalg', resource[:mac_algorithm],
         ]
         cmd.push('-certpbe', resource[:certpbe]) if resource[:certpbe]
         cmd.push('-keypbe', resource[:keypbe]) if resource[:keypbe]
+        cmd.push('-passin', "pass:#{resource[:key_password]}") if resource[:key_password]
+        cmd.push('-passout', "pass:#{resource[:password]}") if resource[:password]
         openssl(cmd)
       else
         # Use the native Ruby method when no specific MAC algorithm is required.

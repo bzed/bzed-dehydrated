@@ -24,6 +24,9 @@ Puppet::Type.newtype(:dehydrated_pfx) do
 
   newparam(:key_password) do
     desc 'The optional password for the private key'
+    defaultto do
+      nil
+    end
   end
 
   newparam(:certificate) do
