@@ -61,7 +61,7 @@ Puppet::Type.type(:dehydrated_pfx).provide(:openssl) do
     begin
       # The `macalg` parameter is not available in the OpenSSL Ruby version that is shipped with
       # puppet. Use the command line tool instead.
-      if resource[:mac_algorithm]
+      if resource[:mac_algorithm] && (Gem::Version.new(RUBY_VERSION) < Gem::Version.new('3.3.0'))
         cmd = [
           'pkcs12', '-export',
           '-in', resource[:certificate],
@@ -87,6 +87,10 @@ Puppet::Type.type(:dehydrated_pfx).provide(:openssl) do
           resource[:keypbe],
           resource[:certpbe]
         )
+
+        # only available with ruby >= 3.3.0
+        pfx.set_mac(nil, nil, nil, resource[:mac_algorithm]) if resource[:mac_algorithm]
+
         # use binary mode as windows is extra picky.
         File.binwrite(resource[:path], pfx.to_der)
       end
