@@ -71,10 +71,15 @@ Puppet::Type.type(:dehydrated_pfx).provide(:openssl) do
           '-name', resource[:pkcs12_name],
           '-macalg', resource[:mac_algorithm],
         ]
-        cmd.push('-certpbe', resource[:certpbe]) if resource[:certpbe]
-        cmd.push('-keypbe', resource[:keypbe]) if resource[:keypbe]
+        if resource[:password]
+          cmd.push('-certpbe', resource[:certpbe]) if resource[:certpbe]
+          cmd.push('-keypbe', resource[:keypbe]) if resource[:keypbe]
+          cmd.push('-passout', "pass:#{resource[:password]}")
+        else
+          cmd.push('-certpbe', 'NONE')
+          cmd.push('-keypbe', 'NONE')
+        end
         cmd.push('-passin', "pass:#{resource[:key_password]}") if resource[:key_password]
-        cmd.push('-passout', "pass:#{resource[:password]}") if resource[:password]
         openssl(cmd)
       else
         # Use the native Ruby method when no specific MAC algorithm is required.
