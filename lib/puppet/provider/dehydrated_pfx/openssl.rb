@@ -83,14 +83,21 @@ Puppet::Type.type(:dehydrated_pfx).provide(:openssl) do
         openssl(cmd)
       else
         # Use the native Ruby method when no specific MAC algorithm is required.
+        keypbe = resource[:keypbe]
+        certpbe = resource[:certpbe]
+        if keypbe == 'NONE' && certpbe == 'NONE'
+          keypbe = nil
+          certpbe = nil
+        end
+
         pfx = OpenSSL::PKCS12.create(
           resource[:password],
           resource[:pkcs12_name],
           key,
           cert,
           ca,
-          resource[:keypbe],
-          resource[:certpbe]
+          keypbe,
+          certpbe
         )
 
         # only available with ruby >= 3.3.0
