@@ -94,16 +94,6 @@ Puppet::Type.newtype(:dehydrated_pfx) do
     self[:private_key]
   end
 
-  validate do
-    certpbe_none = self[:certpbe] && self[:certpbe] == 'NONE'
-    keypbe_none = self[:keypbe] && self[:keypbe] == 'NONE'
-    if !self[:password] && ((self[:certpbe] && !certpbe_none) || (self[:keypbe] && !keypbe_none))
-      raise Puppet::Error, 'A password is required when using certpbe or keypbe with an encryption algorithm.'
-    elsif self[:password] && (certpbe_none || keypbe_none)
-      raise Puppet::Error, "certpbe/keypbe cannot be 'NONE' when a password is set. Omit them to use defaults."
-    end
-  end
-
   def refresh
     provider.create
   end
