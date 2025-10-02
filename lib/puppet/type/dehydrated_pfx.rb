@@ -94,6 +94,10 @@ Puppet::Type.newtype(:dehydrated_pfx) do
     self[:private_key]
   end
 
+  validate do
+    raise Puppet::Error, 'A password is required when using certpbe or keypbe' if (self[:certpbe] || self[:keypbe]) && !self[:password]
+  end
+
   def refresh
     provider.create
   end
