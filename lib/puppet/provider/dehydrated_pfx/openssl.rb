@@ -76,8 +76,7 @@ Puppet::Type.type(:dehydrated_pfx).provide(:openssl) do
           cmd.push('-keypbe', resource[:keypbe]) if resource[:keypbe]
           cmd.push('-passout', "pass:#{resource[:password]}")
         else
-          cmd.push('-certpbe', 'NONE')
-          cmd.push('-keypbe', 'NONE')
+          cmd.push('-noenc')
         end
         cmd.push('-passin', "pass:#{resource[:key_password]}") if resource[:key_password]
         openssl(cmd)
