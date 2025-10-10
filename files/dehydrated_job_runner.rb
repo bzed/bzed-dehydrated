@@ -195,7 +195,7 @@ def handle_request(fqdn, dn, config)
   # update csr and force to
   force_update ||= update_csr(csr_content, csr_file, crt_file, ca_file)
 
-  if !cert_still_valid(crt_file) || force_update || !cert_still_valid(ca_file)
+  if !cert_still_valid?(crt_file) || force_update || !cert_still_valid?(ca_file)
     if dehydrated_domain_validation_hook_script && !dehydrated_domain_validation_hook_script.empty?
       stdout, stderr, status = run_domain_validation_hook(
         dehydrated_domain_validation_hook_script,
