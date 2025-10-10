@@ -8,18 +8,29 @@ require 'net/http'
 require 'shellwords'
 require 'fileutils'
 
+def debug_log(message)
+  # rubocop:disable Style/GlobalVars
+  puts "DEBUG: #{message}" if $DEBUG_MODE
+  # rubocop:enable Style/GlobalVars
+end
+
 def run_domain_validation_hook(hook, dn, subject_alternative_names = [])
   if hook && File.exist?(hook) && File.executable?(hook)
     domains = [dn] + subject_alternative_names
     # The hook script is responsible for its own argument parsing.
     # Pass domains as separate arguments for robustness.
     cmd = [hook, *domains]
+    debug_log("Running domain validation hook: #{cmd.join(' ')}")
+
     stdout, stderr, status = Open3.capture3(cmd)
     status = status.to_i >> 8
   else
     stdout = stderr = 'domain validation hook not found or not executable'
     status = 255
   end
+  debug_log("Hook stdout: #{stdout}")
+  debug_log("Hook stderr: #{stderr}")
+  debug_log("Hook status: #{status}")
   [stdout, stderr, status]
 end
 
@@ -33,7 +44,12 @@ def run_dehydrated(dehydrated_config, command)
   cmd_parts = [DEHYDRATED, '--config', dehydrated_config]
   cmd_parts.concat(Shellwords.split(command))
 
+  debug_log("Running dehydrated: #{cmd_parts.join(' ')}")
   stdout, stderr, status = Open3.capture3(*cmd_parts)
+  status_code = status.to_i >> 8
+  debug_log("Dehydrated stdout: #{stdout}")
+  debug_log("Dehydrated stderr: #{stderr}")
+  debug_log("Dehydrated status: #{status_code}")
 
   [stdout, stderr, status.to_i >> 8]
 end
@@ -119,6 +135,7 @@ def update_csr(csr_content, csr_file, crt_file, ca_file)
 end
 
 def handle_request(fqdn, dn, config)
+  debug_log("Handling request for fqdn: #{fqdn}, dn: #{dn}")
   # set environment from config
   env = config['dehydrated_environment']
   old_env = {}
@@ -126,6 +143,7 @@ def handle_request(fqdn, dn, config)
     old_env[key] = value
     ENV[key] = value
   end
+  debug_log("Set environment: #{env.inspect}")
 
   # set paths/filenames
   dehydrated_config = config['dehydrated_config']
@@ -142,6 +160,7 @@ def handle_request(fqdn, dn, config)
   dehydrated_domain_validation_hook_script = config['dehydrated_domain_validation_hook_script']
   dehydrated_hook_script = config['dehydrated_hook_script']
 
+  debug_log("Using dehydrated config: #{dehydrated_config}")
   new_dn_config = {
     'letsencrypt_ca_hash' => letsencrypt_ca_hash,
     'dn' => dn,
@@ -154,6 +173,7 @@ def handle_request(fqdn, dn, config)
                         new_dn_config
                       end
 
+  debug_log("Current DN config: #{current_dn_config.inspect}")
   # clean up OCSP files as they are not supported by letsencrypt anymore.
   ocsp_file = "#{crt_file}.ocsp"
   FileUtils.rm_f(ocsp_file)
@@ -173,6 +193,7 @@ def handle_request(fqdn, dn, config)
     end
   end
   if needs_registration
+    debug_log("Account registration needed for CA hash #{letsencrypt_ca_hash}")
     stdout, stderr, status = register_account(dehydrated_config)
     return ['Account registration failed', stdout, stderr, status] if status.positive?
   end
@@ -192,10 +213,12 @@ def handle_request(fqdn, dn, config)
                    end
                   )
 
+  debug_log("Force update due to config change: #{force_update}")
   # update csr and force to
   force_update ||= update_csr(csr_content, csr_file, crt_file, ca_file)
 
   if !cert_still_valid?(crt_file) || force_update || !cert_still_valid?(ca_file)
+    debug_log("Certificate requires update. cert_still_valid?(crt_file): #{cert_still_valid?(crt_file)}, force_update: #{force_update}, cert_still_valid?(ca_file): #{cert_still_valid?(ca_file)}")
     if dehydrated_domain_validation_hook_script && !dehydrated_domain_validation_hook_script.empty?
       stdout, stderr, status = run_domain_validation_hook(
         dehydrated_domain_validation_hook_script,
@@ -222,6 +245,7 @@ def handle_request(fqdn, dn, config)
   # we do this before the OCSP stuff as we have a valid cert already.
   File.write(dn_config_file, JSON.generate(new_dn_config))
 
+  debug_log("Restoring environment: #{old_env.inspect}")
   old_env.each do |key, value|
     ENV[key] = value
   end
@@ -239,6 +263,7 @@ def prepare_files(request_config)
   dehydrated_config = request_config['dehydrated_config']
   dehydrated_config_content = request_config['dehydrated_config_content']
 
+  debug_log("Preparing files in #{request_base_dir}")
   FileUtils.mkdir_p request_base_dir
   File.write(dehydrated_config, dehydrated_config_content)
 end
@@ -289,7 +314,13 @@ def write_status_file(requests_status, status_file, monitoring_status_file)
   File.write(monitoring_status_file, output.join("\n"))
 end
 
+# rubocop:disable Style/GlobalVars
+$DEBUG_MODE = ARGV.delete('--debug')
+# rubocop:enable Style/GlobalVars
+
 raise ArgumentError, 'Need to specify config.json as argument' if ARGV.empty?
+
+debug_log("Starting dehydrated job runner. ARGV: #{ARGV.inspect}")
 
 dehydrated_host_config_file = ARGV[0]
 dehydrated_host_config = JSON.parse(File.read(dehydrated_host_config_file))
@@ -300,6 +331,7 @@ dehydrated_git_dir = dehydrated_host_config['dehydrated_git_dir']
 dehydrated_status_file = dehydrated_host_config['dehydrated_status_file']
 dehydrated_monitoring_status_file = dehydrated_host_config['dehydrated_monitoring_status_file']
 DEHYDRATED = File.join(dehydrated_git_dir, 'dehydrated')
+debug_log("DEHYDRATED script path: #{DEHYDRATED}")
 
 request_status = run_config(dehydrated_requests_config)
 write_status_file(
@@ -307,6 +339,7 @@ write_status_file(
   dehydrated_status_file,
   dehydrated_monitoring_status_file
 )
+debug_log('Dehydrated job runner finished.')
 
 # rubocop:disable all
 #{
