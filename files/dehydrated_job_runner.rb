@@ -11,11 +11,9 @@ require 'fileutils'
 def run_domain_validation_hook(hook, dn, subject_alternative_names = [])
   if hook && File.exist?(hook) && File.executable?(hook)
     domains = [dn] + subject_alternative_names
-    escaped_domains = domains.each do |domain|
-      Shellwords.escape(domain)
-    end
-    args = escaped_domains.join(' ')
-    cmd = "#{hook} #{args}"
+    # The hook script is responsible for its own argument parsing.
+    # Pass domains as separate arguments for robustness.
+    cmd = [hook, *domains]
     stdout, stderr, status = Open3.capture3(cmd)
     status = status.to_i >> 8
   else
@@ -28,90 +26,59 @@ end
 def run_dehydrated(dehydrated_config, command)
   raise 'dehydrated script not found or missing in config' unless DEHYDRATED && File.exist?(DEHYDRATED) && File.executable?(DEHYDRATED)
 
-  cmd = "#{DEHYDRATED} --config '#{dehydrated_config}' #{command}"
-  stdout, stderr, status = Open3.capture3(cmd)
+  # Construct the command as an array of arguments for Open3.capture3.
+  # This avoids shell interpretation and is more robust.
+  # Shellwords.split is used for the 'command' string to correctly parse
+  # arguments that might contain spaces or quotes (e.g., "--signcsr 'path with spaces'").
+  cmd_parts = [DEHYDRATED, '--config', dehydrated_config]
+  cmd_parts.concat(Shellwords.split(command))
+
+  stdout, stderr, status = Open3.capture3(*cmd_parts)
 
   [stdout, stderr, status.to_i >> 8]
 end
 
 def _get_authority_url(crt, url_description)
   authority_info_access = crt.extensions.find do |extension|
-    extension.oid == 'authorityInfoAccess'
+    extension.oid == 'authorityInfoAccess' # 1.3.6.1.5.5.7.1.1
   end
+  return nil unless authority_info_access
 
   descriptions = authority_info_access.value.split "\n"
   url_description = descriptions.find do |description|
     description.start_with? url_description
   end
-  URI url_description[%r{URI:(.*)}, 1]
-end
+  return nil unless url_description
 
-def update_ca_chain(crt_file, ca_file)
-  raw_crt = File.read(crt_file)
-  crt = OpenSSL::X509::Certificate.new(raw_crt)
-  ca_issuer_uri = _get_authority_url(crt, 'CA Issuers')
-  limit = 10
-  ca_crt = ''
-  while limit > 0
-    response = Net::HTTP.get_response(ca_issuer_uri)
-    case response
-    when Net::HTTPSuccess
-      ca_crt_raw = response.body
-      status = 0
-      stdout = ca_crt
-      stderr = response.message
-    when Net::HTTPRedirection
-      ca_issuer_uri = URI(response['location'])
-      limit -= 1
-      status = response.code
-      stdout = response.body
-      stderr = response.message
-      next
-    else
-      status = 1
-      stdout = ''
-      stderr = response.class.name
-    end
-    break
-  end
-  if status.zero?
-    ca_crt = OpenSSL::X509::Certificate.new(ca_crt_raw)
-    File.write(ca_file, ca_crt.to_pem)
-    File.write(ca_file + '.url', ca_issuer_uri.to_s)
-  end
-  [stdout, stderr, status]
+  URI url_description[%r{URI:(.*)}, 1]
 end
 
 def register_account(dehydrated_config)
   run_dehydrated(dehydrated_config, '--accept-terms --register')
 end
 
-def update_account(dehydrated_config)
-  run_dehydrated(dehydrated_config, '--account')
-end
-
 def sign_csr(dehydrated_config, csr_file, crt_file, ca_file)
   # tidy url files, not used anymore
-  ca_url_file = ca_file + '.url'
-  File.delete(ca_url_file) if File.exist?(ca_url_file)
+  ca_url_file = "#{ca_file}.url"
+  FileUtils.rm_f(ca_url_file)
 
   stdout, stderr, status = run_dehydrated(dehydrated_config, "--signcsr '#{csr_file}'")
   if status.zero?
-    stdout = stdout.strip.gsub(%r{(\n-+END CERTIFICATE-+)\s+(-+BEGIN CERTIFICATE-+\n)}, '\1' + "\n\n" + '\2')
-    certs = stdout.split("\n\n")
+    # Split the output by the standard PEM certificate delimiters
+    certs = stdout.scan(%r{-----BEGIN CERTIFICATE-----(?:.|\n)+?-----END CERTIFICATE-----})
     if certs.size < 2
       stdout = "# -- CA certificate missing? -- \n #{stdout}"
       status = 255
     else
-      crt = certs[0].sub("# CERT #\n", '')
-      ca_crt = certs[1..-1].join("\n\n") + "\n"
+      crt_pem = certs[0]
+      ca_chain_pem = "#{certs[1..].join("\n")}\n"
       begin
-        crt = OpenSSL::X509::Certificate.new(crt)
-        File.write(crt_file, crt.to_pem)
-        OpenSSL::X509::Certificate.new(ca_crt)
-        File.write(ca_file, ca_crt)
-      rescue OpenSSL::X509::CertificateError
-        stdout = "# -- is this a certificate?? -- \n #{stdout}"
+        # Validate that the strings are valid certificates before writing to disk
+        OpenSSL::X509::Certificate.new(crt_pem)
+        File.write(crt_file, crt_pem)
+        File.write(ca_file, ca_chain_pem)
+      rescue OpenSSL::X509::CertificateError => e
+        stdout = "# -- is this a certificate?? -- \n #{stdout} \n #{e.message}"
         status = 255
       end
     end
@@ -119,13 +86,15 @@ def sign_csr(dehydrated_config, csr_file, crt_file, ca_file)
   [stdout, stderr, status]
 end
 
-def cert_still_valid(crt_file)
-  if File.exist?(crt_file)
-    raw_crt = File.read(crt_file)
+def cert_still_valid?(crt_file, days_valid = 30)
+  return unless File.exist?(crt_file)
+
+  raw_crt = File.read(crt_file)
+  begin
     crt = OpenSSL::X509::Certificate.new(raw_crt)
-    min_valid = Time.now + (30 * 24 * 60 * 60)
+    min_valid = Time.now + (days_valid * 24 * 60 * 60)
     crt.not_after > min_valid
-  else
+  rescue OpenSSL::X509::CertificateError
     false
   end
 end
@@ -140,8 +109,8 @@ def update_csr(csr_content, csr_file, crt_file, ca_file)
     needs_update = true
   end
   if needs_update
-    File.delete(ca_file) if File.exist?(ca_file)
-    File.delete(crt_file) if File.exist?(crt_file)
+    FileUtils.rm_f(ca_file)
+    FileUtils.rm_f(crt_file)
 
     File.write(csr_file, csr_content)
   end
@@ -187,7 +156,7 @@ def handle_request(fqdn, dn, config)
 
   # clean up OCSP files as they are not supported by letsencrypt anymore.
   ocsp_file = "#{crt_file}.ocsp"
-  File.delete(ocsp_file) if File.exist?(ocsp_file)
+  FileUtils.rm_f(ocsp_file)
 
   # register / update account
   # prior to 2024-04, the config did not contain the request_account_dir.  Fall back to the
@@ -205,7 +174,7 @@ def handle_request(fqdn, dn, config)
   end
   if needs_registration
     stdout, stderr, status = register_account(dehydrated_config)
-    return ['Account registration failed', stdout, stderr, status] if status > 0
+    return ['Account registration failed', stdout, stderr, status] if status.positive?
   end
 
   # key_fingerprint_sha256 was removed from fact
@@ -233,7 +202,7 @@ def handle_request(fqdn, dn, config)
         dn,
         subject_alternative_names
       )
-      return ['Domain validation hook failed', stdout, stderr, status] if status > 0
+      return ['Domain validation hook failed', stdout, stderr, status] if status.positive?
     end
 
     if !(dehydrated_hook_script.nil? || dehydrated_hook_script.empty?) && !(File.exist?(dehydrated_hook_script) && File.executable?(dehydrated_hook_script))
@@ -246,7 +215,7 @@ def handle_request(fqdn, dn, config)
     # in the dehydrated config file already.
 
     stdout, stderr, status = sign_csr(dehydrated_config, csr_file, crt_file, ca_file)
-    return ['CSR signing failed', stdout, stderr, status] if (status > 0 || !cert_still_valid(crt_file)) && (status > 0)
+    return ['CSR signing failed', stdout, stderr, status] if status.positive? || !File.exist?(crt_file)
   end
 
   # track currently used config
@@ -300,7 +269,7 @@ def write_status_file(requests_status, status_file, monitoring_status_file)
   bad_count = 0
   requests_status.each do |fqdn, dns|
     dns.each do |dn, status|
-      if status['statuscode'].to_i > 0
+      if status['statuscode'].to_i.positive?
         bad_count += 1
         errormsg << "#{dn} (from #{fqdn}): #{status['error_message']}"
       else
@@ -309,7 +278,7 @@ def write_status_file(requests_status, status_file, monitoring_status_file)
     end
   end
 
-  monitoring_status = if bad_count > 0
+  monitoring_status = if bad_count.positive?
                         'CRITICAL'
                       else
                         'OK'
