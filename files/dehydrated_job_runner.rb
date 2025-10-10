@@ -26,9 +26,8 @@ def run_domain_validation_hook(hook, dn, subject_alternative_names = [])
 end
 
 def run_dehydrated(dehydrated_config, command)
-  unless DEHYDRATED && File.exist?(DEHYDRATED) && File.executable?(DEHYDRATED)
-    raise 'dehydrated script not found or missing in config'
-  end
+  raise 'dehydrated script not found or missing in config' unless DEHYDRATED && File.exist?(DEHYDRATED) && File.executable?(DEHYDRATED)
+
   cmd = "#{DEHYDRATED} --config '#{dehydrated_config}' #{command}"
   stdout, stderr, status = Open3.capture3(cmd)
 
@@ -56,12 +55,12 @@ def update_ca_chain(crt_file, ca_file)
   while limit > 0
     response = Net::HTTP.get_response(ca_issuer_uri)
     case response
-    when Net::HTTPSuccess then
+    when Net::HTTPSuccess
       ca_crt_raw = response.body
       status = 0
       stdout = ca_crt
       stderr = response.message
-    when Net::HTTPRedirection then
+    when Net::HTTPRedirection
       ca_issuer_uri = URI(response['location'])
       limit -= 1
       status = response.code
@@ -136,9 +135,7 @@ def update_csr(csr_content, csr_file, crt_file, ca_file)
   needs_update = false
   if File.exist?(csr_file)
     old_csr_content = File.read(csr_file)
-    if old_csr_content != csr_content
-      needs_update = true
-    end
+    needs_update = true if old_csr_content != csr_content
   else
     needs_update = true
   end
@@ -197,22 +194,18 @@ def handle_request(fqdn, dn, config)
   # previous method if we don't have request_account_dir in the config (yet?).
   accounts_dir = config['request_account_dir'] || File.join(request_fqdn_dir, 'accounts')
   account_json = File.join(accounts_dir, letsencrypt_ca_hash, 'registration_info.json')
-  if !File.exist?(account_json)
+  needs_registration = true
+  if File.exist?(account_json)
+    begin
+      registration_info = JSON.parse(File.read(account_json))
+      needs_registration = false if registration_info['status'] == 'valid'
+    rescue JSON::ParserError
+      needs_registration = true
+    end
+  end
+  if needs_registration
     stdout, stderr, status = register_account(dehydrated_config)
     return ['Account registration failed', stdout, stderr, status] if status > 0
-  else
-    registration_info = JSON.parse(File.read(account_json))
-    if registration_info['contact'].nil? || registration_info['contact'].empty?
-      current_contact = ''
-    else
-      current_contact = registration_info['contact'][0]
-      current_contact.gsub!(%r{^mailto:}, '')
-    end
-    required_contact = config['dehydrated_contact_email']
-    if current_contact != required_contact
-      stdout, stderr, status = update_account(dehydrated_config)
-      return ['Account update failed', stdout, stderr, status] if status > 0
-    end
   end
 
   # key_fingerprint_sha256 was removed from fact
@@ -238,26 +231,22 @@ def handle_request(fqdn, dn, config)
       stdout, stderr, status = run_domain_validation_hook(
         dehydrated_domain_validation_hook_script,
         dn,
-        subject_alternative_names,
+        subject_alternative_names
       )
       return ['Domain validation hook failed', stdout, stderr, status] if status > 0
     end
 
-    unless dehydrated_hook_script.nil? || dehydrated_hook_script.empty?
-      unless File.exist?(dehydrated_hook_script) && File.executable?(dehydrated_hook_script)
-        return ['Configured Dehydrated hook does not exist or is not executable',
-                dehydrated_hook_script,
-                '',
-                255]
-      end
-      # nothing else to do here, the hook is configured
-      # in the dehydrated config file already.
+    if !(dehydrated_hook_script.nil? || dehydrated_hook_script.empty?) && !(File.exist?(dehydrated_hook_script) && File.executable?(dehydrated_hook_script))
+      return ['Configured Dehydrated hook does not exist or is not executable',
+              dehydrated_hook_script,
+              '',
+              255]
     end
+    # nothing else to do here, the hook is configured
+    # in the dehydrated config file already.
 
     stdout, stderr, status = sign_csr(dehydrated_config, csr_file, crt_file, ca_file)
-    if status > 0 || !cert_still_valid(crt_file)
-      return ['CSR signing failed', stdout, stderr, status] if status > 0
-    end
+    return ['CSR signing failed', stdout, stderr, status] if (status > 0 || !cert_still_valid(crt_file)) && (status > 0)
   end
 
   # track currently used config
@@ -290,9 +279,7 @@ def run_config(dehydrated_requests_config)
   dehydrated_requests_config.each do |fqdn, dns|
     requests_status[fqdn] = {}
     dns.each do |dn, config|
-      if config.key?('dehydrated_config_content')
-        prepare_files(config)
-      end
+      prepare_files(config) if config.key?('dehydrated_config_content')
       error_message, stdout, stderr, statuscode = handle_request(fqdn, dn, config)
       requests_status[fqdn][dn] = {
         'error_message' => error_message,
@@ -333,9 +320,7 @@ def write_status_file(requests_status, status_file, monitoring_status_file)
   File.write(monitoring_status_file, output.join("\n"))
 end
 
-if ARGV.empty?
-  raise ArgumentError, 'Need to specify config.json as argument'
-end
+raise ArgumentError, 'Need to specify config.json as argument' if ARGV.empty?
 
 dehydrated_host_config_file = ARGV[0]
 dehydrated_host_config = JSON.parse(File.read(dehydrated_host_config_file))
@@ -351,7 +336,7 @@ request_status = run_config(dehydrated_requests_config)
 write_status_file(
   request_status,
   dehydrated_status_file,
-  dehydrated_monitoring_status_file,
+  dehydrated_monitoring_status_file
 )
 
 # rubocop:disable all
@@ -369,7 +354,6 @@ write_status_file(
 #      },
 #      "dehydrated_hook_script": "dns-01.sh",
 #      "dehydrated_domain_validation_hook_script": null,
-#      "dehydrated_contact_email": "",
 #      "letsencrypt_ca_url": "https://acme-staging-v02.api.letsencrypt.org/directory",
 #      "letsencrypt_ca_hash": "aHR0cHM6Ly9hY21lLXN0YWdpbmctdjAyLmFwaS5sZXRzZW5jcnlwdC5vcmcvZGlyZWN0b3J5Cg",
 #      "dehydrrated_config": "/opt/dehydrated/requests/fuzz.foobar.com/s.foobar.com/s.foobar.com.config"
@@ -386,7 +370,6 @@ write_status_file(
 #      },
 #      "dehydrated_hook_script": "dns-01.sh",
 #      "dehydrated_domain_validation_hook_script": null,
-#      "dehydrated_contact_email": "",
 #      "letsencrypt_ca_url": "https://acme-staging-v02.api.letsencrypt.org/directory",
 #      "letsencrypt_ca_hash": "aHR0cHM6Ly9hY21lLXN0YWdpbmctdjAyLmFwaS5sZXRzZW5jcnlwdC5vcmcvZGlyZWN0b3J5Cg",
 #      "dehydrrated_config": "/opt/dehydrated/requests/fuzz.foobar.com/tt.foobar.com/tt.foobar.com.config"
@@ -416,7 +399,6 @@ write_status_file(
 #     "n": "zNF9NidRA9VLRfUtDFcK4xnFOXmR-rWA-O76XHGlbDLcBJYkA513GTVcnfZ1la_nK4qIrkH2WDIFX0wMyym9o_YTqbSa966vhhQM4d-S9qMP1aoInbEqLvePi5t-ZbxfPG6PsrgEcDirtP_BvmYhhCF0Q871cqaG2h8ZCkfl7MIRJGOVKpM8_AwcP7VBdoXRF-twNBzKdwRksGODmKJ-69KLZ6X-l1XUwN77p_1-YpJdsodNlwGrm_4NpJP_hySnTq3bunhZZYLwBogcswKEgj2m2-fYuhRWeGv4cLmRyPC8huF5nJUwsUyTB2bCqyIJJzpnWn3O-d8818Q64377Bk4hMhc9xHC4xSRTxFbNYK0aLlBz6-SMLcxXpbyzl7zsoWN12kdSt9ZIN-dPNH01KucE3Y0xzUm7D8Fxu6NfizQEDQq7a4er0WQnxfuVFYauwpVzreO_g3Ba-KKpcz32rWD9Bk68TQPuOJdlLlUev6EVsTueL3Ywbkm66p3QsrAdcsfFKDtzjYLl-D2PYNrxgNLravZxN0Q4I03NRuZeEeMx7t77TTcATmLsDazLYdOeWKyYnL0D6N-POg17t2S0ms76RVokiyPjbWXa7LJgmXK46EnqVvFE5yOhJQLnoJrRv3TQAoFUYiTtlAtI7oodzNqQf_bVAVf7FZa1ZjRYuss",
 #     "e": "AQAB"
 #   },
-#   "contact": [],
 #   "initialIp": "2a02:16a8:dc4:a01::211",
 #   "createdAt": "2018-10-02T16:39:08Z",
 #   "status": "valid"
@@ -436,9 +418,6 @@ write_status_file(
 #     "n": "zNF9NidRA9VLRfUtDFcK4xnFOXmR-rWA-O76XHGlbDLcBJYkA513GTVcnfZ1la_nK4qIrkH2WDIFX0wMyym9o_YTqbSa966vhhQM4d-S9qMP1aoInbEqLvePi5t-ZbxfPG6PsrgEcDirtP_BvmYhhCF0Q871cqaG2h8ZCkfl7MIRJGOVKpM8_AwcP7VBdoXRF-twNBzKdwRksGODmKJ-69KLZ6X-l1XUwN77p_1-YpJdsodNlwGrm_4NpJP_hySnTq3bunhZZYLwBogcswKEgj2m2-fYuhRWeGv4cLmRyPC8huF5nJUwsUyTB2bCqyIJJzpnWn3O-d8818Q64377Bk4hMhc9xHC4xSRTxFbNYK0aLlBz6-SMLcxXpbyzl7zsoWN12kdSt9ZIN-dPNH01KucE3Y0xzUm7D8Fxu6NfizQEDQq7a4er0WQnxfuVFYauwpVzreO_g3Ba-KKpcz32rWD9Bk68TQPuOJdlLlUev6EVsTueL3Ywbkm66p3QsrAdcsfFKDtzjYLl-D2PYNrxgNLravZxN0Q4I03NRuZeEeMx7t77TTcATmLsDazLYdOeWKyYnL0D6N-POg17t2S0ms76RVokiyPjbWXa7LJgmXK46EnqVvFE5yOhJQLnoJrRv3TQAoFUYiTtlAtI7oodzNqQf_bVAVf7FZa1ZjRYuss",
 #     "e": "AQAB"
 #   },
-#   "contact": [
-#     "mailto:test@foobar.com"
-#   ],
 #   "initialIp": "2a02:16a8:dc4:a01::211",
 #   "createdAt": "2018-10-02T16:39:08Z",
 #   "status": "valid"

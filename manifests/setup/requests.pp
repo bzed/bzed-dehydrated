@@ -56,8 +56,6 @@ class dehydrated::setup::requests {
     }
 
     $letsencrypt_ca = $config['letsencrypt_ca']
-    $dehydrated_contact_email = pick_default($config['dehydrated_contact_email'], '')
-
     $challengetype = $config['challengetype']
 
     # added later, handle missing config
@@ -93,7 +91,6 @@ class dehydrated::setup::requests {
           'dehydrated_environment'                   => $dehydrated_environment,
           'dehydrated_hook_script'                   => $dehydrated_hook_script,
           'dehydrated_domain_validation_hook_script' => $dehydrated_domain_validation_hook_script,
-          'dehydrated_contact_email'                 => $dehydrated_contact_email,
           'letsencrypt_ca_url'                       => $letsencrypt_ca_url,
           'letsencrypt_ca_hash'                      => $letsencrypt_ca_hash,
           'dehydrated_config'                        => $dehydrated_config,

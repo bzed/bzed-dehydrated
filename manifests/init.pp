@@ -102,9 +102,6 @@
 # @param dehydrated_hook
 #   Name of the hook script dehydrated will use to validate the authorization request. The hook script
 #   must live in the $dehydrated_hooks_dir on $dehydrated::dehydrated_host.
-# @param dehydrated_contact_email
-#   Contact email address for created accounts. We'll create one account for each
-#   puppet host.
 # @param accounts_per_agent
 #   Create one ACME account per puppet client (true; the default), or one account globally.
 # @param dehydrated_status_file
@@ -179,7 +176,6 @@ class dehydrated (
   Hash $dehydrated_environment = $dehydrated::params::dehydrated_environment,
   Optional[Dehydrated::Hook] $dehydrated_domain_validation_hook = $dehydrated::params::dehydrated_domain_validation_hook,
   Dehydrated::Hook $dehydrated_hook = "${challengetype}.sh",
-  Optional[Dehydrated::Email] $dehydrated_contact_email = $dehydrated::params::dehydrated_contact_email,
   Boolean $accounts_per_agent = true,
 
   Boolean $manage_user = $dehydrated::params::manage_user,
@@ -207,10 +203,6 @@ class dehydrated (
     }
   }
 
-  $_fqdn_based_config = {
-    'dehydrated_contact_email' => $dehydrated_contact_email,
-  }
-
   $dehydrated_domains = $facts['dehydrated_domains']
   $ready_for_merge = $dehydrated_domains.map |Dehydrated::DN $_dn, Hash $_config| {
     $_base_filename = $_config['base_filename']
@@ -231,7 +223,7 @@ class dehydrated (
       ),
     '-')
 
-    $_request_config = merge($_fqdn_based_config, $_config)
+    $_request_config = $_config
     if $_csr =~ Dehydrated::CSR {
       @@dehydrated::certificate::request { $request_name :
         request_fqdn    => $trusted['certname'],
