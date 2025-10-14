@@ -102,7 +102,7 @@ define dehydrated::certificate::deploy (
     }
     concat::fragment { "${dn}_dh_linebreak" :
       target  => $crt_full_chain,
-      content => "\n\n",
+      content => "\n",
       order   => '31',
       require => File[$dh],
     }
