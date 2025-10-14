@@ -68,6 +68,12 @@ define dehydrated::certificate::deploy (
       order   => '01',
       require => Dehydrated_key[$key],
     }
+    concat::fragment { "${dn}_key_linebreak" :
+      target  => $crt_full_chain_with_key,
+      content => "\n\n",
+      order   => '02',
+      require => Dehydrated_key[$key],
+    }
     concat::fragment { "${dn}_fullchain" :
       target    => $crt_full_chain_with_key,
       source    => $crt_full_chain,
@@ -81,11 +87,23 @@ define dehydrated::certificate::deploy (
       order   => '10',
       require => File[$crt],
     }
+    concat::fragment { "${dn}_crt_linebreak" :
+      target  => $crt_full_chain,
+      content => "\n\n",
+      order   => '11',
+      require => File[$crt],
+    }
 
     concat::fragment { "${dn}_dh" :
       target  => $crt_full_chain,
       source  => $dh,
       order   => '30',
+      require => File[$dh],
+    }
+    concat::fragment { "${dn}_dh_linebreak" :
+      target  => $crt_full_chain,
+      content => "\n\n",
+      order   => '31',
       require => File[$dh],
     }
 
