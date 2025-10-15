@@ -113,7 +113,6 @@ The following parameters are available in the `dehydrated` class:
 * [`dehydrated_environment`](#-dehydrated--dehydrated_environment)
 * [`dehydrated_domain_validation_hook`](#-dehydrated--dehydrated_domain_validation_hook)
 * [`dehydrated_hook`](#-dehydrated--dehydrated_hook)
-* [`dehydrated_contact_email`](#-dehydrated--dehydrated_contact_email)
 * [`accounts_per_agent`](#-dehydrated--accounts_per_agent)
 * [`dehydrated_status_file`](#-dehydrated--dehydrated_status_file)
 * [`dehydrated_monitoring_status_file`](#-dehydrated--dehydrated_monitoring_status_file)
@@ -380,15 +379,6 @@ Name of the hook script dehydrated will use to validate the authorization reques
 must live in the $dehydrated_hooks_dir on $dehydrated::dehydrated_host.
 
 Default value: `"${challengetype}.sh"`
-
-##### <a name="-dehydrated--dehydrated_contact_email"></a>`dehydrated_contact_email`
-
-Data type: `Optional[Dehydrated::Email]`
-
-Contact email address for created accounts. We'll create one account for each
-puppet host.
-
-Default value: `$dehydrated::params::dehydrated_contact_email`
 
 ##### <a name="-dehydrated--accounts_per_agent"></a>`accounts_per_agent`
 
