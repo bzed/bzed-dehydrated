@@ -1,5 +1,9 @@
 # Change log
 
+## [2.0.3](https://github.com/bzed/bzed-dehydrated/tree/2.0.3) (2025-10-15)
+
+[Full Changelog](https://github.com/bzed/bzed-dehydrated/compare/2.0.2...2.0.3)
+
 ## [2.0.2](https://github.com/bzed/bzed-dehydrated/tree/2.0.2) (2025-10-02)
 
 [Full Changelog](https://github.com/bzed/bzed-dehydrated/compare/2.0.1...2.0.2)
