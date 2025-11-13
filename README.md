@@ -192,6 +192,19 @@ The cerfificates take some time to appear on the target host. This is due to the
 |6|target|puppet|Collect all `dehydrated::certificate::transfer` and save them to the files.|[dehydrated](manifests/init.pp#L225-L228) [dehydrated::certificate::transfer](manifests/certificate/transfer.pp)|
 |7.|target|puppet|identify deployed certificates by `$fact['dehydrated_domains::`*dn*`::'ready_for_merge]` and create joined files like `*_fullchain.pem`.|[dehydrated::certificate](manifests/certificate.pp#L123-L131) [dehydrated::certificate::deploy](manifests/certificate/deploy.pp)|
 
+### PFX on Windows < Server 2019 / Windows 10 1809
+To use PKCS#12/PFX files on these Windows releases, you must set **keypbe** and **certpbe** to `PBE-SHA1-3DES` and **macalg** to `sha1`.
+
+Set these parameters as follows:
+
+    dehydrated::pkcs12_certpbe: 'PBE-SHA1-3DES'
+    dehydrated::pkcs12_keypbe: 'PBE-SHA1-3DES'
+    dehydrated::pkcs12_mac_algorithm: 'sha1'
+
+#### Additional information
+
+OpenSSL Ruby versions earlier than 3.3.0 are not able to set the MAC algorithm. If the `pkcs12_mac_algorithm` parameter is used and the OpenSSL Ruby version is below 3.3.0, Dehydrated automatically uses Puppet’s bundled `openssl.exe` to create the PFX with the specified options.
+
 ## Development
 
 Please use the github issue tracker and send pull requests. Make sure that your pull requests keep pdk validate/test unit happy!
