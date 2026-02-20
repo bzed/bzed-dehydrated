@@ -218,10 +218,7 @@
 119
 120
 121
-122
-123
-124
-125</pre>
+122</pre>
       </td>
       <td>
         <pre class="code"><span class="info file"># File 'manifests/setup/requests.pp', line 8</span>
@@ -277,8 +274,6 @@ class dehydrated::setup::requests {
     }
 
     $letsencrypt_ca = $config[&#39;letsencrypt_ca&#39;]
-    $dehydrated_contact_email = pick_default($config[&#39;dehydrated_contact_email&#39;], &#39;&#39;)
-
     $challengetype = $config[&#39;challengetype&#39;]
 
     # added later, handle missing config
@@ -314,7 +309,6 @@ class dehydrated::setup::requests {
           &#39;dehydrated_environment&#39;                   =&gt; $dehydrated_environment,
           &#39;dehydrated_hook_script&#39;                   =&gt; $dehydrated_hook_script,
           &#39;dehydrated_domain_validation_hook_script&#39; =&gt; $dehydrated_domain_validation_hook_script,
-          &#39;dehydrated_contact_email&#39;                 =&gt; $dehydrated_contact_email,
           &#39;letsencrypt_ca_url&#39;                       =&gt; $letsencrypt_ca_url,
           &#39;letsencrypt_ca_hash&#39;                      =&gt; $letsencrypt_ca_hash,
           &#39;dehydrated_config&#39;                        =&gt; $dehydrated_config,

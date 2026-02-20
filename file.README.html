@@ -279,6 +279,21 @@ foo.example.com (from bar.example.com): some error description
 </tbody>
 </table>
 
+<h3 id="label-PFX+on+Windows+-3C+Server+2019+-2F+Windows+10+1809">PFX on Windows &lt; Server 2019 / Windows 10 1809</h3>
+
+<p>To use PKCS#12/PFX files on these Windows releases, you must set <strong>keypbe</strong> and <strong>certpbe</strong> to <code>PBE-SHA1-3DES</code> and <strong>macalg</strong> to <code>sha1</code>.</p>
+
+<p>Set these parameters as follows:</p>
+
+<pre class="code ruby"><code class="ruby">dehydrated::pkcs12_certpbe: &#39;PBE-SHA1-3DES&#39;
+dehydrated::pkcs12_keypbe: &#39;PBE-SHA1-3DES&#39;
+dehydrated::pkcs12_mac_algorithm: &#39;sha1&#39;
+</code></pre>
+
+<h4 id="label-Additional+information">Additional information</h4>
+
+<p>OpenSSL Ruby versions earlier than 3.3.0 are not able to set the MAC algorithm. If the <code>pkcs12_mac_algorithm</code> parameter is used and the OpenSSL Ruby version is below 3.3.0, Dehydrated automatically uses Puppet’s bundled <code>openssl.exe</code> to create the PFX with the specified options.</p>
+
 <h2 id="label-Development">Development</h2>
 
 <p>Please use the github issue tracker and send pull requests. Make sure that your pull requests keep pdk validate/test unit happy!</p>

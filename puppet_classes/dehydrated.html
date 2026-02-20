@@ -617,24 +617,6 @@ class { &#39;dehydrated&#39; :
   
     <li>
       
-        <span class='name'>dehydrated_contact_email</span>
-      
-      
-        <span class='type'>(<tt>Optional[Dehydrated::Email]</tt>)</span>
-      
-      
-        <em class="default">(defaults to: <tt>$dehydrated::params::dehydrated_contact_email</tt>)</em>
-      
-      
-        &mdash;
-        <div class='inline'>
-<p>Contact email address for created accounts. We’ll create one account for each puppet host.</p>
-</div>
-      
-    </li>
-  
-    <li>
-      
         <span class='name'>accounts_per_agent</span>
       
       
@@ -813,6 +795,60 @@ class { &#39;dehydrated&#39; :
       
     </li>
   
+    <li>
+      
+        <span class='name'>pkcs12_mac_algorithm</span>
+      
+      
+        <span class='type'>(<tt>Optional[String]</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>undef</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The MAC algorithm to use for PKCS12 files, e.g. <code>sha1</code>, <code>sha256</code>. Defaults to <code>undef</code>, which uses the OpenSSL default. Specifying <code>sha1</code> can be necessary for compatibility with older systems.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>pkcs12_certpbe</span>
+      
+      
+        <span class='type'>(<tt>Optional[String]</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>undef</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The certificate encryption algorithm for PKCS12 files, e.g. <code>AES-256-CBC</code>. Defaults to <code>undef</code>, which uses the OpenSSL default.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>pkcs12_keypbe</span>
+      
+      
+        <span class='type'>(<tt>Optional[String]</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>undef</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The private key encryption algorithm for PKCS12 files, e.g. <code>AES-256-CBC</code>. Defaults to <code>undef</code>, which uses the OpenSSL default.</p>
+</div>
+      
+    </li>
+  
 </ul>
 
 
@@ -824,13 +860,6 @@ class { &#39;dehydrated&#39; :
         <pre class="lines">
 
 
-139
-140
-141
-142
-143
-144
-145
 146
 147
 148
@@ -987,10 +1016,15 @@ class { &#39;dehydrated&#39; :
 299
 300
 301
-302</pre>
+302
+303
+304
+305
+306
+307</pre>
       </td>
       <td>
-        <pre class="code"><span class="info file"># File 'manifests/init.pp', line 139</span>
+        <pre class="code"><span class="info file"># File 'manifests/init.pp', line 146</span>
 
 class dehydrated (
   Stdlib::Absolutepath $base_dir = $dehydrated::params::base_dir,
@@ -1025,7 +1059,6 @@ class dehydrated (
   Hash $dehydrated_environment = $dehydrated::params::dehydrated_environment,
   Optional[Dehydrated::Hook] $dehydrated_domain_validation_hook = $dehydrated::params::dehydrated_domain_validation_hook,
   Dehydrated::Hook $dehydrated_hook = &quot;${challengetype}.sh&quot;,
-  Optional[Dehydrated::Email] $dehydrated_contact_email = $dehydrated::params::dehydrated_contact_email,
   Boolean $accounts_per_agent = true,
 
   Boolean $manage_user = $dehydrated::params::manage_user,
@@ -1036,6 +1069,9 @@ class dehydrated (
   Array[Variant[Dehydrated::DN, Tuple[Dehydrated::DN, Array[Dehydrated::DN]]]] $certificates = [],
 
   Boolean $build_pfx_files = $dehydrated::params::build_pfx_files,
+  Optional[String] $pkcs12_mac_algorithm = undef,
+  Optional[String] $pkcs12_certpbe = undef,
+  Optional[String] $pkcs12_keypbe = undef,
   Optional[String] $preferred_chain = $dehydrated::params::preferred_chain,
 ) inherits dehydrated::params {
   require dehydrated::setup
@@ -1048,10 +1084,6 @@ class dehydrated (
     } else {
       dehydrated::certificate { $certificate : }
     }
-  }
-
-  $_fqdn_based_config = {
-    &#39;dehydrated_contact_email&#39; =&gt; $dehydrated_contact_email,
   }
 
   $dehydrated_domains = $facts[&#39;dehydrated_domains&#39;]
@@ -1074,7 +1106,7 @@ class dehydrated (
       ),
     &#39;-&#39;)
 
-    $_request_config = merge($_fqdn_based_config, $_config)
+    $_request_config = $_config
     if $_csr =~ Dehydrated::CSR {
       @@dehydrated::certificate::request { $request_name :
         request_fqdn    =&gt; $trusted[&#39;certname&#39;],

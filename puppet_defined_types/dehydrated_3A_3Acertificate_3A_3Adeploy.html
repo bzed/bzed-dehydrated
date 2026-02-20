@@ -270,7 +270,28 @@
 136
 137
 138
-139</pre>
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160</pre>
       </td>
       <td>
         <pre class="code"><span class="info file"># File 'manifests/certificate/deploy.pp', line 20</span>
@@ -326,6 +347,12 @@ define dehydrated::certificate::deploy (
       order   =&gt; &#39;01&#39;,
       require =&gt; Dehydrated_key[$key],
     }
+    concat::fragment { &quot;${dn}_key_linebreak&quot; :
+      target  =&gt; $crt_full_chain_with_key,
+      content =&gt; &quot;\n\n&quot;,
+      order   =&gt; &#39;02&#39;,
+      require =&gt; Dehydrated_key[$key],
+    }
     concat::fragment { &quot;${dn}_fullchain&quot; :
       target    =&gt; $crt_full_chain_with_key,
       source    =&gt; $crt_full_chain,
@@ -339,11 +366,23 @@ define dehydrated::certificate::deploy (
       order   =&gt; &#39;10&#39;,
       require =&gt; File[$crt],
     }
+    concat::fragment { &quot;${dn}_crt_linebreak&quot; :
+      target  =&gt; $crt_full_chain,
+      content =&gt; &quot;\n\n&quot;,
+      order   =&gt; &#39;11&#39;,
+      require =&gt; File[$crt],
+    }
 
     concat::fragment { &quot;${dn}_dh&quot; :
       target  =&gt; $crt_full_chain,
       source  =&gt; $dh,
       order   =&gt; &#39;30&#39;,
+      require =&gt; File[$dh],
+    }
+    concat::fragment { &quot;${dn}_dh_linebreak&quot; :
+      target  =&gt; $crt_full_chain,
+      content =&gt; &quot;\n&quot;,
+      order   =&gt; &#39;31&#39;,
       require =&gt; File[$dh],
     }
 
@@ -357,20 +396,23 @@ define dehydrated::certificate::deploy (
     if ($dehydrated::build_pfx_files) {
       $dehydrated_pfx_ensure = &#39;present&#39;
       dehydrated_pfx { $pfx:
-        ensure       =&gt; &#39;present&#39;,
-        pkcs12_name  =&gt; $dn,
-        key_password =&gt; $key_password,
-        password     =&gt; $key_password,
-        ca           =&gt; $ca,
-        certificate  =&gt; $crt,
-        private_key  =&gt; $key,
-        require      =&gt; [
+        ensure        =&gt; &#39;present&#39;,
+        pkcs12_name   =&gt; $dn,
+        key_password  =&gt; $key_password,
+        password      =&gt; $key_password,
+        ca            =&gt; $ca,
+        certificate   =&gt; $crt,
+        private_key   =&gt; $key,
+        mac_algorithm =&gt; $dehydrated::pkcs12_mac_algorithm,
+        certpbe       =&gt; $dehydrated::pkcs12_certpbe,
+        keypbe        =&gt; $dehydrated::pkcs12_keypbe,
+        require       =&gt; [
           File[$crt],
           File[$ca],
           File[$key],
           Dehydrated_key[$key],
         ],
-        subscribe    =&gt; Concat[$crt_full_chain_with_key],
+        subscribe     =&gt; Concat[$crt_full_chain_with_key],
       }
     } else {
       file { $pfx:
