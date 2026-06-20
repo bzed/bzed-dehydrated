@@ -242,7 +242,6 @@ def handle_request(fqdn, dn, config)
   end
 
   # track currently used config
-  # we do this before the OCSP stuff as we have a valid cert already.
   File.write(dn_config_file, JSON.generate(new_dn_config))
 
   debug_log("Restoring environment: #{old_env.inspect}")
@@ -251,7 +250,7 @@ def handle_request(fqdn, dn, config)
   end
 
   [
-    'CRT/CA/OCSP uptodate',
+    'CRT/CA uptodate',
     "(#{dn} for #{fqdn})",
     '',
     0,
