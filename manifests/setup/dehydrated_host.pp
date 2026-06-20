@@ -92,7 +92,7 @@ class dehydrated::setup::dehydrated_host {
   }
   $dehydrated_path = join(flatten([$_puppetlabs_path, $_path]), ':')
 
-  $timer_content = @(EOF)
+  $timer_content = @("EOF")
 [Unit]
 Description=Dehydrated Host Script Timer
 
@@ -105,7 +105,7 @@ Persistent=true
 WantedBy=timers.target
 | EOF
 
-  $service_content = @(EOF)
+  $service_content = @("EOF")
 [Unit]
 Description=Dehydrated Host Script Service
 After=network.target

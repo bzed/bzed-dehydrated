@@ -30,8 +30,10 @@ describe 'dehydrated::setup::dehydrated_host' do
       it { is_expected.to contain_file('/opt/dehydrated/hooks').with_ensure('directory') }
 
       it { is_expected.to contain_systemd__timer('dehydrated_host_script.timer').with(
-        'active' => true,
-        'enable' => true,
+        'active'          => true,
+        'enable'          => true,
+        'timer_content'   => %r{Unit=dehydrated_host_script\.service},
+        'service_content' => %r{User=dehydrated\nGroup=dehydrated\nExecStart=/opt/dehydrated/dehydrated_job_runner\.rb /opt/dehydrated/config\.json\nEnvironment="PATH=/opt/puppetlabs/puppet/bin:.*"}
       ) }
 
       it { is_expected.to contain_cron('dehydrated_host_script').with_ensure('absent') }
