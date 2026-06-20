@@ -97,6 +97,7 @@ class dehydrated::setup::dehydrated_host {
 Description=Dehydrated Host Script Timer
 
 [Timer]
+Unit=dehydrated_host_script.service
 OnCalendar=*-*-* *:03,18,33,48:00
 Persistent=true
 
@@ -122,6 +123,11 @@ Environment="PATH=${dehydrated_path}"
     service_content => $service_content,
     active          => true,
     enable          => true,
+    require         => [
+      $_require,
+      File[$dehydrated_host_script],
+      File[$dehydrated_host_script_config],
+    ],
   }
 
   cron { 'dehydrated_host_script':
