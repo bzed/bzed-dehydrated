@@ -84,14 +84,6 @@ class dehydrated::setup::dehydrated_host {
     require => File[$dehydrated::params::configfile],
   }
 
-  $dehydrated_host_script_lock = "${dehydrated_host_script}.lock"
-
-  $dehydrated_host_script_lock_command = join([
-      '/usr/bin/flock -x -n -E 0',
-      $dehydrated_host_script_lock,
-      '/usr/bin/timeout -k 10 7200',
-  ], ' ')
-
   $_path = split($facts['path'], ':')
   if ($dehydrated::params::puppet_vardir =~ /puppetlabs/) {
     $_puppetlabs_path = [regsubst($dehydrated::params::puppet_vardir, '[^/]*$', 'bin')]
@@ -100,21 +92,41 @@ class dehydrated::setup::dehydrated_host {
   }
   $dehydrated_path = join(flatten([$_puppetlabs_path, $_path]), ':')
 
-  $escaped_path = shell_escape($dehydrated_path)
-  $cron_escaped_path = regsubst($escaped_path, '%', '\%', 'G')
+  $timer_content = @(EOF)
+[Unit]
+Description=Dehydrated Host Script Timer
 
-  $cron_command = join([
-      '/usr/bin/env',
-      "PATH=${cron_escaped_path}",
-      $dehydrated_host_script_lock_command,
-      $dehydrated_host_script,
-      $dehydrated_host_script_config,
-  ], ' ')
+[Timer]
+OnCalendar=*-*-* *:03,18,33,48:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+| EOF
+
+  $service_content = @(EOF)
+[Unit]
+Description=Dehydrated Host Script Service
+After=network.target
+
+[Service]
+Type=oneshot
+User=${dehydrated::dehydrated_user}
+Group=${dehydrated::dehydrated_group}
+ExecStart=${dehydrated_host_script} ${dehydrated_host_script_config}
+Environment="PATH=${dehydrated_path}"
+| EOF
+
+  systemd::timer { 'dehydrated_host_script.timer':
+    timer_content   => $timer_content,
+    service_content => $service_content,
+    active          => true,
+    enable          => true,
+  }
 
   cron { 'dehydrated_host_script':
-    command => $cron_command,
-    user    => $dehydrated::dehydrated_user,
-    minute  => ['3','18','33','48'],
+    ensure => absent,
+    user   => $dehydrated::dehydrated_user,
   }
 
   vcsrepo { $dehydrated::dehydrated_git_dir :

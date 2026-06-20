@@ -29,6 +29,13 @@ describe 'dehydrated::setup::dehydrated_host' do
       it { is_expected.to contain_file('/opt/dehydrated/requests').with_ensure('directory') }
       it { is_expected.to contain_file('/opt/dehydrated/hooks').with_ensure('directory') }
 
+      it { is_expected.to contain_systemd__timer('dehydrated_host_script.timer').with(
+        'active' => true,
+        'enable' => true,
+      ) }
+
+      it { is_expected.to contain_cron('dehydrated_host_script').with_ensure('absent') }
+
       context 'with custom git configuration' do
         let(:pre_condition) do
           <<~PUPPET
