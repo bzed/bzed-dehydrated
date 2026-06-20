@@ -21,6 +21,7 @@ define dehydrated::certificate::deploy (
   Enum['present', 'absent'] $ensure = 'present',
   Dehydrated::DN $dn = $name,
   Optional[String] $key_password = undef,
+  Optional[String] $custom_base_filename = undef,
 ) {
   if ! defined(Class['dehydrated']) {
     fail('You must include the dehydrated base class first.')
@@ -29,9 +30,17 @@ define dehydrated::certificate::deploy (
   include dehydrated
   require dehydrated::setup
 
-  $dehydrated_domains = $facts['dehydrated_domains']
-  $_config = $dehydrated_domains[$dn]
-  $base_filename = $_config['base_filename']
+  if $custom_base_filename {
+    $base_filename = $custom_base_filename
+  } else {
+    $dehydrated_domains = $facts['dehydrated_domains']
+    if $dehydrated_domains =~ Hash and $dehydrated_domains[$dn] =~ Hash {
+      $_config = $dehydrated_domains[$dn]
+      $base_filename = $_config['base_filename']
+    } else {
+      $base_filename = regsubst($dn, '^\*', '_wildcard_')
+    }
+  }
 
   $base_dir = $dehydrated::base_dir
   $csr_dir  = $dehydrated::csr_dir
@@ -50,6 +59,30 @@ define dehydrated::certificate::deploy (
   $crt_full_chain_with_key = "${key_dir}/${base_filename}_fullchain_with_key.pem"
 
   if ($ensure == 'present') {
+    realize(Dehydrated::Certificate::Dh[$base_filename])
+
+    $ca_info = $dehydrated::transfer_files[$ca]
+    if $ca_info {
+      file { $ca:
+        ensure  => file,
+        owner   => $ca_info['owner'],
+        group   => $ca_info['group'],
+        mode    => '0644',
+        content => $ca_info['content'],
+      }
+    }
+
+    $crt_info = $dehydrated::transfer_files[$crt]
+    if $crt_info {
+      file { $crt:
+        ensure  => file,
+        owner   => $crt_info['owner'],
+        group   => $crt_info['group'],
+        mode    => '0644',
+        content => $crt_info['content'],
+      }
+    }
+
     Concat {
       owner => $dehydrated::user,
       group => $dehydrated::group,
@@ -147,13 +180,16 @@ define dehydrated::certificate::deploy (
       $key,
       $pfx,
       $csr,
-      $dh ,
       $ca,
 
       $crt_full_chain,
       $crt_full_chain_with_key,
     ]
     file { $cert_files:
+      ensure => absent,
+    }
+
+    file { $dh:
       ensure => absent,
     }
   }

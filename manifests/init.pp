@@ -204,84 +204,97 @@ class dehydrated (
   }
 
   $dehydrated_domains = $facts['dehydrated_domains']
-  $ready_for_merge = $dehydrated_domains.map |Dehydrated::DN $_dn, Hash $_config| {
-    $_base_filename = $_config['base_filename']
-    $_dh_param_size = $_config['dh_param_size']
-    $_csr = $_config['csr']
-    $_crt_serial = $_config['crt_serial']
-    $_subject_alternative_names = $_config['subject_alternative_names']
-    $_dehydrated_host = $_config['dehydrated_host']
+  if $dehydrated_domains =~ Hash {
+    $merge_info = $dehydrated_domains.reduce({ 'ready' => [], 'files' => {} }) |$memo, $entry| {
+      $_dn = $entry[0]
+      $_config = $entry[1]
+      $_base_filename = $_config['base_filename']
+      $_dh_param_size = $_config['dh_param_size']
+      $_csr = $_config['csr']
+      $_crt_serial = $_config['crt_serial']
+      $_subject_alternative_names = $_config['subject_alternative_names']
+      $_dehydrated_host = $_config['dehydrated_host']
 
-    dehydrated::certificate::dh { $_base_filename :
-      dn            => $_dn,
-      dh_param_size => $_dh_param_size,
-    }
-
-    $request_name = join(
-      concat([$trusted['certname'], $_dn],
-        $_subject_alternative_names
-      ),
-    '-')
-
-    $_request_config = $_config
-    if $_csr =~ Dehydrated::CSR {
-      @@dehydrated::certificate::request { $request_name :
-        request_fqdn    => $trusted['certname'],
-        config          => $_request_config,
-        dn              => $_dn,
-        dehydrated_host => $_dehydrated_host,
+      @dehydrated::certificate::dh { $_base_filename :
+        dn            => $_dn,
+        dh_param_size => $_dh_param_size,
       }
-    }
 
-    $transfer_query = @("EOF":json)
-      ["from", "resources",
-        [ "extract",
-          [
-            "title",
-            "certname",
-            "parameters.file_type",
-            "parameters.request_dn",
-            "parameters.file_content"
-          ],
-          [
-            "and",
-            [ "=", "certname", "${_dehydrated_host}"],
-            [ "=", "type", "Dehydrated::Certificate::Transfer" ],
-            [ "=", "parameters.request_fqdn", "${trusted['certname']}" ],
-            [ "=", "parameters.request_base_filename", "${_base_filename}" ],
-            [ "not", [ "=", "parameters.file_type", "ocsp" ]],
-            [ "=", "exported", true ]
+      $request_name = join(
+        concat([$trusted['certname'], $_dn],
+          $_subject_alternative_names
+        ),
+      '-')
+
+      $_request_config = $_config
+      if $_csr =~ Dehydrated::CSR {
+        @@dehydrated::certificate::request { $request_name :
+          request_fqdn    => $trusted['certname'],
+          config          => $_request_config,
+          dn              => $_dn,
+          dehydrated_host => $_dehydrated_host,
+        }
+      }
+
+      $transfer_query = @("EOF":json)
+        ["from", "resources",
+          [ "extract",
+            [
+              "title",
+              "certname",
+              "parameters.file_type",
+              "parameters.request_dn",
+              "parameters.file_content"
+            ],
+            [
+              "and",
+              [ "=", "certname", "${_dehydrated_host}"],
+              [ "=", "type", "Dehydrated::Certificate::Transfer" ],
+              [ "=", "parameters.request_fqdn", "${trusted['certname']}" ],
+              [ "=", "parameters.request_base_filename", "${_base_filename}" ],
+              [ "not", [ "=", "parameters.file_type", "ocsp" ]],
+              [ "=", "exported", true ]
+            ]
           ]
         ]
-      ]
-      | EOF
+        | EOF
 
-    $transfer_data = puppetdb_query($transfer_query)
-    $transfer_data.each |$transfer| {
-      $content = $transfer['parameters.file_content']
-
-      $filenames = {
-        'ca'   => "${crt_dir}/${_base_filename}_ca.pem",
-        'crt'  => "${crt_dir}/${_base_filename}.crt",
+      $transfer_data = puppetdb_query($transfer_query)
+      $new_files = $transfer_data.reduce($memo['files']) |$files_memo, $transfer| {
+        $content = $transfer['parameters.file_content']
+        $filenames = {
+          'ca'   => "${crt_dir}/${_base_filename}_ca.pem",
+          'crt'  => "${crt_dir}/${_base_filename}.crt",
+        }
+        $filename = $filenames[$transfer['parameters.file_type']]
+        $files_memo + {
+          $filename => {
+            'content' => $content,
+            'owner'   => $user,
+            'group'   => $group,
+          }
+        }
       }
 
-      $filename = $filenames[$transfer['parameters.file_type']]
-      file { $filename:
-        ensure  => file,
-        owner   => $user,
-        group   => $group,
-        mode    => '0644',
-        content => $content,
+      $is_ready = length($transfer_data) == 2
+      $new_ready = $is_ready ? {
+        true  => $memo['ready'] + [$_dn],
+        false => $memo['ready'],
       }
+
+      $result = {
+        'ready' => $new_ready,
+        'files' => $new_files,
+      }
+      $result
     }
 
-    # mark as ready for merge in case we have 3 files to transfer.
-    if length($transfer_data) == 2 {
-      $_dn
-    } else {
-      undef
-    }
-  }.delete_undef_values()
+    $ready_for_merge = $merge_info['ready']
+    $transfer_files  = $merge_info['files']
+  } else {
+    $ready_for_merge = []
+    $transfer_files  = {}
+  }
 
   if ($dehydrated_host == $trusted['certname']) {
     require dehydrated::setup::dehydrated_host

@@ -13,15 +13,20 @@ describe 'dehydrated' do
   end
 
   on_supported_os.each do |os, os_facts|
-    let(:facts) { os_facts }
-    let(:params) do
-      {
-        'dehydrated_host' => os_facts[:networking][:fqdn],
-      }
-    end
+    next if os_facts[:kernel] == 'windows'
 
     context "on #{os}" do
-      next if os_facts[:kernel] == 'windows'
+      let(:facts) { os_facts }
+      let(:trusted_facts) do
+        {
+          'certname' => 'dehydrated.example.com'
+        }
+      end
+      let(:params) do
+        {
+          'dehydrated_host' => 'dehydrated.example.com',
+        }
+      end
 
       it { is_expected.to compile.with_all_deps }
 
@@ -33,7 +38,7 @@ describe 'dehydrated' do
             expect(catalogue).to contain_file('/etc/dehydrated').with_ensure('directory')
           end
         end
-        
+
         it 'creates correct base directory for non-Debian' do
           unless os_facts[:os]['family'] == 'Debian'
             expect(catalogue).to contain_file('/etc/pki/dehydrated').with_ensure('directory')
@@ -80,9 +85,10 @@ describe 'dehydrated' do
       context 'when acting as dehydrated_host' do
         let(:params) do
           super().merge({
-            'dehydrated_host' => os_facts[:networking][:fqdn]
+            'dehydrated_host' => os_facts[:networking]['fqdn']
           })
         end
+        let(:node) { os_facts[:networking]['fqdn'] }
 
         it { is_expected.to contain_class('dehydrated::setup::dehydrated_host') }
         it { is_expected.to contain_class('dehydrated::setup::requests') }
@@ -95,7 +101,7 @@ describe 'dehydrated' do
           }
         end
 
-        it { is_expected.to compile.and_raise_error(%r{expects a Stdlib::Absolutepath value}) }
+        it { is_expected.to compile.and_raise_error(%r{expects a Stdlib::Absolutepath}) }
       end
     end
   end
@@ -104,6 +110,11 @@ describe 'dehydrated' do
     let(:facts) do
       {
         kernel: 'windows',
+        os: {
+          name: 'windows',
+          family: 'windows',
+          release: { full: '2019' }
+        },
         identity: { 'user' => 'SYSTEM' },
         puppet_vardir: 'C:/ProgramData/PuppetLabs/puppet/var',
         networking: { fqdn: 'windows.example.com' }

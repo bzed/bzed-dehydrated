@@ -13,6 +13,30 @@ RSpec.configure do |c|
   c.facterdb_string_keys = false
 end
 
+module RspecPuppetFacts
+  class << self
+    alias_method :original_on_supported_os, :on_supported_os
+    def on_supported_os(*args)
+      stringify = lambda do |v|
+        case v
+        when Hash
+          v.map { |k, val| [k.to_s, stringify.call(val)] }.to_h
+        when Array
+          v.map { |val| stringify.call(val) }
+        else
+          v
+        end
+      end
+
+      original_on_supported_os(*args).map do |os, facts|
+        stringified = stringify.call(facts)
+        symbolized_top = stringified.map { |k, v| [k.to_sym, v] }.to_h
+        [os, symbolized_top]
+      end.to_h
+    end
+  end
+end
+
 add_mocked_facts!
 
 if File.exist?(File.join(__dir__, 'default_module_facts.yml'))

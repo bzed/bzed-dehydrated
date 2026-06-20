@@ -25,12 +25,13 @@ describe 'dehydrated::certificate::csr' do
 
     context "on #{os}" do
       let(:facts) { os_facts }
+      let(:base_dir) { os_facts[:os]['family'] == 'Debian' ? '/etc/dehydrated' : '/etc/pki/dehydrated' }
 
       it { is_expected.to compile.with_all_deps }
 
-      it { is_expected.to contain_dehydrated_key('test.example.com.key') }
-      it { is_expected.to contain_dehydrated_fingerprint('test.example.com.key.fingerprint') }
-      it { is_expected.to contain_dehydrated_csr('test.example.com.csr') }
+      it { is_expected.to contain_dehydrated_key("#{base_dir}/private/test.example.com.key") }
+      it { is_expected.to contain_dehydrated_fingerprint("#{base_dir}/private/test.example.com.key.fingerprint") }
+      it { is_expected.to contain_dehydrated_csr("#{base_dir}/csr/test.example.com.csr") }
 
       context 'with key_password' do
         let(:params) do
@@ -39,9 +40,9 @@ describe 'dehydrated::certificate::csr' do
           })
         end
 
-        it { is_expected.to contain_dehydrated_key('test.example.com.key').with_password('secret') }
-        it { is_expected.to contain_dehydrated_fingerprint('test.example.com.key.fingerprint').with_password('secret') }
-        it { is_expected.to contain_dehydrated_csr('test.example.com.csr').with_password('secret') }
+        it { is_expected.to contain_dehydrated_key("#{base_dir}/private/test.example.com.key").with_password('secret') }
+        it { is_expected.to contain_dehydrated_fingerprint("#{base_dir}/private/test.example.com.key.fingerprint").with_password('secret') }
+        it { is_expected.to contain_dehydrated_csr("#{base_dir}/csr/test.example.com.csr").with_password('secret') }
       end
 
       context 'with different algorithm' do
@@ -51,8 +52,8 @@ describe 'dehydrated::certificate::csr' do
           })
         end
 
-        it { is_expected.to contain_dehydrated_key('test.example.com.key').with_algorithm('prime256v1') }
-        it { is_expected.to contain_dehydrated_csr('test.example.com.csr').with_algorithm('prime256v1') }
+        it { is_expected.to contain_dehydrated_key("#{base_dir}/private/test.example.com.key").with_algorithm('prime256v1') }
+        it { is_expected.to contain_dehydrated_csr("#{base_dir}/csr/test.example.com.csr").with_algorithm('prime256v1') }
       end
 
       context 'with custom filenames' do
@@ -64,8 +65,8 @@ describe 'dehydrated::certificate::csr' do
           })
         end
 
-        it { is_expected.to contain_dehydrated_key('custom.key') }
-        it { is_expected.to contain_dehydrated_csr('custom.csr') }
+        it { is_expected.to contain_dehydrated_key("#{base_dir}/private/custom_name.key") }
+        it { is_expected.to contain_dehydrated_csr("#{base_dir}/csr/custom_name.csr") }
       end
 
       context 'with ensure => absent' do
@@ -75,15 +76,13 @@ describe 'dehydrated::certificate::csr' do
           })
         end
 
-        it { is_expected.to contain_dehydrated_key('test.example.com.key').with_ensure('absent') }
-        it { is_expected.to contain_dehydrated_csr('test.example.com.csr').with_ensure('absent') }
-        it { is_expected.to contain_file('test.example.com.key').with_ensure('absent') }
-        it { is_expected.to contain_file('test.example.com.csr').with_ensure('absent') }
+        it { is_expected.to contain_file("#{base_dir}/private/test.example.com.key").with_ensure('absent') }
+        it { is_expected.to contain_file("#{base_dir}/csr/test.example.com.csr").with_ensure('absent') }
       end
 
       context 'with file permissions' do
-        it { is_expected.to contain_file('test.example.com.key').with_mode('0640') }
-        it { is_expected.to contain_file('test.example.com.csr').with_mode('0644') }
+        it { is_expected.to contain_file("#{base_dir}/private/test.example.com.key").with_mode('0640') }
+        it { is_expected.to contain_file("#{base_dir}/csr/test.example.com.csr").with_mode('0644') }
       end
 
       context 'with custom user and group' do
@@ -101,8 +100,8 @@ describe 'dehydrated::certificate::csr' do
           PUPPET
         end
 
-        it { is_expected.to contain_file('test.example.com.key').with_owner('customuser') }
-        it { is_expected.to contain_file('test.example.com.csr').with_owner('customuser') }
+        it { is_expected.to contain_file("#{base_dir}/private/test.example.com.key").with_owner('customuser') }
+        it { is_expected.to contain_file("#{base_dir}/csr/test.example.com.csr").with_owner('customuser') }
       end
     end
   end

@@ -141,12 +141,14 @@ define dehydrated::certificate (
 
     if $ready_for_merge {
       dehydrated::certificate::deploy { $dn :
-        key_password => $key_password,
+        key_password         => $key_password,
+        custom_base_filename => $base_filename,
       }
     }
   } else {
     dehydrated::certificate::deploy { $dn :
-      ensure => $ensure,
+      ensure               => $ensure,
+      custom_base_filename => $base_filename,
     }
   }
 }
