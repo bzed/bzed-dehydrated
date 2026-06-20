@@ -93,30 +93,30 @@ class dehydrated::setup::dehydrated_host {
   $dehydrated_path = join(flatten([$_puppetlabs_path, $_path]), ':')
 
   $timer_content = @("EOF")
-[Unit]
-Description=Dehydrated Host Script Timer
+    [Unit]
+    Description=Dehydrated Host Script Timer
 
-[Timer]
-Unit=dehydrated_host_script.service
-OnCalendar=*-*-* *:03,18,33,48:00
-Persistent=true
+    [Timer]
+    Unit=dehydrated_host_script.service
+    OnCalendar=*-*-* *:03,18,33,48:00
+    Persistent=true
 
-[Install]
-WantedBy=timers.target
-| EOF
+    [Install]
+    WantedBy=timers.target
+    | EOF
 
   $service_content = @("EOF")
-[Unit]
-Description=Dehydrated Host Script Service
-After=network.target
+    [Unit]
+    Description=Dehydrated Host Script Service
+    After=network.target
 
-[Service]
-Type=oneshot
-User=${dehydrated::dehydrated_user}
-Group=${dehydrated::dehydrated_group}
-ExecStart=${dehydrated_host_script} ${dehydrated_host_script_config}
-Environment="PATH=${dehydrated_path}"
-| EOF
+    [Service]
+    Type=oneshot
+    User=${dehydrated::dehydrated_user}
+    Group=${dehydrated::dehydrated_group}
+    ExecStart=${dehydrated_host_script} ${dehydrated_host_script_config}
+    Environment="PATH=${dehydrated_path}"
+    | EOF
 
   systemd::timer { 'dehydrated_host_script.timer':
     timer_content   => $timer_content,
