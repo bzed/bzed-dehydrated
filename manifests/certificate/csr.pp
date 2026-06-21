@@ -143,14 +143,16 @@ define dehydrated::certificate::csr (
     group  => $dehydrated::group,
     mode   => '0640',
   }
+  $_csr_require = $ensure ? {
+    'present' => Dehydrated_csr[$csr],
+    default   => undef,
+  }
+
   file { $csr :
     ensure  => $ensure,
     owner   => $dehydrated::user,
     group   => $dehydrated::group,
     mode    => '0644',
-    require => $ensure ? {
-      'present' => Dehydrated_csr[$csr],
-      default   => undef,
-    },
+    require => $_csr_require,
   }
 }
