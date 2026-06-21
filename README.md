@@ -66,9 +66,9 @@ Basic things you need:
  -  a host with internet access, preferable a puppet master. This will be known as *dehydrated\_host* now.
  -  a working hook script for dehydrated, for exampes and documentation see [dehydrated-io/dehydrated](https://github.com/dehydrated-io/dehydrated/tree/master/docs)
  -  bzed-dehydrated installed as `dehydrated` module in your Puppet environment.
-    You will also need recent versions of `puppetlabs-stdlib`, `puppetlabs-concat`, `puppetlabs-vcsrepo`.
-    For puppet >= 6.0 you'll also need `puppetlabs-cron\_core`.
- -  I'd assume at least puppet version 4.8. Not tested or developed for older version.
+    You will also need recent versions of `puppetlabs-stdlib`, `puppetlabs-concat`, `puppetlabs-vcsrepo`, and `puppet-systemd`.
+    You'll also need `puppetlabs-cron\_core` (to ensure the legacy cron job is cleaned up).
+ -  Requires at least Puppet version 8.0.0.
  -  Working exportable ressources. Make sure your puppetdb is working well, this module
     heavily depends on it.
 
@@ -107,7 +107,7 @@ So for a basic setup, the following steps should give you a running setup.
          }
 
  5.  Wait.... it will take a few puppet runs until your certificate will appear.
-     The certificates will be requestd by a cronjob, not directly from puppet.
+     The certificates will be requested by a systemd timer, not directly from puppet.
      Otherwise puppet runs will take way too much time. For detailed description of the workflow see [Deployment workflow
 ](#deployment-workflow)
 
@@ -140,10 +140,10 @@ With the yaml snippet above you'd request the following certificates:
 
 ### Monitoring & debugging
  -  usual Puppet debugging rules apply >:-)
- -  you'll find the output and errors from the last cronjob run in **/opt/dehydrated/status.json**.
+ -  you'll find the output and errors from the last systemd timer run in **/opt/dehydrated/status.json**.
     Unfortunately proper logging and maybe a better error handling is not implemented yet.
     Pull requests are welcome :-)
- -  monitoring the cronjob results is possible by using check\_statusfile. On Debian and derivates
+ -  monitoring the timer results is possible by using check\_statusfile. On Debian and derivates
     this is available in the _nagios-plugins-contrib_ package. Or find the source here: [check_statusfile](https://github.com/bzed/pkg-nagios-plugins-contrib/blob/master/dsa/checks/dsa-check-statusfile)
 
         # /usr/lib/nagios/plugins/check_statusfile /opt/dehydrated/monitoring.status
@@ -169,7 +169,7 @@ There is also a markdown version in REFERENCE.md
 
 ## Monitoring
 
-The cron-triggered dehydrated worker creates a status file in a format compatible with check\_statusfile, which is - in Debian and derivates - packaged in the _nagios-plugins-contrib_ package.
+The timer-triggered dehydrated worker creates a status file in a format compatible with check\_statusfile, which is - in Debian and derivates - packaged in the _nagios-plugins-contrib_ package.
 If you ar enot using Debian you can retrieve the source code here: [check_statusfile](https://github.com/bzed/pkg-nagios-plugins-contrib/blob/master/dsa/checks/dsa-check-statusfile)
 
 ## Limitations
@@ -186,8 +186,8 @@ The cerfificates take some time to appear on the target host. This is due to the
 |----|:-----|:-----|:----------|:--------------|
 |1|target|puppet|Create Key and CSR|[dehydrated::certificate](manifests/certificate.pp#L115) [dehydrated::certificate::csr](manifests/certificate/csr.pp#L52-L81)|
 |2|target|puppet|get CSR from `$fact['dehydrated_domains']` and export it as a `dehydrated::certificate::request`.|[dehydrated](manifests/init.pp#L217-L222)|
-|3|*dehydrated\_host*|puppet|Collect all `dehydrated::certificate::request` and save them for the cronjob.|[dehydrated](manifests/init.pp#L235) [dehydrated::certificate::request](manifests/certificate/request.pp) |
-|4|*dehydrated\_host*|cron|finds the files from previous step and requests the certificates.|[dehydrated_job_runner](files/dehydrated_job_runner.rb)|
+|3|*dehydrated\_host*|puppet|Collect all `dehydrated::certificate::request` and save them for the systemd timer.|[dehydrated](manifests/init.pp#L235) [dehydrated::certificate::request](manifests/certificate/request.pp) |
+|4|*dehydrated\_host*|systemd|finds the files from previous step and requests the certificates.|[dehydrated_job_runner](files/dehydrated_job_runner.rb)|
 |5|*dehydrated\_host*|puppet|Find the certificates and export them as `dehydrated::certificate::transfer`|[dehydrated](manifests/init.pp#L243-L247) [dehydrated::certificate:collect](manifests/certificate/collect.pp#L76-L111)|
 |6|target|puppet|Collect all `dehydrated::certificate::transfer` and save them to the files.|[dehydrated](manifests/init.pp#L225-L228) [dehydrated::certificate::transfer](manifests/certificate/transfer.pp)|
 |7.|target|puppet|identify deployed certificates by `$fact['dehydrated_domains::`*dn*`::'ready_for_merge]` and create joined files like `*_fullchain.pem`.|[dehydrated::certificate](manifests/certificate.pp#L123-L131) [dehydrated::certificate::deploy](manifests/certificate/deploy.pp)|
