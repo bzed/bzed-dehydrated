@@ -29,12 +29,14 @@ describe 'dehydrated::setup::dehydrated_host' do
       it { is_expected.to contain_file('/opt/dehydrated/requests').with_ensure('directory') }
       it { is_expected.to contain_file('/opt/dehydrated/hooks').with_ensure('directory') }
 
-      it { is_expected.to contain_systemd__timer('dehydrated_host_script.timer').with(
-        'active'          => true,
-        'enable'          => true,
-        'timer_content'   => %r{Unit=dehydrated_host_script\.service},
-        'service_content' => %r{User=dehydrated\nGroup=dehydrated\nExecStart=/opt/dehydrated/dehydrated_job_runner\.rb /opt/dehydrated/config\.json\nEnvironment="PATH=/opt/puppetlabs/puppet/bin:.*"}
-      ) }
+      it {
+        is_expected.to contain_systemd__timer('dehydrated_host_script.timer').with(
+          'active'          => true,
+          'enable'          => true,
+          'timer_content'   => %r{Unit=dehydrated_host_script\.service},
+          'service_content' => %r{User=dehydrated\nGroup=dehydrated\nExecStart=/opt/dehydrated/dehydrated_job_runner\.rb /opt/dehydrated/config\.json\nEnvironment="PATH=/opt/puppetlabs/puppet/bin:.*"}
+        )
+      }
 
       it { is_expected.to contain_cron('dehydrated_host_script').with_ensure('absent') }
 
@@ -47,7 +49,7 @@ describe 'dehydrated::setup::dehydrated_host' do
             }
             function assert_private() {
             }
-            class { 'dehydrated' : 
+            class { 'dehydrated' :#{' '}
               dehydrated_host => $facts['networking']['fqdn'],
               dehydrated_git_url => 'https://internal.git/dehydrated',
               dehydrated_git_tag => 'v1.0.0'
@@ -68,7 +70,7 @@ describe 'dehydrated::setup::dehydrated_host' do
             }
             function assert_private() {
             }
-            class { 'dehydrated' : 
+            class { 'dehydrated' :#{' '}
               dehydrated_host => $facts['networking']['fqdn'],
               dehydrated_base_dir => '/custom/dehydrated'
             }
@@ -92,7 +94,7 @@ describe 'dehydrated::setup::dehydrated_host' do
             }
             function assert_private() {
             }
-            class { 'dehydrated' : 
+            class { 'dehydrated' :#{' '}
               dehydrated_host => $facts['networking']['fqdn'],
               dehydrated_user => 'customuser',
               dehydrated_group => 'customgroup'

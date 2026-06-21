@@ -15,12 +15,12 @@ end
 
 module RspecPuppetFacts
   class << self
-    alias_method :original_on_supported_os, :on_supported_os
+    alias original_on_supported_os on_supported_os
     def on_supported_os(*args)
       stringify = lambda do |v|
         case v
         when Hash
-          v.map { |k, val| [k.to_s, stringify.call(val)] }.to_h
+          v.to_h { |k, val| [k.to_s, stringify.call(val)] }
         when Array
           v.map { |val| stringify.call(val) }
         else
@@ -28,11 +28,11 @@ module RspecPuppetFacts
         end
       end
 
-      original_on_supported_os(*args).map do |os, facts|
+      original_on_supported_os(*args).to_h do |os, facts|
         stringified = stringify.call(facts)
-        symbolized_top = stringified.map { |k, v| [k.to_sym, v] }.to_h
+        symbolized_top = stringified.transform_keys(&:to_sym)
         [os, symbolized_top]
-      end.to_h
+      end
     end
   end
 end

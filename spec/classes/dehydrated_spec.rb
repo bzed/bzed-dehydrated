@@ -34,23 +34,19 @@ describe 'dehydrated' do
 
       context 'with default parameters' do
         it 'creates correct base directory for Debian' do
-          if os_facts[:os]['family'] == 'Debian'
-            expect(catalogue).to contain_file('/etc/dehydrated').with_ensure('directory')
-          end
+          expect(catalogue).to contain_file('/etc/dehydrated').with_ensure('directory') if os_facts[:os]['family'] == 'Debian'
         end
 
         it 'creates correct base directory for non-Debian' do
-          unless os_facts[:os]['family'] == 'Debian'
-            expect(catalogue).to contain_file('/etc/pki/dehydrated').with_ensure('directory')
-          end
+          expect(catalogue).to contain_file('/etc/pki/dehydrated').with_ensure('directory') unless os_facts[:os]['family'] == 'Debian'
         end
       end
 
       context 'with custom base_dir' do
         let(:params) do
           super().merge({
-            'base_dir' => '/custom/cert/path'
-          })
+                          'base_dir' => '/custom/cert/path'
+                        })
         end
 
         it { is_expected.to contain_file('/custom/cert/path').with_ensure('directory') }
@@ -62,8 +58,8 @@ describe 'dehydrated' do
       context 'with certificates parameter' do
         let(:params) do
           super().merge({
-            'certificates' => ['test.example.com', ['www.example.com', ['www.example.com', 'example.com']]]
-          })
+                          'certificates' => ['test.example.com', ['www.example.com', ['www.example.com', 'example.com']]]
+                        })
         end
 
         it { is_expected.to contain_dehydrated__certificate('test.example.com') }
@@ -73,9 +69,9 @@ describe 'dehydrated' do
       context 'with custom user and group' do
         let(:params) do
           super().merge({
-            'user' => 'customuser',
-            'group' => 'customgroup'
-          })
+                          'user' => 'customuser',
+                          'group' => 'customgroup'
+                        })
         end
 
         it { is_expected.to contain_file('/etc/dehydrated').with_owner('customuser') } if os_facts[:os]['family'] == 'Debian'
@@ -85,8 +81,8 @@ describe 'dehydrated' do
       context 'when acting as dehydrated_host' do
         let(:params) do
           super().merge({
-            'dehydrated_host' => os_facts[:networking]['fqdn']
-          })
+                          'dehydrated_host' => os_facts[:networking]['fqdn']
+                        })
         end
         let(:node) { os_facts[:networking]['fqdn'] }
 

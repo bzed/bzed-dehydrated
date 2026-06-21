@@ -69,16 +69,16 @@ describe 'dehydrated::certificate' do
         end
         let(:facts) do
           os_facts.merge({
-            dehydrated_domains: {
-              'test.example.com' => {
-                'base_filename' => 'custom_filename',
-                'challengetype' => 'dns-01',
-                'dehydrated_host' => 'dehydrated.example.com',
-                'dh_param_size' => 4096,
-                'subject_alternative_names' => []
-              }
-            }
-          })
+                           dehydrated_domains: {
+                             'test.example.com' => {
+                               'base_filename' => 'custom_filename',
+                               'challengetype' => 'dns-01',
+                               'dehydrated_host' => 'dehydrated.example.com',
+                               'dh_param_size' => 4096,
+                               'subject_alternative_names' => []
+                             }
+                           }
+                         })
         end
 
         it { is_expected.to contain_dehydrated__certificate__csr('custom_filename') }

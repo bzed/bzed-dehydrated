@@ -36,8 +36,8 @@ describe 'dehydrated::certificate::csr' do
       context 'with key_password' do
         let(:params) do
           super().merge({
-            'key_password' => 'secret'
-          })
+                          'key_password' => 'secret'
+                        })
         end
 
         it { is_expected.to contain_dehydrated_key("#{base_dir}/private/test.example.com.key").with_password('secret') }
@@ -48,8 +48,8 @@ describe 'dehydrated::certificate::csr' do
       context 'with different algorithm' do
         let(:params) do
           super().merge({
-            'algorithm' => 'prime256v1'
-          })
+                          'algorithm' => 'prime256v1'
+                        })
         end
 
         it { is_expected.to contain_dehydrated_key("#{base_dir}/private/test.example.com.key").with_algorithm('prime256v1') }
@@ -59,10 +59,10 @@ describe 'dehydrated::certificate::csr' do
       context 'with custom filenames' do
         let(:params) do
           super().merge({
-            'base_filename' => 'custom_name',
-            'csr_filename' => 'custom.csr',
-            'key_filename' => 'custom.key'
-          })
+                          'base_filename' => 'custom_name',
+                          'csr_filename' => 'custom.csr',
+                          'key_filename' => 'custom.key'
+                        })
         end
 
         it { is_expected.to contain_dehydrated_key("#{base_dir}/private/custom_name.key") }
@@ -72,8 +72,8 @@ describe 'dehydrated::certificate::csr' do
       context 'with ensure => absent' do
         let(:params) do
           super().merge({
-            'ensure' => 'absent'
-          })
+                          'ensure' => 'absent'
+                        })
         end
 
         it { is_expected.to contain_file("#{base_dir}/private/test.example.com.key").with_ensure('absent') }
@@ -92,7 +92,7 @@ describe 'dehydrated::certificate::csr' do
               return [
               ]
             }
-            class { "dehydrated" : 
+            class { "dehydrated" :#{' '}
               dehydrated_host => $facts["fqdn"],
               user => 'customuser',
               group => 'customgroup'
