@@ -12,6 +12,9 @@
 # @param key_password
 # Password of the key if needed to access it.
 #
+# @param custom_base_filename
+# Custom base filename to use for the certificate files.
+#
 # @example
 #   dehydrated::certificate::deploy { 'namevar': }
 #

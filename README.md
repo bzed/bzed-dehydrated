@@ -138,6 +138,28 @@ With the yaml snippet above you'd request the following certificates:
  -  SAN certificate __san.example.com__ with **second_domain.san.example.com**
     and **third_domain.san.example.com** as subject alternative names.
 
+### Service Notification (Restart/Reload)
+When a certificate is initially created or renewed, you usually want to restart or reload the service using it (like Nginx, Apache, etc.). 
+To do this, you can safely `subscribe` to the `Dehydrated::Certificate[$dn]` resource or have the certificate resource `notify` your service.
+
+**Example using `subscribe` in a Service:**
+```puppet
+service { 'nginx':
+    ensure    => running,
+    enable    => true,
+    subscribe => Dehydrated::Certificate['my-https-host.example.com'],
+}
+```
+
+**Example using `notify` from the Certificate:**
+```puppet
+::dehydrated::certificate { 'my-https-host.example.com':
+    notify => Service['apache2'],
+}
+```
+
+Since the actual certificate files are contained within the `dehydrated::certificate` defined type, any changes to the underlying files (such as a renewal) will automatically bubble up and trigger the refresh event for your service.
+
 ### Monitoring & debugging
  -  usual Puppet debugging rules apply >:-)
  -  you'll find the output and errors from the last systemd timer run in **/opt/dehydrated/status.json**.
